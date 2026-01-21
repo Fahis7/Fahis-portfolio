@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mohammed Fahis | Python Full Stack Developer</title>
+  <meta name="description"
+    content="Portfolio of Mohammed Fahis, a Python Full Stack Developer specializing in Django, React, and AWS." />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- AOS Animation CSS -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+</head>
+
+<body>
+  <!-- Preloader -->
+  <div id="preloader">
+    <div class="loader-content">
+      <span class="logo">MF<span class="dot">.</span></span>
+    </div>
+  </div>
+
+  <div class="cursor-dot" data-cursor-dot></div>
+  <div class="cursor-outline" data-cursor-outline></div>
+
+  <!-- Scroll Progress -->
+  <div class="scroll-progress-container">
+    <div class="scroll-progress-bar"></div>
+  </div>
+
+  <header class="header">
+    <div class="container">
+      <a href="#" class="logo">MF<span class="dot">.</span></a>
+      <nav class="navbar">
+        <ul class="nav-list">
+          <li><a href="#home" class="nav-link">Home</a></li>
+          <li><a href="#about" class="nav-link">About</a></li>
+          <li><a href="#expertise" class="nav-link">Expertise</a></li>
+          <li><a href="#projects" class="nav-link">Projects</a></li>
+          <li><a href="#services" class="nav-link">Services</a></li>
+          <li><a href="#contact" class="nav-link contact-btn">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle" aria-label="Toggle Dark/Light Mode">
+          <i class="fa-solid fa-sun sun-icon"></i>
+          <i class="fa-solid fa-moon moon-icon"></i>
+        </button>
+        <div class="hamburger">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+      <div class="bg-blur blur-1"></div>
+      <div class="bg-blur blur-2"></div>
+
+      <div class="container">
+        <div class="hero-content" data-aos="fade-right" data-aos-duration="1000">
+          <p class="subtitle">Hello, I'm</p>
+          <h1 class="title">Mohammed <span class="highlight">Fahis</span></h1>
+          <h2 class="role">I'm a <span class="typing"></span></h2>
+          <p class="description">
+            Transforming ideas into enterprise-grade software. I specialize in
+            building high-performance
+            <strong>Django REST APIs</strong> and dynamic
+            <strong>React</strong> frontends, deploying scalable solutions on
+            <strong>AWS</strong> with automated
+            <strong>CI/CD</strong> pipelines.
+          </p>
+          <div class="hero-btns">
+            <a href="#projects" class="btn btn-primary">View My Work</a>
+            <a href="#contact" class="btn btn-secondary">Contact Me</a>
+          </div>
+        </div>
+        <div class="hero-visual" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+            <pre><code>
+<span class="keyword">class</span> <span class="class-name">Developer</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="self">self</span>):
+        <span class="self">self</span>.name = <span class="string">"Mohammed Fahis"</span>
+        <span class="self">self</span>.stack = [
+            <span class="string">"Python"</span>, <span class="string">"Django"</span>,
+            <span class="string">"React"</span>, <span class="string">"AWS"</span>
+        ]
+
+    <span class="keyword">def</span> <span class="function">solve_problem</span>(<span class="self">self</span>):
+        <span class="return">return</span> <span class="string">"Scalable Solutions"</span>
+                        </code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-down">
+        <a href="#about">
+          <i class="fa-solid fa-arrow-down"></i>
+        </a>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section about">
+      <div class="container">
+        <h2 class="section-title" data-aos="fade-up">About Me</h2>
+        <div class="about-content" data-aos="fade-up" data-aos-delay="100">
+          <div class="about-text">
+            <p>
+              I am a Python Full Stack Developer who bridges the gap between
+              robust backend logic and modern, interactive frontends.
+              Specializing in <strong>Django</strong> and
+              <strong>React</strong>, I don't just write code—I build and
+              deploy scalable web applications.
+            </p>
+            <p>
+              My recent work involves architecting production-grade systems
+              like 'Horologie,' an e-commerce platform hosted on
+              <strong>AWS EC2</strong> with a hybrid cloud setup using
+              <strong>Supabase</strong> and <strong>Nginx</strong>. I am
+              passionate about cloud infrastructure, API design, and creating
+              seamless user experiences. I am currently seeking an opportunity
+              to bring my deployment-ready skillset to an engineering team.
+            </p>
+            <div class="about-details">
+              <div class="detail-item">
+                <span class="label">Experience</span>
+                <span class="value">Python Full Stack Intern @ Bridgeon Solutions</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Education</span>
+                <span class="value">BCA, University of Calicut (2025)</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Location</span>
+                <span class="value">Palakkad, Kerala</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Expertise Section -->
+    <section id="expertise" class="section expertise">
+      <div class="container">
+        <h2 class="section-title" data-aos="fade-up">My Expertise</h2>
+        <div class="skills-grid">
+          <div class="skill-card" data-aos="fade-up" data-aos-delay="0">
+            <i class="fa-brands fa-react icon"></i>
+            <h3>Frontend</h3>
+            <ul class="skill-list">
+              <li>React.js</li>
+              <li>Redux Toolkit</li>
+              <li>Context API</li>
+              <li>Tailwind CSS</li>
+              <li>JavaScript (ES6+)</li>
+            </ul>
+          </div>
+          <div class="skill-card" data-aos="fade-up" data-aos-delay="100">
+            <i class="fa-brands fa-python icon"></i>
+            <h3>Backend</h3>
+            <ul class="skill-list">
+              <li>Python & Django</li>
+              <li>Django REST Framework</li>
+              <li>REST API Design</li>
+              <li>RBAC</li>
+              <li>PostgreSQL / Supabase</li>
+            </ul>
+          </div>
+          <div class="skill-card" data-aos="fade-up" data-aos-delay="200">
+            <i class="fa-brands fa-aws icon"></i>
+            <h3>Cloud & DevOps</h3>
+            <ul class="skill-list">
+              <li>AWS EC2/RDS</li>
+              <li>Nginx & Gunicorn</li>
+              <li>Docker / CI/CD</li>
+              <li>Linux</li>
+              <li>Certbot SSL</li>
+            </ul>
+          </div>
+          <div class="skill-card" data-aos="fade-up" data-aos-delay="300">
+            <i class="fa-solid fa-shield-halved icon"></i>
+            <h3>Auth & Tools</h3>
+            <ul class="skill-list">
+              <li>JWT / OAuth</li>
+              <li>Firebase Auth</li>
+              <li>Stripe API</li>
+              <li>Git / GitHub</li>
+              <li>Postman</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="section projects">
+      <div class="container">
+        <h2 class="section-title" data-aos="fade-up">Featured Projects</h2>
+        <div class="projects-grid">
+          <!-- Project 1 -->
+          <article class="project-card" data-aos="fade-up">
+            <div class="project-content">
+              <h3 class="project-title">Horologie - Luxury Watch Store</h3>
+
+              <p class="project-category">Full Stack E-Commerce Platform</p>
+
+              <p class="project-desc">
+                A premium e-commerce platform for
+                <strong>luxury timepieces</strong>, deployed on
+                <strong>AWS EC2</strong>. It bridges a robust
+                <strong>Django REST Framework</strong> backend with a dynamic
+                <strong>React</strong> frontend, utilizing a hybrid cloud
+                setup with <strong>Supabase</strong> (PostgreSQL) and
+                <strong>Nginx</strong> for secure, high-performance delivery.
+              </p>
+
+              <div class="project-tags">
+                <span>Python</span>
+                <span>Django DRF</span>
+                <span>React.js</span>
+                <span>AWS EC2</span>
+                <span>Supabase</span>
+                <span>Stripe Payments</span>
+                <span>Firebase auth</span>
+              </div>
+
+              <div class="project-links">
+                <a href="https://horologiee.vercel.app/" target="_blank" class="link-btn">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i>Horologie Live
+                </a>
+                <a href="https://github.com/Fahis7/horologie-backend" target="_blank" class="link-btn secondary">
+                  <i class="fa-brands fa-github"></i> Code
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Project 2 -->
+          <article class="project-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="project-content">
+              <h3 class="project-title">Academic Resource Portal</h3>
+              <p class="project-category">Student Management System</p>
+              <p class="project-desc">
+                Secure system with normalized PostgreSQL schema for
+                Many-to-Many subject allocations. Utilizes advanced search
+                filters using Django Q objects and extensive student data
+                management.
+              </p>
+              <div class="project-tags">
+                <span>Django</span>
+                <span>PostgreSQL</span>
+                <span>Rest API</span>
+                <span>Security</span>
+              </div>
+              <div class="project-links">
+                <a href="#" class="link-btn secondary">
+                  <i class="fa-brands fa-github"></i> Code
+                </a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="section services">
+      <div class="container">
+        <h2 class="section-title" data-aos="fade-up">Services</h2>
+        <div class="services-grid">
+          <div class="service-item" data-aos="fade-up" data-aos-delay="0">
+            <span class="service-num">01</span>
+            <h3>Full Stack Development</h3>
+            <p>
+              Building end-to-end scalable web applications using modern
+              technologies.
+            </p>
+          </div>
+          <div class="service-item" data-aos="fade-up" data-aos-delay="100">
+            <span class="service-num">02</span>
+            <h3>API Development</h3>
+            <p>
+              Designing secure and efficient RESTful APIs for mobile and web
+              consumption.
+            </p>
+          </div>
+          <div class="service-item" data-aos="fade-up" data-aos-delay="200">
+            <span class="service-num">03</span>
+            <h3>Cloud Deployment</h3>
+            <p>
+              Deploying application to AWS, configuring servers, and setting
+              up CI/CD pipelines.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section contact">
+      <div class="container">
+        <h2 class="section-title" data-aos="fade-up">Get In Touch</h2>
+        <div class="contact-wrapper" data-aos="zoom-in">
+          <div class="contact-info">
+            <p class="contact-subtitle">Let's talk about your project</p>
+            <ul class="contact-list">
+              <li>
+                <i class="fa-regular fa-envelope"></i>
+                <a href="mailto:fahismt777@gmail.com">fahismt777@gmail.com</a>
+              </li>
+              <li>
+                <i class="fa-solid fa-phone"></i>
+                <a href="tel:+918129458920">+91 81294 58920</a>
+              </li>
+              <li>
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Palakkad, Kerala</span>
+              </li>
+            </ul>
+            <div class="social-links">
+              <a href="https://github.com/Fahis7" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+              <a href="https://www.linkedin.com/in/fahismt/" aria-label="LinkedIn"><i
+                  class="fa-brands fa-linkedin-in"></i></a>
+              <a href="https://www.instagram.com/fahls__/" aria-label="Instagram"><i
+                  class="fa-brands fa-instagram"></i></a>
+              <a href="https://wa.me/918129458920?text=Hi%20Mohammed,%20I%20viewed%20your%20portfolio%20and%20would%20like%20to%20discuss%20an%20opportunity."
+                target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+                <i class="fa-brands fa-whatsapp"></i>
+              </a>
+            </div>
+          </div>
+
+          <form class="contact-form" id="contact-form">
+            <input type="hidden" name="access_key" value="8ca8da56-c192-417c-a902-65788c8fbf28">
+
+            <div class="form-group">
+              <input type="text" name="name" placeholder="Your Name" required />
+            </div>
+            <div class="form-group">
+              <input type="email" name="email" placeholder="Your Email" required />
+            </div>
+            <div class="form-group">
+              <textarea name="message" placeholder="Message" rows="5" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary submit-btn">
+              Send Message
+            </button>
+
+            <div id="result" style="margin-top: 15px; text-align: center; font-weight: 500; font-size: 1.1rem;"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2025 Mohammed Fahis. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- AOS JS -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>

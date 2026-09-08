@@ -1,0 +1,21 @@
+{
+  "name": "fahis-portfolio-immersive",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "gsap": "latest",
+    "lenis": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "vite": "latest",
+    "framer-motion": "^12.23.12"
+  },
+  "devDependencies": {}
+}

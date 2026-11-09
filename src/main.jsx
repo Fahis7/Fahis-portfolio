@@ -223,18 +223,19 @@ function Marquee({ items, direction = 'left', speed = 40, className = '' }) {
   );
 }
 
-/* AxisKYC case study: the blocks that used to make up the Featured section, unchanged. */
+/* Full case study for any project with `caseStudy` in data.js: metrics strip, features grid,
+   one or two panels (e.g. Security / Testing, or Engineering) and the stack marquee. */
 function CaseStudy({ p }) {
+  const { features, panels } = p.caseStudy;
   return (
     <>
-      <div className="metrics rise" style={{ '--d': '.1s' }}>
+      <div className="metrics rise" style={{ '--d': '.1s', '--n': p.metrics.length }}>
         {p.metrics.map((m) => <div key={m.label}><strong>{m.value}</strong><span>{m.label}</span></div>)}
-        <div><strong>Real PG</strong><span>integration tests in CI</span></div>
       </div>
 
       <h3 className="sub t-sub rise">What it does</h3>
       <ol className="features">
-        {p.features.map((f, i) => (
+        {features.map((f, i) => (
           <li key={f.t} className="rise" style={{ '--d': `${(i % 2) * 0.08}s` }}>
             <span className="mono">{String(i + 1).padStart(2, '0')}</span>
             <div><h4 className="t-sub">{f.t}</h4><p className="t-copy">{f.d}</p></div>
@@ -242,20 +243,17 @@ function CaseStudy({ p }) {
         ))}
       </ol>
 
-      <div className="two-col">
-        <div className="panel panel-dark rise">
-          <p className="kicker">SECURITY</p>
-          <h3 className="t-sub">Locked down by default.</h3>
-          <ul className="ticks">{p.security.map((s) => <li key={s}>{s}</li>)}</ul>
-        </div>
-        <div className="panel rise" style={{ '--d': '.1s' }}>
-          <p className="kicker">TESTING</p>
-          <h3 className="t-sub">Tested like it matters.</h3>
-          <ul className="ticks">{p.testing.map((s) => <li key={s}>{s}</li>)}</ul>
-        </div>
+      <div className={`two-col${panels.length === 1 ? ' two-col--single' : ''}`}>
+        {panels.map((pn, i) => (
+          <div key={pn.kicker} className={`panel${pn.dark ? ' panel-dark' : ''} rise`} style={i ? { '--d': `${i * 0.1}s` } : undefined}>
+            <p className="kicker">{pn.kicker}</p>
+            <h3 className="t-sub">{pn.title}</h3>
+            <ul className="ticks">{pn.items.map((s) => <li key={s}>{s}</li>)}</ul>
+          </div>
+        ))}
       </div>
 
-      <ul className="sr-only" aria-label="AxisKYC tech stack">{p.stack.map((s) => <li key={s}>{s}</li>)}</ul>
+      <ul className="sr-only" aria-label={`${p.title} tech stack`}>{p.stack.map((s) => <li key={s}>{s}</li>)}</ul>
       <Marquee items={p.stack} direction="right" speed={50} className="marquee--bleed rise" />
     </>
   );
@@ -344,11 +342,11 @@ function Work() {
     <section className="section more" id="work">
       <div className="more-head">
         <div className="section-label rise"><span>01</span>Work</div>
-        <h2 className="big t-head rise" style={{ '--d': '.1s' }}>Five builds, four <DotWord text="live." /></h2>
+        <h2 className="big t-head rise" style={{ '--d': '.1s' }}>Six builds, five <DotWord text="live." /></h2>
         <a className="hero-link showreel-link rise" style={{ '--d': '.2s' }} href={`${BASE}work.html`}>Open the full showreel <Arrow size={12} /></a>
       </div>
       <div className="projects">
-        {projects.map((p, i) => (p.features ? <ProjectWithCase key={p.id} p={p} i={i} /> : <Project key={p.id} p={p} i={i} />))}
+        {projects.map((p, i) => (p.caseStudy ? <ProjectWithCase key={p.id} p={p} i={i} /> : <Project key={p.id} p={p} i={i} />))}
       </div>
     </section>
   );

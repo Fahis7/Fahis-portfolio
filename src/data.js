@@ -53,6 +53,7 @@ export const projects = [
       { value: '4', label: 'screening lists' },
       { value: '3', label: 'Postgres roles (RLS)' },
       { value: 'EN · AR', label: 'full RTL support' },
+      { value: 'Real PG', label: 'integration tests in CI' },
     ],
     stack: [
       'Django 5.2', 'DRF', 'PostgreSQL 16 + RLS', 'Celery', 'Redis', 'Next.js 16', 'TypeScript', 'Tailwind v4', 'Framer Motion', 'GitHub Actions',
@@ -88,36 +89,109 @@ def issue_certificate(profile):
 LOCALES = ("en", "ar")  # full RTL
 # tokens: in-memory · refresh: httpOnly
 # CORS: none - proxied via Next.js`,
-    features: [
-      { t: 'Screening engine', d: 'Automated PEP, Sanctions, UAE Local List and Adverse Media screening via the Sanctions.io API, with real-time risk scoring and configurable low / medium / high bands.' },
-      { t: 'Multi-tenant by design', d: 'Row-Level Security isolates every tenant at the database level. Three Postgres roles: owner (migrations), app (tenant runtime), platform (super-admin).' },
-      { t: 'MLRO review queue', d: 'Compliance officers confirm or dismiss each PEP, sanctions, adverse-media and UAE-list match, with a full audit trail.' },
-      { t: 'Verifiable KYC certificates', d: 'PDF certificates with QR verification, officer attestation, dynamic screening results and a public verification endpoint.' },
-      { t: 'Training & compliance LMS', d: 'Course authoring, timed auto-graded quizzes, certificates, assignment lifecycle, Excel training register and analytics on completion and scores.' },
-      { t: 'Quotas & subscriptions', d: 'Free tier, bonus credits and monthly rollover, with race-condition-safe quota reservation using database-level locking.' },
-      { t: 'Individuals & entities', d: 'Company profiles with ownership links: screening a company auto-screens every linked director and owner. Document management built in.' },
-      { t: 'AML audit module', d: 'Compliance audit logging plus document upload and download for audit evidence.' },
-      { t: 'English & Arabic', d: 'Every UI component, error message and PDF certificate in both languages, with true RTL layout.' },
-      { t: 'Role-based portals', d: 'Simplified broker-agent view, full admin dashboard with stats, and cross-tenant platform management for super-admins.' },
+    caseStudy: {
+      features: [
+        { t: 'Screening engine', d: 'Automated PEP, Sanctions, UAE Local List and Adverse Media screening via the Sanctions.io API, with real-time risk scoring and configurable low / medium / high bands.' },
+        { t: 'Multi-tenant by design', d: 'Row-Level Security isolates every tenant at the database level. Three Postgres roles: owner (migrations), app (tenant runtime), platform (super-admin).' },
+        { t: 'MLRO review queue', d: 'Compliance officers confirm or dismiss each PEP, sanctions, adverse-media and UAE-list match, with a full audit trail.' },
+        { t: 'Verifiable KYC certificates', d: 'PDF certificates with QR verification, officer attestation, dynamic screening results and a public verification endpoint.' },
+        { t: 'Training & compliance LMS', d: 'Course authoring, timed auto-graded quizzes, certificates, assignment lifecycle, Excel training register and analytics on completion and scores.' },
+        { t: 'Quotas & subscriptions', d: 'Free tier, bonus credits and monthly rollover, with race-condition-safe quota reservation using database-level locking.' },
+        { t: 'Individuals & entities', d: 'Company profiles with ownership links: screening a company auto-screens every linked director and owner. Document management built in.' },
+        { t: 'AML audit module', d: 'Compliance audit logging plus document upload and download for audit evidence.' },
+        { t: 'English & Arabic', d: 'Every UI component, error message and PDF certificate in both languages, with true RTL layout.' },
+        { t: 'Role-based portals', d: 'Simplified broker-agent view, full admin dashboard with stats, and cross-tenant platform management for super-admins.' },
+      ],
+      panels: [
+        { kicker: 'SECURITY', title: 'Locked down by default.', dark: true, items: [
+          'No CORS: the frontend proxies every API call through Next.js Route Handlers',
+          'Access tokens held in memory only; refresh tokens in httpOnly cookies',
+          'Migrations run only as the owner database role',
+          'Platform-domain writes use a dedicated database role',
+          'SSH password authentication disabled in production',
+        ] },
+        { kicker: 'TESTING', title: 'Tested like it matters.', items: [
+          'Integration suite against real PostgreSQL, not SQLite',
+          'CI pipeline on GitHub Actions',
+          'Concurrent threading tests for quota race conditions',
+          'Query-count regression tests that block N+1 queries',
+        ] },
+      ],
+    },
+  },
+  {
+    id: 'refurbops',
+    num: '02',
+    title: 'RefurbOps',
+    kicker: 'RECOMMERCE / AI OPS',
+    tagline: 'AI-powered operations for refurbished electronics',
+    role: 'Live platform',
+    desc: 'An operations platform for a business that buys, repairs and resells used phones and laptops. It follows each device through intake, grading, repair, quality control and listing, and sells it on several marketplaces at once without ever selling the same unit twice. AI helps with grading, listings and management questions, while a human always makes the final call.',
+    highlights: [
+      'Oversell-safe sync across 3 marketplaces: idempotent webhooks, first order wins, automatic delisting',
+      'AI photo grading and a plain-English ops assistant, with a human making the final decision',
+      'Smart IMEI intake (TAC model lookup + Luhn check) and multi-currency margins',
     ],
-    security: [
-      'No CORS: the frontend proxies every API call through Next.js Route Handlers',
-      'Access tokens held in memory only; refresh tokens in httpOnly cookies',
-      'Migrations run only as the owner database role',
-      'Platform-domain writes use a dedicated database role',
-      'SSH password authentication disabled in production',
+    metrics: [
+      { value: '3', label: 'marketplaces synced' },
+      { value: '150+', label: 'automated tests' },
+      { value: '6', label: 'pipeline stages' },
     ],
-    testing: [
-      'Integration suite against real PostgreSQL, not SQLite',
-      'CI pipeline on GitHub Actions',
-      'Concurrent threading tests for quota race conditions',
-      'Query-count regression tests that block N+1 queries',
-    ],
+    stack: ['Next.js 16', 'React 19', 'TypeScript', 'Claude API', 'Vitest', 'Vercel', 'GitHub Actions'],
+    demo: 'https://refurbops.vercel.app/',
+    github: 'https://github.com/Fahis7/RefurbOps',
+    reel: { poster: 'showreel/refurbops.webp', video: 'showreel/refurbops.mp4', aspect: 1600 / 900 },
+    meta: ['# live: refurbops.vercel.app', '# domain: refurb electronics ops', '# ai: claude, vision + text'],
+    code: `// RefurbOps: refurb electronics ops platform
+export const stack = {
+  app:   "Next.js 16 + React 19",
+  lang:  "TypeScript",
+  ai:    "Claude API, vision + text",
+  tests: "Vitest, 150+ tests",
+  ci:    "GitHub Actions + Vercel",
+};
+
+const PIPELINE = ["Received", "Grading",
+  "Repair", "QC", "Listed", "Sold"];
+
+export function onOrder(order: Order) {
+  if (seen(order.id)) return ok();  // idempotent
+  if (unit.sold) return reject(409); // first wins
+  markSold(unit);
+  delistEverywhere(unit);
+}
+
+export const grade = (photos: Photo[]) =>
+  vision.suggest(photos)   // human confirms
+    .then(rejectLowConfidence);`,
+    caseStudy: {
+      features: [
+        { t: 'Repair pipeline board', d: 'Every device moves across a board from intake to sale, with time-in-stage alerts when work stalls.' },
+        { t: 'QC gate', d: 'Device-specific checklists that must pass before a unit can be listed.' },
+        { t: 'Oversell-safe marketplace sync', d: 'One unit, several marketplaces: the first order wins, late orders get a 409 and the unit is delisted everywhere.' },
+        { t: 'AI photo grading', d: 'Suggested grades from device photos; low-confidence results can’t be applied.' },
+        { t: 'AI ops assistant', d: 'Answers management questions only from pre-computed data, with clickable device IDs.' },
+        { t: 'AI listing generator', d: 'Listings written from verified device facts, with output validation and a safe fallback.' },
+        { t: 'Smart intake', d: 'IMEI and TAC model lookup, Luhn check, autocomplete and live duplicate detection.' },
+        { t: 'Multi-currency costs', d: 'Costs in AED, INR, USD, GBP and EUR, margins in EUR, with the exchange rate saved per device.' },
+        { t: 'Executive dashboard', d: 'Revenue and profit trends, devices in vs out, KPI sparklines and profit per marketplace.' },
+        { t: 'Safe CSV export', d: 'Exports protected against formula injection, plus a light and dark theme.' },
+      ],
+      panels: [
+        { kicker: 'ENGINEERING', title: 'Built to be trusted.', dark: true, items: [
+          'Clean layered architecture with business rules as pure, tested functions',
+          '150+ automated tests and GitHub Actions CI: type-check, tests and build on every push',
+          'AI evaluated like production code, which caught and fixed a real "lowest profit" bug before release',
+          'AI safety: server-side key, prompt-injection protection, strict output validation, rate limiting, timeouts and fallbacks',
+          'A PostgreSQL schema with database-level oversell protection included',
+        ] },
+      ],
+    },
   },
   {
     id: 'zero',
     site: 'zero',
-    num: '02',
+    num: '03',
     title: 'Zero Accounting',
     kicker: 'ACCOUNTING / AUDIT · UAE',
     tagline: 'Auditing & accounting firm in Dubai and Abu Dhabi',
@@ -155,7 +229,7 @@ export default function Page() {
   {
     id: 'propai',
     site: 'propai',
-    num: '03',
+    num: '04',
     title: 'PropAI OS',
     kicker: 'REAL ESTATE / VISION AI',
     tagline: 'Operating system for Dubai property teams',
@@ -197,7 +271,7 @@ def price(unit):
   {
     id: 'seek',
     site: 'seek',
-    num: '04',
+    num: '05',
     title: 'Seek & Sync',
     kicker: 'HR / AI RECRUITING',
     tagline: 'AI recruiting for an Abu Dhabi consultancy',
@@ -236,7 +310,7 @@ def on_new_match(match):
   {
     id: 'horologie',
     site: 'horologie',
-    num: '05',
+    num: '06',
     title: 'Horologie',
     kicker: 'LUXURY COMMERCE / ANALYTICS',
     tagline: 'Premium e-commerce engine for timepieces',
@@ -286,8 +360,8 @@ export const stackCards = [
   {
     key: 'ai', variant: 'speed',
     title: ['AI / LLM', 'Applied in Production'],
-    dots: '3', unit: 'AI products',
-    caption: ['AxisKYC, PropAI OS', '& Seek and Sync'],
+    dots: '4', unit: 'AI products',
+    caption: ['AxisKYC, RefurbOps,', 'PropAI OS & Seek and Sync'],
     groups: [{ label: 'AI / LLM', items: ['Claude (Anthropic)', 'Groq Llama 4 Scout Vision', 'OpenAI GPT-4', 'RAG & pgvector', 'Hugging Face', 'LangChain & prompt engineering'] }],
   },
   {
@@ -300,7 +374,7 @@ export const stackCards = [
   {
     key: 'ship', variant: 'connections',
     title: ['Frontend & Cloud', 'Shipped End-to-End'],
-    dots: '4', unit: 'live',
+    dots: '5', unit: 'live',
     caption: ['Products live', 'in production'],
     groups: [
       { label: 'Frontend', items: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind v4', 'Framer Motion', 'i18n / RTL'] },

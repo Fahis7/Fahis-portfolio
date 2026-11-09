@@ -119,6 +119,34 @@ function ThemeToggle() {
   );
 }
 
+const shortUrl = (u) => u.replace(/^https?:\/\//, '').replace(/\/$/, '');
+
+// Case-study preview: links to the live site, or to GitHub when `demo` is null.
+const previewLink = (p) => (p.demo
+  ? { href: p.demo, label: shortUrl(p.demo), aria: `Open ${p.title} live` }
+  : { href: p.github, label: 'Code on GitHub', aria: `View ${p.title} code on GitHub` });
+
+function Preview({ p, className = '', d, rise = true }) {
+  const l = previewLink(p);
+  return (
+    <a className={`preview ${className} ${rise ? 'rise' : ''}`} style={d ? { '--d': d } : undefined} href={l.href} target="_blank" rel="noreferrer" aria-label={l.aria}>
+      <Shot p={p} />
+      <span className="preview-url">{l.label} <Arrow size={12} /></span>
+    </a>
+  );
+}
+
+// More builds: on touch screens the chip sits under the preview (see .preview-caption).
+function ProjectPreview({ p }) {
+  const l = previewLink(p);
+  return (
+    <div className="preview-wrap rise" style={{ '--d': '.15s' }}>
+      <Preview p={p} rise={false} />
+      <a className="preview-caption" href={l.href} target="_blank" rel="noreferrer">{l.label} <Arrow size={12} /></a>
+    </div>
+  );
+}
+
 function CopyEmail() {
   const [copied, setCopied] = useState(false);
   const copy = async () => {
@@ -160,7 +188,7 @@ function Stage() {
           <p>I design and ship AI-powered products end-to-end (compliance platforms, property SaaS, recruiting tools) and the secure, multi-tenant systems running underneath them.</p>
           <div className="hero-ctas">
             <a href="#work" className="pill pill-hot pill-lg">Explore the work</a>
-            <a href={featured.demo} target="_blank" rel="noreferrer" className="hero-link">Live: axiskyc.ae <Arrow size={12} /></a>
+            {featured.demo && <a href={featured.demo} target="_blank" rel="noreferrer" className="hero-link">Live: {shortUrl(featured.demo)} <Arrow size={12} /></a>}
           </div>
         </div>
       </div>
@@ -195,16 +223,13 @@ function Featured() {
         <div className="featured-intro rise" style={{ '--d': '.2s' }}>
           <p>{p.desc}</p>
           <div className="btn-row">
-            <Button href={p.demo} external>Visit axiskyc.ae <Arrow /></Button>
+            {p.demo && <Button href={p.demo} external>Visit {shortUrl(p.demo)} <Arrow /></Button>}
             <Button href={p.github} variant="secondary" external>GitHub</Button>
           </div>
         </div>
       </div>
 
-      <a className="preview preview-xl rise" style={{ '--d': '.3s' }} href={p.demo} target="_blank" rel="noreferrer" aria-label={`Open ${p.title} live`}>
-        <Shot p={p} />
-        <span className="preview-url">{p.demo.replace('https://', '')} <Arrow size={12} /></span>
-      </a>
+      <Preview p={p} className="preview-xl" d=".3s" />
 
       <div className="metrics rise" style={{ '--d': '.1s' }}>
         {p.metrics.map((m) => <div key={m.label}><strong>{m.value}</strong><span>{m.label}</span></div>)}
@@ -243,21 +268,18 @@ function Project({ p, i }) {
   return (
     <article className={`project ${i % 2 ? 'flip' : ''}`} id={`work-${p.id}`}>
       <div className="project-text rise">
-        <p className="kicker"><span className="mono">{p.num}</span> {p.kicker}</p>
+        <p className="kicker"><span className="mono">{p.num}</span> {p.kicker}{!p.demo && <span className="kicker-status"> · DEMO OFFLINE</span>}</p>
         <h3 className="serif-title">{p.title}</h3>
         <p className="lede">{p.tagline}</p>
         <p>{p.desc}</p>
         <ul className="ticks">{p.highlights.map((h) => <li key={h}>{h}</li>)}</ul>
         <ul className="chips small">{p.stack.map((s) => <li key={s}>{s}</li>)}</ul>
         <div className="btn-row">
-          <Button href={p.demo} external>Open live <Arrow /></Button>
+          {p.demo && <Button href={p.demo} external>Open live <Arrow /></Button>}
           <Button href={p.github} variant="secondary" external>GitHub</Button>
         </div>
       </div>
-      <a className="preview rise" style={{ '--d': '.15s' }} href={p.demo} target="_blank" rel="noreferrer" aria-label={`Open ${p.title} live`}>
-        <Shot p={p} />
-        <span className="preview-url">{p.demo.replace(/^https?:\/\//, '').replace(/\/$/, '')} <Arrow size={12} /></span>
-      </a>
+      <ProjectPreview p={p} />
     </article>
   );
 }
@@ -267,7 +289,7 @@ function MoreWork() {
     <section className="more wrap">
       <div className="more-head">
         <div className="section-label rise"><span>02</span>More builds</div>
-        <h2 className="big rise" style={{ '--d': '.1s' }}>Four more, <em>all live.</em></h2>
+        <h2 className="big rise" style={{ '--d': '.1s' }}>Four more <em>builds.</em></h2>
       </div>
       <div className="projects">{others.map((p, i) => <Project key={p.id} p={p} i={i} />)}</div>
     </section>

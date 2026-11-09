@@ -24,6 +24,7 @@ export const profile = {
   site:   which mini-website design the belt card uses (see MiniSites.jsx)
   code:   what the scanner "prints" when the card dissolves (keep lines ≤ 50 chars)
   meta:   three short comment lines shown top-right of the code
+  demo:   live URL, or null when offline (the site then links to `github` instead)
   image:  optional real screenshot for the case-study preview, e.g. 'projects/axiskyc.webp'
           (put the file in public/projects/, ~1600×1020). The belt always uses the drawn card.
 */
@@ -98,13 +99,50 @@ LOCALES = ("en", "ar")  # full RTL
     ],
   },
   {
+    id: 'zero',
+    site: 'zero',
+    num: '02',
+    title: 'Zero Accounting',
+    kicker: 'ACCOUNTING / AUDIT · UAE',
+    tagline: 'Auditing & accounting firm in Dubai and Abu Dhabi',
+    role: 'Live business website',
+    desc: 'The live website for a Dubai and Abu Dhabi auditing and accounting firm, built to make six services (bookkeeping, VAT consulting, auditing, ICV certification, payroll and business consultancy) clear, credible and easy to enquire about.',
+    highlights: ['Service-led structure across six services, guiding visitors to an enquiry', 'Typed Next.js + Tailwind CSS codebase', 'Mobile-first, responsive layouts across every page'],
+    metrics: [
+      { value: 'Live', label: 'business website' },
+      { value: 'Next.js', label: '+ TypeScript' },
+      { value: 'Mobile', label: 'first, responsive' },
+    ],
+    stack: ['Next.js', 'TypeScript', 'Tailwind CSS'],
+    demo: 'https://zeroaccounting.ae/',
+    github: 'https://github.com/Fahis7',
+    meta: ['# live: zeroaccounting.ae', '# domain: audit / accounting', '# build: next.js'],
+    code: `// Zero Accounting: business services site
+export const stack = {
+  framework: "Next.js",
+  language:  "TypeScript",
+  styling:   "Tailwind CSS",
+  layout:    "mobile-first",
+};
+
+export default function Page() {
+  return (
+    <main>
+      <Hero />
+      <Services />
+      <Enquiry />
+    </main>
+  );
+}`,
+  },
+  {
     id: 'propai',
     site: 'propai',
-    num: '02',
+    num: '03',
     title: 'PropAI OS',
     kicker: 'REAL ESTATE / VISION AI',
     tagline: 'Operating system for Dubai property teams',
-    role: 'Architecture → production',
+    role: 'Architecture → production · demo offline',
     desc: 'A multi-tenant SaaS for Dubai property teams. Four role-based portals, async jobs, five-service Docker orchestration and AI features designed for real production workflows.',
     highlights: ['Vision-AI maintenance triage powered by Groq Vision', 'RAG concierge over property data using pgvector', 'Smart market pricing and four role-based portals with 8 JWT roles'],
     metrics: [
@@ -113,9 +151,9 @@ LOCALES = ("en", "ar")  # full RTL
       { value: '5', label: 'Docker services' },
     ],
     stack: ['Django 5', 'React 19', 'PostgreSQL', 'Groq Vision', 'pgvector', 'Docker'],
-    demo: 'https://propai-os.up.railway.app',
+    demo: null,
     github: 'https://github.com/Fahis7',
-    meta: ['# live: propai-os.up.railway.app', '# domain: real estate', '# ai: vision + rag'],
+    meta: ['# status: redeploying', '# domain: real estate', '# ai: vision + rag'],
     code: `# PropAI OS: multi-tenant property SaaS
 class Stack:
     backend  = "Django 5 + DRF"
@@ -141,7 +179,7 @@ def price(unit):
   {
     id: 'seek',
     site: 'seek',
-    num: '03',
+    num: '04',
     title: 'Seek & Sync',
     kicker: 'HR / AI RECRUITING',
     tagline: 'AI recruiting for an Abu Dhabi consultancy',
@@ -179,7 +217,7 @@ def on_new_match(match):
   {
     id: 'horologie',
     site: 'horologie',
-    num: '04',
+    num: '05',
     title: 'Horologie',
     kicker: 'LUXURY COMMERCE / ANALYTICS',
     tagline: 'Premium e-commerce engine for timepieces',
@@ -214,43 +252,6 @@ def product_media(watch):
 
 analytics.live(dashboard="ops")`,
   },
-  {
-    id: 'zero',
-    site: 'zero',
-    num: '05',
-    title: 'Zero Accounting',
-    kicker: 'ACCOUNTING / BUSINESS SERVICES',
-    tagline: 'Business-services website, live in the UAE',
-    role: 'Live business website',
-    desc: 'A modern accounting and business-services website built to make financial services feel clear, credible and effortless, from service discovery to conversion.',
-    highlights: ['Service-led structure that guides visitors to an enquiry', 'Typed Next.js + Tailwind CSS codebase', 'Mobile-first, responsive layouts across every page'],
-    metrics: [
-      { value: 'Live', label: 'business website' },
-      { value: 'Next.js', label: '+ TypeScript' },
-      { value: 'Mobile', label: 'first, responsive' },
-    ],
-    stack: ['Next.js', 'TypeScript', 'Tailwind CSS'],
-    demo: 'https://zeroaccounting.ae/',
-    github: 'https://github.com/Fahis7',
-    meta: ['# live: zeroaccounting.ae', '# domain: business services', '# build: next.js'],
-    code: `// Zero Accounting: business services site
-export const stack = {
-  framework: "Next.js",
-  language:  "TypeScript",
-  styling:   "Tailwind CSS",
-  layout:    "mobile-first",
-};
-
-export default function Page() {
-  return (
-    <main>
-      <Hero />
-      <Services />
-      <Enquiry />
-    </main>
-  );
-}`,
-  },
 ];
 
 export const skills = [
@@ -279,8 +280,8 @@ export const stackCards = [
   {
     key: 'ship', variant: 'connections',
     title: ['Frontend & Cloud', 'Shipped End-to-End'],
-    dots: '5', unit: 'live',
-    caption: ['Products deployed', 'to production'],
+    dots: '4', unit: 'live',
+    caption: ['Products live', 'in production'],
     groups: [
       { label: 'Frontend', items: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind v4', 'Framer Motion', 'i18n / RTL'] },
       { label: 'Cloud / DevOps', items: ['Docker + Compose', 'GitHub Actions', 'Nginx + Gunicorn', 'AWS EC2 / RDS', 'CentOS / Linux', 'Vercel / Railway'] },

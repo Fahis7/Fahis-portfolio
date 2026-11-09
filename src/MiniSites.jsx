@@ -140,16 +140,16 @@ function Zero() {
   return (
     <div className="ms ms-zero">
       <div className="ms-nav">
-        <div className="ms-logo"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="14" fill="none" stroke="currentColor" strokeWidth="5" /></svg>Zero</div>
+        <div className="ms-logo"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="14" fill="none" stroke="currentColor" strokeWidth="5" /></svg>Zero Accounting</div>
         <Menu items={['SERVICES', 'ABOUT', 'CONTACT']} current="SERVICES" />
       </div>
       <div className="ms-zero-copy">
-        <span className="ms-kicker">ACCOUNTING &amp; BUSINESS SERVICES</span>
+        <span className="ms-kicker">AUDITING &amp; ACCOUNTING · DUBAI / ABU DHABI</span>
         <h3>Financial services, <em>made clear.</em></h3>
         <span className="ms-btn">Get in touch →</span>
       </div>
       <div className="ms-zero-cards">
-        {['Services', 'About us', 'Enquire'].map((t, i) => (
+        {['Bookkeeping', 'VAT consulting', 'Auditing'].map((t, i) => (
           <div key={t} className="ms-zero-card"><span>0{i + 1}</span><b>{t}</b><i>↗</i></div>
         ))}
       </div>

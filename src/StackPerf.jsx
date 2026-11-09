@@ -182,7 +182,7 @@ function ContextWindow() {
   );
 }
 
-/* ── card 3 visual: connections map (5 nodes = 5 live products) ── */
+/* ── card 3 visual: connections map (4 nodes = 4 live products) ── */
 function ConnectionsMap() {
   const white = [
     [0.2, 'M0 5H128c27 0 36 7 39 26 2 16 9 22 24 22h106c16 0 23-8 25-25 2-16 10-23 31-23h76'],
@@ -196,7 +196,7 @@ function ConnectionsMap() {
     [0.52, 'M0 61h95c14 0 22-6 27-20 4-13 12-20 27-20h115c15 0 23 6 27 20 5 14 13 20 28 20h110'],
     [0.94, 'M0 117h88c15 0 22-8 25-25 4-24 12-31 31-31h129c20 0 27 7 31 31 3 17 10 25 26 25h99'],
   ];
-  const nodes = [[45, 117, '#fff'], [133, 61, '#fff4a7'], [189, 61, '#fff1a4'], [319, 61, '#fff4a6'], [319, 117, '#fff2a0']];
+  const nodes = [[45, 117, '#fff'], [133, 61, '#fff4a7'], [189, 61, '#fff1a4'], [319, 61, '#fff4a6']];
   return (
     <svg className="sp-map" viewBox="0 0 429 238" preserveAspectRatio="none" aria-hidden="true">
       {white.map(([o, d], i) => <path key={i} d={d} fill="none" stroke="#fff" strokeWidth="1" opacity={o} />)}

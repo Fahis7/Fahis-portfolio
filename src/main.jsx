@@ -590,6 +590,11 @@ function Experience() {
   const n = timeline.length;
   const sec = useRef(null), list = useRef(null), count = useRef(null), hint = useRef(null);
   const cards = useRef([]), nodes = useRef([]);
+  // pinned (desktop, motion): oldest first, left to right. Otherwise the list itself is newest first,
+  // so the reading / Tab order matches the screen.
+  const [pinned, setPinned] = useState(() => window.matchMedia(PINNED).matches);
+  const order = timeline.map((t, i) => ({ t, i }));
+  if (!pinned) order.reverse();
 
   useEffect(() => {
     const el = sec.current, mq = window.matchMedia(PINNED);
@@ -615,13 +620,14 @@ function Experience() {
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
     const onResize = () => { measure(); onScroll(); };
+    const onMode = () => { setPinned(mq.matches); onResize(); };
     measure(); update();
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize, { passive: true });
-    mq.addEventListener('change', onResize);
+    mq.addEventListener('change', onMode);
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onResize); mq.removeEventListener('change', onResize);
+      window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onResize); mq.removeEventListener('change', onMode);
     };
   }, [n]);
 
@@ -657,7 +663,7 @@ function Experience() {
         <div className="xpt-viewport">
           <span className="xpt-vline" aria-hidden="true"><i /></span>
           <ol className="xpt-cards" ref={list}>
-            {timeline.map((t, i) => (
+            {order.map(({ t, i }) => (
               <li key={t.key} className="xpt-card" ref={(el) => (cards.current[i] = el)} style={{ '--i': i }}>
                 <span className="xpt-year" aria-hidden="true"><DotText text={t.dots} pitchX={4} radius={1.8} /></span>
                 <p className="xpt-date">{t.kicker} · {t.date}</p>

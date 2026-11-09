@@ -581,7 +581,7 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
 
 /* ═════════════ EXPERIENCE ═════════════ */
 /* ═════════════ EXPERIENCE TIMELINE (Experience in main.jsx) ═════════════
-   Default (phones, reduced motion): a vertical timeline, newest first, its line filling with scroll (--vf).
+   Default (phones, reduced motion): a vertical timeline, newest first in the DOM, its line filling with scroll (--vf).
    Desktop with motion: a scroll-pinned horizontal timeline driven by --f (see the media query below). */
 .xp-masthead { width: 100%; margin-bottom: clamp(24px, 3.5vw, 44px); }
 .xp-intro { font-size: var(--section-text); }
@@ -589,7 +589,7 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
 .xpt-viewport { position: relative; padding-left: 40px; }
 .xpt-vline { position: absolute; left: 16px; top: 8px; bottom: 8px; width: 2px; border-radius: 2px; background: var(--line); }
 .xpt-vline i { position: absolute; inset: 0; border-radius: inherit; background: var(--hot); transform-origin: 50% 0; transform: scaleY(var(--vf, 0)); }
-.xpt-cards { display: flex; flex-direction: column-reverse; gap: 16px; }
+.xpt-cards { display: flex; flex-direction: column; gap: 16px; }
 .xpt-card { position: relative; padding: 24px 22px; border-radius: 28px; background: var(--paper); box-shadow: var(--shadow-card); }
 .xpt-card::before {
   content: ''; position: absolute; left: -29px; top: 30px; width: 10px; height: 10px; border-radius: 50%;

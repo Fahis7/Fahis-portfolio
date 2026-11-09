@@ -32,10 +32,10 @@ html[data-theme="dark"] .reel--band::after { bottom: 0; background: linear-gradi
   font: 500 max(9px, calc(10 * var(--ru))) / 1.4 system-ui, sans-serif; text-transform: uppercase; letter-spacing: 0;
 }
 .reel.is-near .reel-label, .reel.is-near .reel-cap, .reel.is-near .reel-list { font-family: 'Inter Tight Variable', system-ui, sans-serif; }
-.reel-tl { left: calc(80 * var(--ru)); top: calc(40 * var(--ru)); }
-.reel-tr { right: calc(80 * var(--ru)); top: calc(40 * var(--ru)); font-variant-numeric: tabular-nums; }
-.reel-bl { left: calc(80 * var(--ru)); bottom: calc(40 * var(--ru)); }
-.reel-br { right: calc(80 * var(--ru)); bottom: calc(40 * var(--ru)); }
+.reel-tl { left: var(--edge); top: calc(40 * var(--ru)); }
+.reel-tr { right: var(--edge); top: calc(40 * var(--ru)); font-variant-numeric: tabular-nums; }
+.reel-bl { left: var(--edge); bottom: calc(40 * var(--ru)); }
+.reel-br { right: var(--edge); bottom: calc(40 * var(--ru)); }
 .reel-br:hover { color: var(--hot-btn); }
 .reel-hint { display: inline-block; transition: opacity 0.4s ease; }
 .reel-hint.is-gone { opacity: 0; }
@@ -84,10 +84,10 @@ html[data-theme="dark"] .reel--band::after { bottom: 0; background: linear-gradi
 
 @media (max-width: 767px) {
   .reel { --ru: calc(100vw / 390); }
-  .reel-tl { left: calc(40 * var(--ru)); top: calc(25 * var(--ru)); }
-  .reel-tr { right: calc(40 * var(--ru)); top: calc(25 * var(--ru)); }
-  .reel-bl { left: calc(40 * var(--ru)); bottom: calc(25 * var(--ru)); }
-  .reel-br { right: calc(40 * var(--ru)); bottom: calc(25 * var(--ru)); }
+  .reel-tl { left: var(--edge); top: calc(25 * var(--ru)); }
+  .reel-tr { right: var(--edge); top: calc(25 * var(--ru)); }
+  .reel-bl { left: var(--edge); bottom: calc(25 * var(--ru)); }
+  .reel-br { right: var(--edge); bottom: calc(25 * var(--ru)); }
   .reel--row { padding: calc(25 * var(--ru) + 30px) 0; }
 }
 

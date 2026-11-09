@@ -13,7 +13,6 @@
   --glass-line: rgba(255, 255, 255, 0.36);
   --card-count: 3;
   --gap: clamp(8px, 1.5vw, 23px);
-  --gutter: clamp(14px, 3.6vw, 54px);
   --content-max: calc(var(--card-count) * 429px + (var(--card-count) - 1) * var(--gap));
   --pad-top: clamp(20px, 9.6vh, 94px);
   --pad-bottom: clamp(88px, 11vh, 104px); /* leaves room for the floating chat pill */
@@ -30,7 +29,7 @@
 /* shared section sizing: same content width and vertical padding as the other sections */
 .sp-stage.section {
   --content-max: 100%; margin-top: 0;
-  padding: var(--section-pad) max(var(--section-gutter), calc((100% - var(--section-w)) / 2));
+  padding: var(--section-pad) var(--edge);
 }
 
 html[data-theme="dark"] .sp-stage {

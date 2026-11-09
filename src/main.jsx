@@ -411,17 +411,15 @@ function Partner() {
     return () => box.removeEventListener('mousemove', onMove);
   }, []);
   return (
-    <section className="section section--fill partner-wrap" id="contact">
-      <div className="partner" ref={boxRef}>
-        <p className="kicker rise">07 · CONTACT</p>
-        <h2 className="partner-title rise" style={{ '--d': '.1s' }}>Let’s build <em>something.</em></h2>
-        <p className="partner-sub rise" style={{ '--d': '.2s' }}>Roles, products, AI architecture, compliance tech: send me a message.</p>
-        <a href={MAILTO} className="btn btn-primary btn-avatar rise" style={{ '--d': '.3s' }}>
-          <span className="avatar" aria-hidden="true">MF</span>Start a chat with Fahis
-        </a>
-        <div className="partner-email rise" style={{ '--d': '.4s' }}>
-          <span>{profile.email}</span><CopyEmail />
-        </div>
+    <section className="section section--fill partner" id="contact" ref={boxRef}>
+      <p className="kicker rise">07 · CONTACT</p>
+      <h2 className="partner-title rise" style={{ '--d': '.1s' }}>Let’s build <em>something.</em></h2>
+      <p className="partner-sub rise" style={{ '--d': '.2s' }}>Roles, products, AI architecture, compliance tech: send me a message.</p>
+      <a href={MAILTO} className="btn btn-primary btn-avatar rise" style={{ '--d': '.3s' }}>
+        <span className="avatar" aria-hidden="true">MF</span>Start a chat with Fahis
+      </a>
+      <div className="partner-email rise" style={{ '--d': '.4s' }}>
+        <span>{profile.email}</span><CopyEmail />
       </div>
     </section>
   );

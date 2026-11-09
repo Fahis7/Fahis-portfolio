@@ -21,16 +21,23 @@
   background: linear-gradient(90deg, rgba(255, 110, 50, 0.5), transparent); filter: blur(4px);
 }
 .me-tag {
-  position: absolute; z-index: 3; left: 10px; bottom: 9px; padding: 4px 7px; border-radius: 99px;
+  position: absolute; z-index: 3; left: 10px; bottom: 9px; padding: 4px 8px 4px 7px; border-radius: 99px;
+  display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;
   font: 500 10px 'IBM Plex Mono', ui-monospace, monospace; letter-spacing: 0.02em; color: #ffd9c4; background: rgba(15, 17, 21, 0.7);
-  opacity: clamp(0, calc((var(--p) - 0.75) * 4), 1); pointer-events: none;
+  pointer-events: none; transition: opacity 0.2s ease;
 }
+/* hint: visible while decoded, fades out while the photo is revealed */
+.me.is-photo .me-tag { opacity: 0; }
+.me-dot { width: 6px; height: 6px; flex: none; border-radius: 50%; background: #ff5a1f; box-shadow: 0 0 6px rgba(255, 90, 31, 0.8); animation: meDot 1.6s ease-in-out infinite; }
+@keyframes meDot { 50% { opacity: 0.45; transform: scale(0.75); } }
+@media (prefers-reduced-motion: reduce) { .me-dot { animation: none; } }
 
 /* hero layout: portrait beside the eyebrow + headline */
 .hero-left { display: flex; gap: 26px; align-items: center; }
 
 @media (max-width: 767px) {
   .me { height: auto; width: 112px; border-radius: 14px; }
-  .me-tag { display: none; }
+  .me-tag { left: 6px; bottom: 6px; padding: 3px 6px 3px 5px; gap: 4px; font-size: 9px; }
+  .me-dot { width: 5px; height: 5px; }
   .hero-left { gap: 16px; }
 }

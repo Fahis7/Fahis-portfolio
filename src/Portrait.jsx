@@ -1,12 +1,13 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 /*
   Decode portrait.
-  On hover (or keyboard focus, or a tap on touch screens) an orange scanner
-  sweeps across the black-and-white photo. Behind the line the photo is
-  rebuilt from characters of code with a soft x-ray glow.
-  One CSS variable, --p (0 to 1), drives the photo clip, the code clip and
-  the scanner position. Styles live in portrait.css.
+  Shown decoded by default: the photo rebuilt from characters of code with a
+  soft x-ray glow. Hover (or keyboard focus, a tap, Enter / Space) sweeps the
+  orange scanner back to reveal the real black-and-white photo.
+  On load it starts as the photo and sweeps once to decoded, so the effect is seen.
+  One CSS variable, --p (0 = photo, 1 = decoded), drives the photo clip, the code
+  clip and the scanner position. Styles live in portrait.css.
 */
 
 const CODE = "const fahis = { role: 'AI engineer', city: 'Dubai', stack: ['django','react','postgres','pgvector'], ships: true }; ";
@@ -62,8 +63,11 @@ function drawCode(canvas, img) {
   }
 }
 
-export default function Portrait({ photo, cutout, alt, tag = 'fahis.decode()' }) {
+export default function Portrait({ photo, cutout, alt }) {
   const wrap = useRef(null), canvas = useRef(null);
+  const drawn = useRef(null); // resolves once the code layer has been drawn
+  if (!drawn.current) { let r; drawn.current = new Promise((res) => (r = res)); drawn.current.resolve = r; }
+  const [hint] = useState(() => (window.matchMedia('(hover: hover) and (pointer: fine)').matches ? 'Hover me' : 'Tap me'));
 
   // Draw the code layer once the cut-out and the mono font are ready; redraw on resize.
   useEffect(() => {
@@ -75,18 +79,18 @@ export default function Portrait({ photo, cutout, alt, tag = 'fahis.decode()' })
     Promise.all([
       new Promise((res) => { img.onload = res; img.onerror = res; }),
       document.fonts?.load('500 9px "IBM Plex Mono"').catch(() => {}),
-    ]).then(draw);
+    ]).then(() => { draw(); drawn.current.resolve(); });
     let t;
     const ro = new ResizeObserver(() => { clearTimeout(t); t = setTimeout(draw, 120); });
     ro.observe(canvas.current);
     return () => { alive = false; ro.disconnect(); clearTimeout(t); };
   }, [cutout]);
 
-  // Animate --p toward 0 or 1.
+  // Animate --p toward 0 (photo) or 1 (decoded).
   useEffect(() => {
     const el = wrap.current;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let p = 0, target = 0, raf = 0, last = 0;
+    let p = 0, target = 0, raf = 0, last = 0, touched = false, alive = true;
     const ease = (x) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
     const tick = (t) => {
       const dt = last ? Math.min(0.05, (t - last) / 1000) : 0.016; last = t;
@@ -96,21 +100,35 @@ export default function Portrait({ photo, cutout, alt, tag = 'fahis.decode()' })
       el.style.setProperty('--p', ease(p).toFixed(4));
       if (p !== target) raf = requestAnimationFrame(tick); else { raf = 0; last = 0; }
     };
-    const go = (v) => {
+    const go = (v, user = true) => {
+      if (user) touched = true;
       target = v;
-      el.setAttribute('aria-pressed', v ? 'true' : 'false');
+      el.setAttribute('aria-pressed', v ? 'false' : 'true'); // pressed = photo revealed
+      el.classList.toggle('is-photo', !v);
       if (reduced) { p = v; el.style.setProperty('--p', String(v)); return; }
       if (!raf) raf = requestAnimationFrame(tick);
     };
-    const enter = (e) => e.pointerType !== 'touch' && go(1);
-    const leave = (e) => e.pointerType !== 'touch' && go(0);
+    const enter = (e) => e.pointerType !== 'touch' && go(0);
+    const leave = (e) => e.pointerType !== 'touch' && go(1);
     const up = (e) => e.pointerType === 'touch' && go(target ? 0 : 1);
     const key = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(target ? 0 : 1); } };
-    const focus = () => go(1), blur = () => go(0);
+    const focus = () => go(0), blur = () => go(1);
+
+    // Intro: start as the photo, then sweep once to decoded when the code layer is drawn
+    // and ~0.6 s after the hero entrance ends. Reduced motion: decoded straight away.
+    el.classList.add('is-photo');
+    if (reduced) go(1, false);
+    else {
+      const entrance = Promise.all((el.getAnimations?.() || []).map((a) => a.finished.catch(() => {})));
+      Promise.all([drawn.current, entrance])
+        .then(() => new Promise((r) => setTimeout(r, 600)))
+        .then(() => { if (alive && !touched) go(1, false); });
+    }
     el.addEventListener('pointerenter', enter); el.addEventListener('pointerleave', leave);
     el.addEventListener('pointerup', up); el.addEventListener('keydown', key);
     el.addEventListener('focus', focus); el.addEventListener('blur', blur);
     return () => {
+      alive = false;
       cancelAnimationFrame(raf);
       el.removeEventListener('pointerenter', enter); el.removeEventListener('pointerleave', leave);
       el.removeEventListener('pointerup', up); el.removeEventListener('keydown', key);
@@ -119,11 +137,11 @@ export default function Portrait({ photo, cutout, alt, tag = 'fahis.decode()' })
   }, []);
 
   return (
-    <figure className="me" ref={wrap} tabIndex={0} role="button" aria-pressed="false" aria-label={`${alt}. Decode portrait`}>
+    <figure className="me" ref={wrap} tabIndex={0} role="button" aria-pressed="true" aria-label={`${alt}. Hover, tap or press Enter to reveal photo`}>
       <canvas className="me-code" ref={canvas} aria-hidden="true" />
       <img className="me-photo" src={photo} alt="" draggable="false" />
       <i className="me-scan" aria-hidden="true" />
-      <span className="me-tag" aria-hidden="true">{tag}</span>
+      <span className="me-tag" aria-hidden="true"><i className="me-dot" />{hint}</span>
     </figure>
   );
 }

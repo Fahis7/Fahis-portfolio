@@ -19,7 +19,7 @@ import Portrait from './Portrait.jsx';
 import Showreel from './Showreel.jsx';
 import Quotes from './Quotes.jsx';
 import { DotText, DotWord, DotTitle } from './DotText.jsx';
-import { GlassCard, useGlassEntrance } from './GlassCard.jsx';
+import { GlassCard, GlassBadge, useGlassEntrance } from './GlassCard.jsx';
 import { profile, projects, stackCards, toolkit, marquee, experience, credentials, quotes, offers, realShot } from './data.js';
 
 const BASE = import.meta.env.BASE_URL;
@@ -584,64 +584,50 @@ const CRED_ICONS = {
   ),
 };
 
-// Experience: sticky intro on the left, role cards on the right along a spine whose orange fill
-// follows the scroll (passive, rAF-throttled). Reduced motion: the spine is simply full.
+// Experience: the Stack masthead pattern, then the roles as glass cards (flip on hover for the details, like
+// Stack) and the credentials as compact glass badges. The cards are artwork: the same in both themes.
+function XpBack({ x }) {
+  return (
+    <>
+      <p className="xp-b-company">{x.company}</p>
+      <p className="xp-b-desc">{x.desc}</p>
+      {x.tech && <ul className="xp-b-chips" aria-label="Tech">{x.tech.map((t) => <li key={t}>{t}</li>)}</ul>}
+      {x.link && <a className="sp-stack-link" href={x.link}>View project ↘</a>}
+    </>
+  );
+}
+
 function Experience() {
-  const list = useRef(null);
-  useEffect(() => {
-    const el = list.current;
-    if (reducedMotion()) { el.style.setProperty('--xp', '1'); return; }
-    let raf = 0;
-    const update = () => {
-      raf = 0;
-      const r = el.getBoundingClientRect();
-      const p = Math.min(1, Math.max(0, (window.innerHeight * 0.6 - r.top) / r.height));
-      el.style.setProperty('--xp', p.toFixed(4));
-    };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
-    update();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    return () => { cancelAnimationFrame(raf); window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll); };
-  }, []);
+  const glass = useRef(null);
+  useGlassEntrance(glass);
   return (
     <section className="section section--fill experience" id="experience">
-      <div className="xp-grid">
-        <div className="xp-head rise">
+      <header className="sp-masthead xp-masthead rise">
+        <div>
           <div className="section-label"><span>04</span>Experience</div>
           <h2 className="big t-head">From first commit to full <DotWord text="ownership." /></h2>
-          <p className="xp-intro t-copy">Four roles, from backend internship to sole engineer of a live compliance SaaS.</p>
         </div>
-        <div className="xp-list" ref={list}>
-          <span className="xp-spine" aria-hidden="true"><i /></span>
-          <ol className="xp-cards">
-            {experience.map((x, i) => (
-              <li key={x.title} className="xp-card rise" style={{ '--d': `${i * 0.08}s` }}>
-                <div className="xp-top">
-                  <span className="xp-date">{x.time}</span>
-                  {x.current && <span className="xp-now"><DotText text="NOW" pitchX={4} radius={1.8} /><span className="sr-only">Current role</span></span>}
-                </div>
-                <h3 className="xp-title">{x.title}</h3>
-                {x.company && <p className="xp-company">{x.company}</p>}
-                <p className="xp-desc t-copy">{x.desc}</p>
-                {x.tech && <ul className="chips small" aria-label="Tech">{x.tech.map((t) => <li key={t}>{t}</li>)}</ul>}
-                {x.link && <a className="xp-link" href={x.link}>View project ↘</a>}
-              </li>
-            ))}
-          </ol>
-          <ul className="xp-creds">
-            {credentials.map((c, i) => (
-              <li key={c.key} className={`xp-card xp-cred rise${c.accent ? ' xp-cred--accent' : ''}`} style={{ '--d': `${(experience.length + i) * 0.08}s` }}>
-                <div className="xp-top">
-                  <span className="xp-icon" aria-hidden="true">{CRED_ICONS[c.icon]}</span>
-                  <span className="xp-date">{c.date}</span>
-                </div>
-                <p className="xp-cred-label">{c.label}</p>
-                <h3 className="xp-cred-title">{c.title}</h3>
-                <p className="xp-cred-sub">{c.sub}</p>
-              </li>
-            ))}
-          </ul>
+        <p className="xp-intro t-copy">Four roles, from backend internship to sole engineer of a live compliance SaaS.</p>
+      </header>
+      <div className="xp-glass sp-pending" ref={glass}>
+        <div className="xpg-row">
+          {experience.map((x, i) => (
+            <GlassCard
+              key={x.title} id={`xp-role-${i}`} index={i} revealOnHover
+              variant={x.card.variant} title={x.card.title} dots={x.card.dots} unit={x.card.unit} caption={x.card.caption}
+              corner={x.current && <span className="sp-now" role="img" aria-label="Current role"><DotText text="NOW" pitchX={4} radius={1.8} /></span>}
+              reveal={{ openLabel: 'View role', title: [x.title], content: <XpBack x={x} /> }}
+            />
+          ))}
+        </div>
+        <p className="xpg-swipe" aria-hidden="true">Swipe →</p>
+        <div className="xpg-creds">
+          {credentials.map((c, i) => (
+            <GlassBadge
+              key={c.key} index={experience.length + i} variant="graphite" glow={c.accent}
+              icon={CRED_ICONS[c.icon]} title={c.title} sub={c.sub} dots={c.dots} unit={c.unit}
+            />
+          ))}
         </div>
       </div>
     </section>
@@ -725,7 +711,7 @@ function Partner() {
 
 /* Cursor light: a soft orange spotlight that follows the pointer, plus a local highlight on the card under it.
    Fine pointers only, off with reduced motion. One passive, rAF-throttled pointermove listener writes CSS variables. */
-const LIGHT_CARDS = '.preview, .sp-card, .panel, .xp-card, .tk-tile';
+const LIGHT_CARDS = '.preview, .sp-card, .panel, .tk-tile';
 const LIGHT_STRONG = '.reel, .panel-dark, .tk-term';
 function CursorLight() {
   const ref = useRef(null);

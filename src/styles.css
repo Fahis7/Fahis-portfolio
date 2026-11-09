@@ -580,45 +580,28 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
 .quotes-btn:hover { border-color: var(--hot-btn); color: var(--hot-btn); }
 
 /* ═════════════ EXPERIENCE ═════════════ */
-.xp-grid { display: grid; grid-template-columns: minmax(0, 35fr) minmax(0, 65fr); gap: clamp(32px, 5vw, 80px); align-items: start; }
-.xp-head { position: sticky; top: 96px; }
-.xp-intro { margin-top: 18px; font-size: var(--section-text); }
-/* spine: 1px line down the cards column, orange fill follows the scroll (--xp, set in Experience) */
-.xp-list { position: relative; padding-left: 36px; --xp: 0; }
-.xp-spine { position: absolute; left: 8px; top: 8px; bottom: 8px; width: 1px; background: var(--line); }
-.xp-spine i { position: absolute; inset: 0; background: var(--hot); transform-origin: 50% 0; transform: scaleY(var(--xp)); }
-.xp-cards { display: grid; gap: 16px; }
-.xp-card { position: relative; padding: 28px 32px; border-radius: 28px; background: var(--paper); box-shadow: var(--shadow-card); }
-.xp-card::before {
-  content: ''; position: absolute; left: -32.5px; top: 34px; width: 9px; height: 9px; border-radius: 50%;
-  background: var(--hot); box-shadow: 0 0 0 4px var(--bg);
+/* Experience: the Stack masthead, then glass cards (rigid 429×554, like Stack) and compact glass badges */
+.xp-masthead { width: 100%; margin-bottom: clamp(28px, 4vw, 48px); }
+.xp-intro { font-size: var(--section-text); }
+.xpg-row {
+  --gap: clamp(12px, 1.5vw, 23px); container-type: inline-size;
+  display: flex; justify-content: center; gap: var(--gap); perspective: 900px;
+  --card-w: min((100cqw - 3 * var(--gap)) / 4, 429px);
 }
-.xp-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
-.xp-date { padding: 6px 11px; border-radius: 999px; background: var(--bg); box-shadow: var(--shadow-secondary); font: 400 11.5px var(--mono); color: var(--body); }
-.xp-now { display: block; height: 14px; color: var(--dot); }
-.xp-now svg { display: block; height: 100%; width: auto; overflow: visible; }
-.xp-title { font: 500 22px / 1.25 var(--sans); letter-spacing: -0.01em; color: var(--ink); }
-.xp-company { margin-top: 6px; font: 500 11.5px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
-.xp-desc { margin-top: 14px; font-size: var(--section-text); max-width: 68ch; }
-.xp-card .chips.small { margin-top: 18px; }
-.xp-link {
-  display: block; width: fit-content; margin: 18px 0 0 auto; padding-bottom: 2px; border-bottom: 1px solid var(--pill-line);
-  font: 500 13px var(--sans); color: var(--body); transition: color 0.25s, border-color 0.25s;
+.xpg-swipe { display: none; }
+.xpg-creds {
+  --gap: clamp(12px, 1.5vw, 23px); container-type: inline-size;
+  display: flex; justify-content: center; gap: var(--gap); margin-top: var(--gap); perspective: 900px;
 }
-.xp-link:hover { color: var(--hot-btn); border-color: var(--hot-btn); }
-/* credential cards (education, programme): the role-card style, continuing the spine with one hollow dot */
-.xp-creds { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
-.xp-creds::before {
-  content: ''; position: absolute; left: -32.5px; top: 30px; width: 9px; height: 9px; border-radius: 50%;
-  border: 1.5px solid var(--hot); background: var(--bg); box-shadow: 0 0 0 4px var(--bg);
+.xpg-creds .sp-card--badge { width: min((100cqw - var(--gap)) / 2, 520px); }
+/* back face content: company, description, tech chips, project link */
+.xp-b-company { font: 500 calc(11 * var(--u)) var(--mono); letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.8; }
+.xp-b-desc { font-size: calc(13.5 * var(--u)); line-height: 1.45; color: rgba(255, 255, 255, 0.92); }
+.xp-b-chips { display: flex; flex-wrap: wrap; gap: calc(6 * var(--u)); }
+.xp-b-chips li {
+  padding: calc(4 * var(--u)) calc(9 * var(--u)); border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1); font: 400 calc(11 * var(--u)) var(--mono); color: #fff;
 }
-.xp-card.xp-cred { padding: 24px 28px; }
-.xp-card.xp-cred::before { content: none; }
-.xp-icon { display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 10px; color: var(--ink); }
-.xp-cred--accent .xp-icon { border-color: var(--dot); color: var(--dot); }
-.xp-cred-label { font: 500 11px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
-.xp-cred-title { margin-top: 6px; font: 500 19px / 1.3 var(--sans); letter-spacing: -0.01em; color: var(--ink); }
-.xp-cred-sub { margin-top: 4px; font: 400 14.5px / 1.5 var(--sans); color: var(--copy); }
 
 /* ═════════════ WORK TOGETHER ═════════════ */
 .together { display: grid; grid-template-columns: 0.75fr 1.25fr; gap: 48px; align-items: start; }
@@ -684,6 +667,10 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
 .bn-mark { font: 600 26px/1 var(--sans); color: var(--navy); }
 
 /* ═════════════ RESPONSIVE ═════════════ */
+/* experience: 2×2 below 1100px */
+@media (min-width: 768px) and (max-width: 1099px) {
+  .xpg-row { display: grid; grid-template-columns: repeat(2, max-content); --card-w: min((100cqw - var(--gap)) / 2, 429px); }
+}
 @media (max-width: 1000px) {
   .project, .project.flip, .about-grid { grid-template-columns: 1fr; gap: 32px; }
   .project.flip .project-text { order: 0; }
@@ -715,13 +702,16 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
   .hero-ctas .hero-cv { height: 34px; padding: 0 14px; font-size: 12.5px; }
   .hero-dl { font-size: 12.5px; }
   .quote p { font-size: 17px; }
-  .xp-grid { grid-template-columns: 1fr; }
-  .xp-head { position: static; }
-  .xp-list { padding-left: 24px; }
-  .xp-spine { left: 12px; }
-  .xp-card { padding: 22px; }
-  .xp-card::before { left: -16.5px; top: 28px; }
-  .xp-creds { grid-template-columns: 1fr; }
+  /* experience: a horizontal swipe row of 85vw cards; badges stacked */
+  .xpg-row {
+    justify-content: flex-start; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; --card-w: 85vw;
+    margin-inline: calc(-1 * var(--gutter)); padding: 4px var(--gutter) 8px; scroll-padding-inline: var(--gutter); scrollbar-width: none;
+  }
+  .xpg-row::-webkit-scrollbar { display: none; }
+  .xpg-row .sp-card { scroll-snap-align: start; }
+  .xpg-swipe { display: block; margin-top: 10px; font: 500 11px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  .xpg-creds { flex-direction: column; align-items: center; }
+  .xpg-creds .sp-card--badge { width: min(100cqw, 520px); }
   /* toolkit: tabs become a horizontal pill row, tiles in 2 columns */
   .tk-body { grid-template-columns: 1fr; }
   .tk-tabs {
@@ -735,8 +725,6 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
   .tk-panels { padding: 16px; min-height: 0; }
   .tk-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .tk-tile { padding: 10px 12px; font-size: 13px; }
-  .xp-creds::before { left: -16.5px; top: 26px; }
-  .xp-card.xp-cred { padding: 22px; }
   .codes { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 30vw); mask-image: linear-gradient(90deg, transparent 0, #000 30vw); }
   .preview { border-radius: 18px; }
   .preview-url { right: 10px; bottom: 10px; padding: 6px 10px; font-size: 10.5px; }
@@ -794,9 +782,9 @@ html[data-theme="dark"] { --spot-card: 0.2; }
 
 /* cards: one orange radial at the cursor, shown at --spot-edge on a 1px ring (so the edge nearest the cursor glows)
    and at --spot-card inside, via a two-layer mask */
-.has-light :where(.preview, .sp-card, .panel, .xp-card, .tk-tile) { position: relative; }
+.has-light :where(.preview, .sp-card, .panel, .tk-tile) { position: relative; }
 .has-light :where(.panel-dark, .sp-card, .tk-tile) { --spot-card: 0.2; }
-.has-light :is(.preview, .sp-card, .panel, .xp-card, .tk-tile)::after {
+.has-light :is(.preview, .sp-card, .panel, .tk-tile)::after {
   --fill: rgba(0, 0, 0, calc(var(--spot-card) / var(--spot-edge)));
   content: ''; position: absolute; inset: 0; z-index: 3; padding: 1px; border-radius: inherit; pointer-events: none;
   opacity: 0; transition: opacity 0.3s ease;
@@ -806,7 +794,7 @@ html[data-theme="dark"] { --spot-card: 0.2; }
   mask: linear-gradient(var(--fill) 0 0), linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: add, exclude;
 }
-.has-light :is(.preview, .sp-card, .panel, .xp-card, .tk-tile):hover::after { opacity: 1; }
+.has-light :is(.preview, .sp-card, .panel, .tk-tile):hover::after { opacity: 1; }
 
 /* ═════════════ TYPOGRAPHY (Stack section style) ═════════════
    Headings: Inter 400, +0.015em, line-height 1.223, one LED dot accent word (DotWord).

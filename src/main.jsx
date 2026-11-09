@@ -26,7 +26,6 @@ const BASE = import.meta.env.BASE_URL;
 const MAILTO = `mailto:${profile.email}`;
 const CV_URL = BASE + profile.resume;
 const CV_FILE = 'Mohammed_Fahis_CV.pdf';
-const featured = projects[0];
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ───────────── hooks ───────────── */
@@ -310,7 +309,6 @@ function Stage() {
             <a href="#work" className="pill pill-hot pill-lg">Explore the work</a>
             <CvLink className="pill pill-ghost pill-lg hero-cv">View CV</CvLink>
             <CvDownload className="hero-link hero-dl">Download ↓</CvDownload>
-            {featured.demo && <a href={featured.demo} target="_blank" rel="noreferrer" className="hero-link hero-live">Live: {shortUrl(featured.demo)} <Arrow size={12} /></a>}
           </div>
         </div>
       </div>

@@ -696,7 +696,7 @@ function Partner() {
   return (
     <section className="section section--fill partner" id="contact" ref={boxRef}>
       <p className="kicker rise">06 · CONTACT</p>
-      <h2 className="partner-title rise" style={{ '--d': '.1s' }}>Let’s build <em>something.</em></h2>
+      <h2 className="partner-title rise" style={{ '--d': '.1s' }} aria-label="Let’s build something.">Let’s build <span className="nowrap"><DotWord text="something" />.</span></h2>
       <p className="partner-sub rise" style={{ '--d': '.2s' }}>Roles, products, AI architecture, compliance tech: send me a message.</p>
       <a href={MAILTO} className="btn btn-primary btn-avatar rise" style={{ '--d': '.3s' }}>
         <span className="avatar" aria-hidden="true">MF</span>Start a chat with Fahis

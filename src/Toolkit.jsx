@@ -12,27 +12,34 @@ import { Grain } from './GlassCard.jsx';
 export const groupKey = (label) => label.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
 const monogram = (name) => name.replace(/[^A-Za-z0-9]/g, '').slice(0, 2);
 
+// Brand logos are filled simple-icons paths ({ path }); generic tools use line icons ({ line: [d, ...] }).
 function Logo({ name, icons }) {
   const icon = icons?.[name];
-  return icon
-    ? <svg className="tk-logo" viewBox="0 0 24 24" aria-hidden="true"><path d={icon.path} /></svg>
-    : <span className="tk-mono" aria-hidden="true">{monogram(name)}</span>;
+  if (icon?.path) return <svg className="tk-logo" viewBox="0 0 24 24" aria-hidden="true"><path d={icon.path} /></svg>;
+  if (icon?.line) {
+    return (
+      <svg className="tk-logo tk-logo--line" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        {icon.line.map((d) => <path key={d} d={d} />)}
+      </svg>
+    );
+  }
+  return <span className="tk-mono" aria-hidden="true">{monogram(name)}</span>;
 }
 
-export function ToolkitView({ toolkit, active = 0, onSelect, onKeyDown, tabRefs, icons = null }) {
+export function ToolkitView({ toolkit, active = 0, onSelect, onKeyDown, tabRefs, icons = null, termRef, trailRef }) {
   const groups = toolkit.filter((g) => !g.wide);
   const domains = toolkit.find((g) => g.wide);
   const total = toolkit.reduce((n, g) => n + g.items.length, 0);
   return (
-    <div className="tk-term">
+    <div className="tk-term" ref={termRef}>
       <Grain />
+      <div className="tk-trail" ref={trailRef} aria-hidden="true" />
       <div className="tk-bar">
         <span className="tk-dots" aria-hidden="true"><i /><i /><i /></span>
         <span className="tk-path">~/fahis/toolkit</span>
-        <span className="tk-total">
+        <span className="tk-total" role="img" aria-label={`${total} tools`}>
           <span className="tk-led" aria-hidden="true"><DotText text={String(total)} pitchX={4} radius={1.8} /></span>
           <span aria-hidden="true">tools</span>
-          <span className="sr-only">{total} tools</span>
         </span>
       </div>
       <div className="tk-body">

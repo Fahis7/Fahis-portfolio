@@ -870,7 +870,21 @@ html.cv-lock { overflow: hidden; }
   box-shadow: 0 40px 100px rgba(10, 12, 18, 0.32), 0 8px 24px rgba(10, 12, 18, 0.16);
 }
 .tk-term .sp-grain { z-index: 0; opacity: 0.3; }
-.tk-term > :not(.sp-grain) { position: relative; z-index: 1; }
+.tk-term > :not(.sp-grain):not(.tk-trail) { position: relative; z-index: 1; }
+/* cursor logo trail: above the panel background and grain, below the tabs, tiles and text; clipped to the panel */
+.tk-trail { position: absolute; inset: 0; z-index: 0; overflow: hidden; border-radius: inherit; pointer-events: none; }
+.tk-trail-tile {
+  position: absolute; width: 44px; height: 44px; margin: -22px 0 0 -22px; display: grid; place-items: center; border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  transform: rotate(var(--rot)); animation: tkTrail 1s ease-out forwards;
+}
+.tk-trail-tile svg { width: 22px; height: 22px; }
+@keyframes tkTrail {
+  0% { opacity: 0; transform: translateY(0) rotate(var(--rot)) scale(0.6); }
+  15% { opacity: 1; transform: translateY(0) rotate(var(--rot)) scale(1); }
+  100% { opacity: 0; transform: translateY(-12px) rotate(var(--rot)) scale(0.7); }
+}
 .tk-bar {
   display: flex; align-items: center; gap: 14px; height: 44px; padding: 0 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   font: 500 12px var(--mono); color: rgba(255, 255, 255, 0.55);
@@ -905,6 +919,7 @@ html.cv-lock { overflow: hidden; }
 }
 .tk-tile:hover { border-color: rgba(255, 90, 31, 0.45); box-shadow: 0 0 18px rgba(255, 90, 31, 0.12); }
 .tk-logo { flex: none; width: 18px; height: 18px; fill: #fff; opacity: 0.85; }
+.tk-logo--line { fill: none; stroke: #fff; }
 .tk-mono {
   flex: none; display: grid; place-items: center; width: 18px; height: 18px; border-radius: 5px;
   background: rgba(255, 255, 255, 0.12); font: 500 8.5px var(--mono); text-transform: uppercase; color: rgba(255, 255, 255, 0.85);

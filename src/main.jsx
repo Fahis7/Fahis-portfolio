@@ -131,11 +131,70 @@ const previewLink = (p) => (p.demo
   ? { href: p.demo, label: shortUrl(p.demo), aria: `Open ${p.title} live` }
   : { href: p.github, label: 'Code on GitHub', aria: `View ${p.title} code on GitHub` });
 
+/* ── preview videos: one plays at a time, page-wide ──
+   Desktop: load + play on hover / keyboard focus. Touch: autoplay while >= 60% visible.
+   Off with reduced motion or Save-Data (the still poster stays). Paused when the tab is hidden. */
+let playingPreview = null;
+const videoAllowed = () => !reducedMotion() && !navigator.connection?.saveData;
+if (typeof document !== 'undefined') {
+  document.addEventListener('visibilitychange', () => { if (document.hidden && playingPreview) playingPreview.stop(); });
+}
+
+function usePreviewVideo(link, video, enabled) {
+  useEffect(() => {
+    const a = link.current, v = video.current;
+    if (!enabled || !a || !v) return;
+    if (!videoAllowed()) { a.classList.add('no-video'); return; } // keep the still; hide the cue
+    let active = false, hideTimer = 0;
+    const show = () => { if (active) { v.classList.add('is-on'); a.classList.add('is-playing'); } };
+    const ctrl = {
+      start() {
+        clearTimeout(hideTimer);
+        active = true;
+        if (!v.getAttribute('src')) { v.src = v.dataset.src; v.load(); }
+        // fade in on the first real frame (no black flash)
+        if (v.requestVideoFrameCallback) v.requestVideoFrameCallback(show);
+        else v.addEventListener('playing', show, { once: true });
+        v.play().catch(() => {});
+      },
+      stop() {
+        active = false;
+        if (playingPreview === ctrl) playingPreview = null;
+        v.classList.remove('is-on'); a.classList.remove('is-playing');
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => { if (!active) { v.pause(); try { v.currentTime = 0; } catch { /* not loaded yet */ } } }, 300);
+      },
+    };
+    const play = () => { if (playingPreview && playingPreview !== ctrl) playingPreview.stop(); playingPreview = ctrl; ctrl.start(); };
+    const stop = () => { if (active) ctrl.stop(); };
+
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      a.addEventListener('pointerenter', play); a.addEventListener('pointerleave', stop);
+      a.addEventListener('focus', play); a.addEventListener('blur', stop);
+      return () => {
+        stop(); clearTimeout(hideTimer);
+        a.removeEventListener('pointerenter', play); a.removeEventListener('pointerleave', stop);
+        a.removeEventListener('focus', play); a.removeEventListener('blur', stop);
+      };
+    }
+    const io = new IntersectionObserver(([e]) => (e.intersectionRatio >= 0.6 ? play() : stop()), { threshold: [0, 0.6] });
+    io.observe(a);
+    return () => { io.disconnect(); stop(); clearTimeout(hideTimer); };
+  }, [enabled]);
+}
+
 function Preview({ p, className = '', d, rise = true }) {
   const l = previewLink(p);
+  const link = useRef(null), video = useRef(null);
+  const shot = realShot(p), hasVideo = Boolean(shot && p.reel.video);
+  usePreviewVideo(link, video, hasVideo);
   return (
-    <a className={`preview ${className} ${rise ? 'rise' : ''}`} style={d ? { '--d': d } : undefined} href={l.href} target="_blank" rel="noreferrer" aria-label={l.aria}>
+    <a ref={link} className={`preview ${className} ${rise ? 'rise' : ''}`} style={d ? { '--d': d } : undefined} href={l.href} target="_blank" rel="noreferrer" aria-label={l.aria}>
       <Shot p={p} />
+      {hasVideo && <>
+        <video ref={video} className="shot-video" muted playsInline loop preload="none" poster={shot} data-src={BASE + p.reel.video} aria-hidden="true" tabIndex={-1} />
+        <span className="preview-cue" aria-hidden="true">▶ Live preview</span>
+      </>}
       <span className="preview-url">{l.label} <Arrow size={12} /></span>
     </a>
   );

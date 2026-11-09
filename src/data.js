@@ -10,8 +10,8 @@ export const profile = {
   location: 'Dubai, UAE',
   timezone: 'Asia/Dubai',
   email: 'muhdfahis.aidev@gmail.com',
-  // Drop a PDF at public/resume.pdf and set this to 'resume.pdf' to show a "Download CV" link.
-  resume: null,
+  // CV in public/: every View CV / Download CV link is built from this (with BASE_URL).
+  resume: 'Mohammed_Fahis_CV.pdf',
   socials: [
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/mohammed-fahis-mt' },
     { label: 'GitHub', href: 'https://github.com/Fahis7' },
@@ -392,7 +392,7 @@ export const offers = [
     title: ['Full-time role', 'AI & Full-stack Engineer'],
     dots: 'NOW', unit: 'available',
     caption: ['Dubai on-site,', 'hybrid or remote'],
-    reveal: { label: 'What I bring', linkedin: true, items: [
+    reveal: { label: 'What I bring', cv: true, linkedin: true, items: [
       'AI features in production (LLMs, vision, RAG)',
       'Multi-tenant SaaS and Row-Level Security',
       'Django / DRF + Next.js / React',
@@ -431,7 +431,26 @@ export const marquee = ['Row-Level Security', 'RAG pipelines', 'Vision AI', 'KYC
 
 // Tip: recruiters scan for company names + dates. Add `company` when you can.
 export const experience = [
-  { time: 'Now · Dubai', title: 'AI Engineer / Full Stack Developer', company: '', desc: 'Building AxisKYC, a multi-tenant KYC/AML compliance platform with Row-Level Security, sanctions screening and an Arabic/English UI, and PropAI OS, a property SaaS with vision-AI triage and a pgvector RAG assistant.' },
-  { time: '2025–26', title: 'Independent product builds', company: '', desc: 'Shipped Seek & Sync with Claude CV parsing and recruiter automation, Horologie with triple-layer authentication and live analytics, and the Zero Accounting website.' },
-  { time: 'Earlier', title: 'Backend / cloud engineering', company: '', desc: 'Production e-commerce APIs on Django REST Framework, AWS EC2 with Nginx/Gunicorn/SSL, hybrid Supabase and Cloudinary architecture, and automated CI/CD.' },
+  {
+    time: '2026 to present', title: 'AI Full Stack Developer / Lead Engineer', company: 'AM Audit, Abdulla Al Mulla Auditing & Accounting',
+    desc: 'Sole engineer behind AxisKYC, a live multi-tenant AML/KYC compliance SaaS for UAE compliance firms: PostgreSQL RLS, three database roles, sanctions / PEP / adverse-media screening, Claude Vision document OCR and four role-based portals.',
+  },
+  {
+    time: 'May to Jun 2026', title: 'Full Stack AI Developer', company: 'PropAI OS, Zero Accounting, Dubai',
+    desc: 'Vision-AI maintenance triage, a smart rent pricing engine on live Dubai market data, and a pgvector RAG concierge in a multi-tenant SaaS with four portals and eight JWT roles.',
+  },
+  {
+    time: 'Feb to Apr 2026', title: 'Frontend Developer & AI Integration', company: 'Seek & Sync HR Consultancy, Abu Dhabi',
+    desc: 'Shipped a live HR consultancy platform with Claude Haiku CV parsing, vector matching on Supabase and automated recruiter alerts.',
+  },
+  {
+    time: 'Apr 2025 to Jan 2026', title: 'Full Stack Developer Intern', company: 'Bridgeon Solutions LLP, Kerala, India',
+    desc: 'Production e-commerce backend in Django REST Framework with JWT, Google OAuth and Firebase auth, deployed on AWS EC2 with Nginx, Gunicorn, SSL and GitHub Actions CI/CD.',
+  },
+];
+
+// Shown in a small row under the experience timeline.
+export const credentials = [
+  { label: 'Education', text: 'Bachelor’s in Computer Application, Calicut University, 2022 to 2025' },
+  { label: 'Programme', text: 'One Million Prompters, Dubai Future Foundation, 2025' },
 ];

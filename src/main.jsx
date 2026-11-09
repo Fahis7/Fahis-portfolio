@@ -20,10 +20,12 @@ import Showreel from './Showreel.jsx';
 import Quotes from './Quotes.jsx';
 import { DotWord, DotTitle } from './DotText.jsx';
 import { GlassCard, useGlassEntrance } from './GlassCard.jsx';
-import { profile, projects, stackCards, marquee, experience, quotes, offers, realShot } from './data.js';
+import { profile, projects, stackCards, marquee, experience, credentials, quotes, offers, realShot } from './data.js';
 
 const BASE = import.meta.env.BASE_URL;
 const MAILTO = `mailto:${profile.email}`;
+const CV_URL = BASE + profile.resume;
+const CV_FILE = 'Mohammed_Fahis_CV.pdf';
 const featured = projects[0];
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -223,6 +225,55 @@ const Shot = ({ p }) => (realShot(p)
   ? <img className="shot" src={realShot(p)} alt={`Screenshot of ${p.title}`} width={1600} height={Math.round(1600 / p.reel.aspect)} loading="lazy" decoding="async" />
   : <MiniSite site={p.site} />);
 
+/* ── CV: one shared <dialog> viewer. Every "View CV" is a real link to the PDF (new tab), upgraded to the
+   in-page viewer on mouse/trackpad devices whose browser can show PDFs inline. ── */
+let openCvViewer = null;
+const cvInline = () => window.matchMedia('(hover: hover) and (pointer: fine)').matches && navigator.pdfViewerEnabled !== false;
+
+function CvLink({ className, children = 'View CV' }) {
+  const onClick = (e) => {
+    if (!openCvViewer || !cvInline()) return; // phones / touch / no inline PDF: let the link open a new tab
+    e.preventDefault();
+    openCvViewer(e.currentTarget);
+  };
+  return <a href={CV_URL} target="_blank" rel="noreferrer" className={className} onClick={onClick}>{children}</a>;
+}
+const CvDownload = ({ className, children = 'Download CV ↓' }) => <a href={CV_URL} download={CV_FILE} className={className}>{children}</a>;
+
+function CvDialog() {
+  const dialog = useRef(null), closeBtn = useRef(null), opener = useRef(null);
+  const [src, setSrc] = useState(null); // load the PDF only on first open
+  useEffect(() => {
+    const d = dialog.current;
+    openCvViewer = (from) => {
+      opener.current = from || document.activeElement;
+      setSrc(`${CV_URL}#view=FitH`);
+      d.showModal();
+      closeBtn.current?.focus();
+    };
+    const onClose = () => opener.current?.focus?.();
+    d.addEventListener('close', onClose);
+    return () => { openCvViewer = null; d.removeEventListener('close', onClose); };
+  }, []);
+  const close = () => dialog.current.close();
+  return (
+    // a click on the dimmed backdrop lands on the <dialog> itself (the panel fills it)
+    <dialog ref={dialog} className="cv-dialog" aria-labelledby="cv-title" onClick={(e) => { if (e.target === e.currentTarget) close(); }}>
+      <div className="cv-panel">
+        <div className="cv-head">
+          <p id="cv-title">Mohammed Fahis · CV</p>
+          <div className="cv-actions">
+            <CvDownload className="cv-btn">Download</CvDownload>
+            <a className="cv-btn" href={CV_URL} target="_blank" rel="noreferrer">Open in new tab ↗</a>
+            <button type="button" className="cv-close" ref={closeBtn} onClick={close} aria-label="Close CV">×</button>
+          </div>
+        </div>
+        {src && <iframe className="cv-frame" src={src} title="Mohammed Fahis CV (PDF)" />}
+      </div>
+    </dialog>
+  );
+}
+
 /* ───────────── sections ───────────── */
 
 function Stage() {
@@ -235,6 +286,7 @@ function Stage() {
         </nav>
         <div className="nav-right">
           <ThemeToggle />
+          <CvLink className="nav-plain">CV</CvLink>
           <a href={profile.socials[1].href} target="_blank" rel="noreferrer" className="nav-plain">GitHub</a>
           <a href={profile.socials[0].href} target="_blank" rel="noreferrer" className="pill pill-ghost">LinkedIn</a>
           <a href="#contact" className="pill pill-hot">Let’s talk</a>
@@ -256,7 +308,9 @@ function Stage() {
           <p className="t-copy">Hi, I’m Fahis. I’m at my best owning the whole thing, from the first sketch to the last pixel. I learn fast, ask the awkward questions early, and stay calm when things break.</p>
           <div className="hero-ctas">
             <a href="#work" className="pill pill-hot pill-lg">Explore the work</a>
-            {featured.demo && <a href={featured.demo} target="_blank" rel="noreferrer" className="hero-link">Live: {shortUrl(featured.demo)} <Arrow size={12} /></a>}
+            <CvLink className="pill pill-ghost pill-lg hero-cv">View CV</CvLink>
+            <CvDownload className="hero-link hero-dl">Download ↓</CvDownload>
+            {featured.demo && <a href={featured.demo} target="_blank" rel="noreferrer" className="hero-link hero-live">Live: {shortUrl(featured.demo)} <Arrow size={12} /></a>}
           </div>
         </div>
       </div>
@@ -450,6 +504,9 @@ function Experience() {
           </li>
         ))}
       </ol>
+      <ul className="credentials rise">
+        {credentials.map((c) => <li key={c.label}><span className="kicker">{c.label}</span>{c.text}</li>)}
+      </ul>
     </section>
   );
 }
@@ -471,7 +528,12 @@ function WorkTogether() {
             reveal={{
               openLabel: 'Details',
               groups: [{ label: o.reveal.label, items: o.reveal.items }],
-              footer: o.reveal.linkedin && <a className="sp-stack-link" href={profile.socials[0].href} target="_blank" rel="noreferrer">LinkedIn ↗</a>,
+              footer: (o.reveal.cv || o.reveal.linkedin) && (
+                <div className="sp-stack-links">
+                  {o.reveal.cv && <CvDownload className="sp-stack-link" />}
+                  {o.reveal.linkedin && <a className="sp-stack-link" href={profile.socials[0].href} target="_blank" rel="noreferrer">LinkedIn ↗</a>}
+                </div>
+              ),
             }}
           />
         ))}
@@ -519,6 +581,7 @@ function Partner() {
       <div className="partner-email rise" style={{ '--d': '.4s' }}>
         <span>{profile.email}</span><CopyEmail />
       </div>
+      <p className="partner-cv rise" style={{ '--d': '.45s' }}><CvLink /> <span aria-hidden="true">·</span> <CvDownload>Download CV</CvDownload></p>
     </section>
   );
 }
@@ -569,7 +632,7 @@ function Footer() {
         <Button href={MAILTO}>Start a chat</Button>
         <div className="footer-cols">
           <Arrow size={20} />
-          <div><a href="#work">Work</a><a href="#about">About</a><a href="#stack">Stack</a><a href="#experience">Experience</a></div>
+          <div><a href="#work">Work</a><a href="#about">About</a><a href="#stack">Stack</a><a href="#experience">Experience</a><CvLink>CV</CvLink></div>
           <div>{profile.socials.map((s) => <a key={s.label} href={s.href} target="_blank" rel="noreferrer">{s.label}</a>)}</div>
         </div>
       </footer>
@@ -615,6 +678,7 @@ function App() {
       </main>
       <Footer />
       <BottomNav />
+      <CvDialog />
       <CursorLight />
     </>
   );

@@ -1,4 +1,4 @@
-# Mohammed Fahis — Portfolio
+# Mohammed Fahis · Portfolio
 
 Live: https://fahis7.github.io/Fahis-portfolio/
 
@@ -7,7 +7,7 @@ React 19 + Vite, no animation libraries. Deployed to GitHub Pages on every push 
 ## What's where
 | File | What it does |
 |---|---|
-| `src/data.js` | **All content** — projects (incl. the code each card "decodes" into), skills, experience, links |
+| `src/data.js` | **All content**: projects (incl. the code each card "decodes" into), skills, experience, links |
 | `src/Belt.jsx` | The scanner belt: card positions, particle dissolve (canvas), drag / wheel / keyboard, counter |
 | `src/MiniSites.jsx` | The mini website drawn for each project card (HTML/CSS, sized in `cqw`) |
 | `src/main.jsx` | Page sections |

@@ -3,7 +3,7 @@ import React from 'react';
 /*
   Mini websites drawn in HTML/CSS. Every size inside uses cqw
   (1cqw = 1% of the card width), so a card renders identically
-  at any size — on the scanner belt, in the project list, anywhere.
+  at any size: on the scanner belt, in the project list, anywhere.
   These are stylised sketches of each product, not screenshots.
 */
 
@@ -40,7 +40,7 @@ function AxisKYC() {
       </div>
       <div className="ms-axis-copy">
         <span className="ms-kicker">KYC / AML COMPLIANCE</span>
-        <h3>Screening, review and certificates — <em>built for the UAE.</em></h3>
+        <h3>Screening, review and certificates, <em>built for the UAE.</em></h3>
         <div className="ms-axis-cert">
           <div className="ms-qr">{qrCells.map((on, i) => <i key={i} className={on ? 'on' : ''} />)}</div>
           <div><b>KYC Certificate</b><span>QR-verified · officer attested</span></div>
@@ -96,7 +96,7 @@ function Seek() {
       <div className="ms-seek-copy">
         <span className="ms-kicker">AI RECRUITING · ABU DHABI</span>
         <h3>CV intelligence &amp; <em>semantic matching.</em></h3>
-        <div className="ms-upload"><span>⇪</span>Drop a CV — parsed into a structured profile</div>
+        <div className="ms-upload"><span>⇪</span>Drop a CV, parsed into a structured profile</div>
       </div>
       <div className="ms-seek-list">
         <div className="ms-panel-head"><span>Matches for this role</span><b>pgvector</b></div>

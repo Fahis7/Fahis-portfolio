@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   STACK — "Built for Production / Across the Stack"
+   STACK: "Built for Production / Across the Stack"
    Rigid 429×554 glass cards. Inside a card, 1u = card width / 429.
    ═══════════════════════════════════════════════════════════ */
 
@@ -9,6 +9,8 @@
   --paper: #ececeb;
   --sp-ink: #202020;
   --sp-copy: #4a4a4a;
+  --sp-dot: #ad314d;
+  --sp-bg-opacity: 0.38;
   --glass-line: rgba(255, 255, 255, 0.36);
   --card-count: 3;
   --gap: clamp(8px, 1.5vw, 23px);
@@ -26,10 +28,18 @@
   font-optical-sizing: auto; text-rendering: geometricPrecision;
 }
 
+html[data-theme="dark"] .sp-stage {
+  --paper: #0f1114;
+  --sp-ink: #f2f3f5;
+  --sp-copy: #a9aeb6;
+  --sp-dot: #e0567a;
+  --sp-bg-opacity: 0.22;
+}
+
 /* soft drifting colour field in place of a background video */
 .sp-bg { position: absolute; inset: 0; z-index: -2; overflow: hidden; pointer-events: none; }
 .sp-bg::before, .sp-bg::after {
-  content: ''; position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.38;
+  content: ''; position: absolute; border-radius: 50%; filter: blur(80px); opacity: var(--sp-bg-opacity);
   animation: spDrift 22s ease-in-out infinite alternate;
 }
 .sp-bg::before { width: 46vw; height: 36vw; left: -6vw; bottom: -12vw; background: radial-gradient(circle, #e6a3b6, transparent 70%); }
@@ -49,7 +59,7 @@
   font-size: clamp(24px, min(3.1vw, 5.9vh), 47px); font-weight: 400; letter-spacing: 0.015em; line-height: 1.223;
 }
 .sp-line { display: flex; align-items: center; white-space: nowrap; }
-.sp-dot-word { display: inline-block; flex: 0 0 auto; height: 0.766em; margin-left: 0.319em; color: #ad314d; transform: translateY(0.085em); }
+.sp-dot-word { display: inline-block; flex: 0 0 auto; height: 0.766em; margin-left: 0.319em; color: var(--sp-dot); transform: translateY(0.085em); }
 .sp-dot-word svg, .sp-dot-number svg { display: block; height: 100%; width: auto; overflow: visible; }
 .sp-intro {
   container-type: inline-size; width: 100%; margin: 0 0 0.3em; color: var(--sp-copy); font-family: var(--sans);

@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import MiniSite from './MiniSites.jsx';
 
 /*
-  Scanner belt — project cards drift left; at the orange scanner line
+  Scanner belt: project cards drift left; at the orange scanner line
   each card dissolves into pixel particles and the code underneath is
   revealed on the left. One requestAnimationFrame loop drives the DOM
   transforms, the counter and the canvas, so everything stays in sync.
@@ -255,7 +255,7 @@ export default function Belt({ projects }) {
         </div>
         <div className="cards">
           {projects.map((p, i) => (
-            <div className="card" key={p.id} data-card={i} ref={(el) => (cardRefs.current[i] = el)} aria-label={`${p.title} — ${p.tagline}`}>
+            <div className="card" key={p.id} data-card={i} ref={(el) => (cardRefs.current[i] = el)} aria-label={`${p.title}: ${p.tagline}`}>
               <MiniSite site={p.site} />
             </div>
           ))}

@@ -4,10 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#eef0f2" />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      // Set the theme before any CSS loads, so the page never flashes the wrong one.
+      (function () {
+        var t = null;
+        try { t = localStorage.getItem('fahis-theme'); } catch (e) {}
+        if (t !== 'light' && t !== 'dark') {
+          t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', t);
+        var m = document.querySelector('meta[name="theme-color"]');
+        if (m) m.setAttribute('content', t === 'dark' ? '#0b0d10' : '#eef0f2');
+      })();
+    </script>
 
-    <title>Mohammed Fahis — AI Engineer & Full Stack Developer in Dubai</title>
-    <meta name="description" content="Mohammed Fahis is a Dubai-based AI Engineer and Full Stack Developer. Builder of AxisKYC (KYC/AML compliance), PropAI OS and more — multi-tenant SaaS, RAG and vision-AI from blank screen to production." />
+    <title>Mohammed Fahis | AI Engineer & Full Stack Developer in Dubai</title>
+    <meta name="description" content="Mohammed Fahis is a Dubai-based AI Engineer and Full Stack Developer. Builder of AxisKYC (KYC/AML compliance), PropAI OS and more: multi-tenant SaaS, RAG and vision-AI from blank screen to production." />
     <meta name="author" content="Mohammed Fahis" />
     <link rel="canonical" href="https://fahis7.github.io/Fahis-portfolio/" />
 
@@ -17,15 +30,15 @@
     <!-- Open Graph / LinkedIn / WhatsApp previews -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Mohammed Fahis" />
-    <meta property="og:title" content="Mohammed Fahis — AI Engineer & Full Stack Developer" />
-    <meta property="og:description" content="Built for people. Engineered underneath. AxisKYC, PropAI OS, Seek & Sync and more — AI products shipped end-to-end." />
+    <meta property="og:title" content="Mohammed Fahis | AI Engineer & Full Stack Developer" />
+    <meta property="og:description" content="Built for people. Engineered underneath. AxisKYC, PropAI OS, Seek & Sync and more: AI products shipped end-to-end." />
     <meta property="og:url" content="https://fahis7.github.io/Fahis-portfolio/" />
     <meta property="og:image" content="https://fahis7.github.io/Fahis-portfolio/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Mohammed Fahis — AI Engineer / Full Stack Developer, Dubai" />
+    <meta property="og:image:alt" content="Mohammed Fahis | AI Engineer / Full Stack Developer, Dubai" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Mohammed Fahis — AI Engineer & Full Stack Developer" />
+    <meta name="twitter:title" content="Mohammed Fahis | AI Engineer & Full Stack Developer" />
     <meta name="twitter:description" content="Built for people. Engineered underneath. AI products shipped end-to-end." />
     <meta name="twitter:image" content="https://fahis7.github.io/Fahis-portfolio/og-image.png" />
 
@@ -47,8 +60,15 @@
   <body>
     <div id="root"></div>
     <noscript>
-      <main style="font-family:system-ui;max-width:640px;margin:80px auto;padding:0 20px;color:#0f1115">
-        <h1>Mohammed Fahis — AI Engineer / Full Stack Developer</h1>
+      <style>
+        .noscript { color: #0f1115; }
+        @media (prefers-color-scheme: dark) {
+          body { background: #0b0d10; }
+          .noscript { color: #f2f3f5; }
+        }
+      </style>
+      <main class="noscript" style="font-family:system-ui;max-width:640px;margin:80px auto;padding:0 20px">
+        <h1>Mohammed Fahis · AI Engineer / Full Stack Developer</h1>
         <p>Dubai-based. I build SaaS, RAG systems and vision-AI products from blank screen to production.</p>
         <p><a href="mailto:muhdfahis.aidev@gmail.com">muhdfahis.aidev@gmail.com</a> · <a href="https://www.linkedin.com/in/mohammed-fahis-mt">LinkedIn</a> · <a href="https://github.com/Fahis7">GitHub</a></p>
       </main>

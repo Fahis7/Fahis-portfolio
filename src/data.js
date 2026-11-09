@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 //  All portfolio content lives here. Edit this file to update
-//  text, projects, skills or links — no need to touch the components.
+//  text, projects, skills or links - no need to touch the components.
 // ─────────────────────────────────────────────────────────────
 
 export const profile = {
@@ -20,7 +20,7 @@ export const profile = {
 };
 
 /*
-  Projects — order here = order on the scanner belt and on the page.
+  Projects: order here = order on the scanner belt and on the page.
   site:   which mini-website design the belt card uses (see MiniSites.jsx)
   code:   what the scanner "prints" when the card dissolves (keep lines ≤ 50 chars)
   meta:   three short comment lines shown top-right of the code
@@ -36,7 +36,7 @@ export const projects = [
     kicker: 'REGTECH / FINTECH',
     tagline: 'AI-powered KYC / AML compliance platform',
     role: 'Architecture → production',
-    desc: 'A multi-tenant compliance platform for compliance officers and audit firms in the UAE — automated PEP, sanctions, UAE Local List and adverse-media screening, an MLRO review workflow, verifiable KYC certificates and a full training LMS, in English and Arabic.',
+    desc: 'A multi-tenant compliance platform for compliance officers and audit firms in the UAE: automated PEP, sanctions, UAE Local List and adverse-media screening, an MLRO review workflow, verifiable KYC certificates and a full training LMS, in English and Arabic.',
     metrics: [
       { value: '4', label: 'screening lists' },
       { value: '3', label: 'Postgres roles (RLS)' },
@@ -46,7 +46,7 @@ export const projects = [
     demo: 'https://axiskyc.ae',
     github: 'https://github.com/Fahis7',
     meta: ['# live: axiskyc.ae', '# domain: regtech / fintech', '# tenants: isolated by RLS'],
-    code: `# AxisKYC — KYC / AML compliance platform
+    code: `# AxisKYC: KYC / AML compliance platform
 class Stack:
     backend  = "Django 5.2 + DRF"
     database = "PostgreSQL 16 + Row-Level Sec."
@@ -70,28 +70,28 @@ def issue_certificate(profile):
 
 LOCALES = ("en", "ar")  # full RTL
 # tokens: in-memory · refresh: httpOnly
-# CORS: none — proxied via Next.js`,
+# CORS: none - proxied via Next.js`,
     features: [
       { t: 'Screening engine', d: 'Automated PEP, Sanctions, UAE Local List and Adverse Media screening via the Sanctions.io API, with real-time risk scoring and configurable low / medium / high bands.' },
       { t: 'Multi-tenant by design', d: 'Row-Level Security isolates every tenant at the database level. Three Postgres roles: owner (migrations), app (tenant runtime), platform (super-admin).' },
       { t: 'MLRO review queue', d: 'Compliance officers confirm or dismiss each PEP, sanctions, adverse-media and UAE-list match, with a full audit trail.' },
       { t: 'Verifiable KYC certificates', d: 'PDF certificates with QR verification, officer attestation, dynamic screening results and a public verification endpoint.' },
       { t: 'Training & compliance LMS', d: 'Course authoring, timed auto-graded quizzes, certificates, assignment lifecycle, Excel training register and analytics on completion and scores.' },
-      { t: 'Quotas & subscriptions', d: 'Free tier, bonus credits and monthly rollover — with race-condition-safe quota reservation using database-level locking.' },
+      { t: 'Quotas & subscriptions', d: 'Free tier, bonus credits and monthly rollover, with race-condition-safe quota reservation using database-level locking.' },
       { t: 'Individuals & entities', d: 'Company profiles with ownership links: screening a company auto-screens every linked director and owner. Document management built in.' },
       { t: 'AML audit module', d: 'Compliance audit logging plus document upload and download for audit evidence.' },
       { t: 'English & Arabic', d: 'Every UI component, error message and PDF certificate in both languages, with true RTL layout.' },
       { t: 'Role-based portals', d: 'Simplified broker-agent view, full admin dashboard with stats, and cross-tenant platform management for super-admins.' },
     ],
     security: [
-      'No CORS — the frontend proxies every API call through Next.js Route Handlers',
+      'No CORS: the frontend proxies every API call through Next.js Route Handlers',
       'Access tokens held in memory only; refresh tokens in httpOnly cookies',
       'Migrations run only as the owner database role',
       'Platform-domain writes use a dedicated database role',
       'SSH password authentication disabled in production',
     ],
     testing: [
-      'Integration suite against real PostgreSQL — not SQLite',
+      'Integration suite against real PostgreSQL, not SQLite',
       'CI pipeline on GitHub Actions',
       'Concurrent threading tests for quota race conditions',
       'Query-count regression tests that block N+1 queries',
@@ -116,7 +116,7 @@ LOCALES = ("en", "ar")  # full RTL
     demo: 'https://propai-os.up.railway.app',
     github: 'https://github.com/Fahis7',
     meta: ['# live: propai-os.up.railway.app', '# domain: real estate', '# ai: vision + rag'],
-    code: `# PropAI OS — multi-tenant property SaaS
+    code: `# PropAI OS: multi-tenant property SaaS
 class Stack:
     backend  = "Django 5 + DRF"
     frontend = "React 19"
@@ -157,7 +157,7 @@ def price(unit):
     demo: 'https://seek-and-sync.netlify.app/',
     github: 'https://github.com/Fahis7',
     meta: ['# live: seek-and-sync.netlify.app', '# domain: hr / recruiting', '# ai: claude haiku'],
-    code: `# Seek & Sync — AI recruiting platform
+    code: `# Seek & Sync: AI recruiting platform
 class Stack:
     backend  = "Django"
     frontend = "React"
@@ -195,7 +195,7 @@ def on_new_match(match):
     demo: 'https://horologiee.vercel.app/',
     github: 'https://github.com/Fahis7',
     meta: ['# live: horologiee.vercel.app', '# domain: luxury commerce', '# auth: 3-layer mfa'],
-    code: `# Horologie — luxury watch commerce
+    code: `# Horologie: luxury watch commerce
 class Stack:
     api   = "Django + DRF"
     auth  = "Firebase MFA · 3 layers"
@@ -222,7 +222,7 @@ analytics.live(dashboard="ops")`,
     kicker: 'ACCOUNTING / BUSINESS SERVICES',
     tagline: 'Business-services website, live in the UAE',
     role: 'Live business website',
-    desc: 'A modern accounting and business-services website built to make financial services feel clear, credible and effortless — from service discovery to conversion.',
+    desc: 'A modern accounting and business-services website built to make financial services feel clear, credible and effortless, from service discovery to conversion.',
     highlights: ['Service-led structure that guides visitors to an enquiry', 'Typed Next.js + Tailwind CSS codebase', 'Mobile-first, responsive layouts across every page'],
     metrics: [
       { value: 'Live', label: 'business website' },
@@ -233,7 +233,7 @@ analytics.live(dashboard="ops")`,
     demo: 'https://zeroaccounting.ae/',
     github: 'https://github.com/Fahis7',
     meta: ['# live: zeroaccounting.ae', '# domain: business services', '# build: next.js'],
-    code: `// Zero Accounting — business services site
+    code: `// Zero Accounting: business services site
 export const stack = {
   framework: "Next.js",
   language:  "TypeScript",
@@ -260,7 +260,7 @@ export const skills = [
   { key: 'cloud', title: 'Cloud / DevOps', items: ['Docker + Compose', 'GitHub Actions CI/CD', 'Nginx + Gunicorn', 'AWS EC2 / RDS', 'CentOS / Linux', 'Railway / Vercel / Netlify'] },
 ];
 
-// Stack section cards — every number here is a real count from the projects above.
+// Stack section cards: every number here is a real count from the projects above.
 export const stackCards = [
   {
     key: 'ai', variant: 'speed',
@@ -292,7 +292,7 @@ export const marquee = ['Row-Level Security', 'RAG pipelines', 'Vision AI', 'KYC
 
 // Tip: recruiters scan for company names + dates. Add `company` when you can.
 export const experience = [
-  { time: 'Now · Dubai', title: 'AI Engineer / Full Stack Developer', company: '', desc: 'Building AxisKYC, a multi-tenant KYC/AML compliance platform with Row-Level Security, sanctions screening and an Arabic/English UI — and PropAI OS, a property SaaS with vision-AI triage and a pgvector RAG assistant.' },
-  { time: '2025 — 26', title: 'Independent product builds', company: '', desc: 'Shipped Seek & Sync with Claude CV parsing and recruiter automation, Horologie with triple-layer authentication and live analytics, and the Zero Accounting website.' },
+  { time: 'Now · Dubai', title: 'AI Engineer / Full Stack Developer', company: '', desc: 'Building AxisKYC, a multi-tenant KYC/AML compliance platform with Row-Level Security, sanctions screening and an Arabic/English UI, and PropAI OS, a property SaaS with vision-AI triage and a pgvector RAG assistant.' },
+  { time: '2025–26', title: 'Independent product builds', company: '', desc: 'Shipped Seek & Sync with Claude CV parsing and recruiter automation, Horologie with triple-layer authentication and live analytics, and the Zero Accounting website.' },
   { time: 'Earlier', title: 'Backend / cloud engineering', company: '', desc: 'Production e-commerce APIs on Django REST Framework, AWS EC2 with Nginx/Gunicorn/SSL, hybrid Supabase and Cloudinary architecture, and automated CI/CD.' },
 ];

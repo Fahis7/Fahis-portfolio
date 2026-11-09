@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 /*
-  Stack section — "Built for Production / Across the Stack".
+  Stack section: "Built for Production / Across the Stack".
   Three rigid glass cards designed at 429×554 and scaled as a unit:
   every size inside a card is a multiple of --u (1u = 1px at 429px wide),
-  so the internal layout never changes — only how many cards share a row.
+  so the internal layout never changes - only how many cards share a row.
 */
 
 /* ── LED dot-matrix type ── */
@@ -273,7 +273,7 @@ export default function StackPerf({ cards }) {
           </h2>
         </div>
         <p className="sp-intro">
-          Every layer is engineered for production — models and RAG pipelines,<br className="sp-break" /> multi-tenant databases with Row-Level Security, and interfaces<br className="sp-break" /> in English and Arabic, shipped with CI/CD.
+          Every layer is engineered for production: models and RAG pipelines,<br className="sp-break" /> multi-tenant databases with Row-Level Security, and interfaces<br className="sp-break" /> in English and Arabic, shipped with CI/CD.
         </p>
       </header>
       <div className="sp-cards" aria-label="Stack capabilities">

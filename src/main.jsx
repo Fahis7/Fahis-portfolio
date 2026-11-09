@@ -58,6 +58,67 @@ function Button({ href, children, variant = 'primary', external, className = '',
   );
 }
 
+/* ── theme (the initial value is set by the inline script in index.html) ── */
+const THEME_KEY = 'fahis-theme';
+const THEME_COLOR = { light: '#eef0f2', dark: '#0b0d10' };
+const darkQuery = () => window.matchMedia('(prefers-color-scheme: dark)');
+const readSaved = () => {
+  try { const t = localStorage.getItem(THEME_KEY); return t === 'light' || t === 'dark' ? t : null; } catch { return null; }
+};
+const currentTheme = () => (document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+
+let switchTimer;
+function applyTheme(theme) {
+  const root = document.documentElement;
+  if (root.getAttribute('data-theme') === theme) return;
+  root.classList.add('theme-switching');
+  root.setAttribute('data-theme', theme);
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_COLOR[theme]);
+  clearTimeout(switchTimer);
+  switchTimer = setTimeout(() => root.classList.remove('theme-switching'), 350);
+}
+
+const SunIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+  </svg>
+);
+const MoonIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
+  </svg>
+);
+
+function ThemeToggle() {
+  const [theme, setTheme] = useState(currentTheme);
+
+  // No saved choice → follow live OS changes.
+  useEffect(() => {
+    const mq = darkQuery();
+    const onChange = (e) => {
+      if (readSaved()) return;
+      const next = e.matches ? 'dark' : 'light';
+      applyTheme(next); setTheme(next);
+    };
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
+  const isDark = theme === 'dark';
+  const toggle = () => {
+    const next = isDark ? 'light' : 'dark';
+    applyTheme(next); setTheme(next);
+    try { localStorage.setItem(THEME_KEY, next); } catch { /* storage blocked: choice lasts for this page only */ }
+  };
+
+  return (
+    <button type="button" className="theme-toggle" onClick={toggle} aria-pressed={isDark}
+      aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}>
+      {isDark ? <SunIcon /> : <MoonIcon />}
+    </button>
+  );
+}
+
 function CopyEmail() {
   const [copied, setCopied] = useState(false);
   const copy = async () => {
@@ -78,11 +139,12 @@ function Stage() {
   return (
     <section className="stage" id="top" aria-label="Introduction">
       <header className="nav">
-        <a href="#top" className="logo" aria-label={`${profile.name} — home`}><Mark /><span>Fahis</span></a>
+        <a href="#top" className="logo" aria-label={`${profile.name}, home`}><Mark /><span>Fahis</span></a>
         <nav className="nav-links" aria-label="Primary">
           <a href="#work">Work</a><a href="#about">About</a><a href="#stack">Stack</a><a href="#experience">Experience</a>
         </nav>
         <div className="nav-right">
+          <ThemeToggle />
           <a href={profile.socials[1].href} target="_blank" rel="noreferrer" className="nav-plain">GitHub</a>
           <a href={profile.socials[0].href} target="_blank" rel="noreferrer" className="pill pill-ghost">LinkedIn</a>
           <a href="#contact" className="pill pill-hot">Let’s talk</a>
@@ -95,7 +157,7 @@ function Stage() {
           <h1 className="hero-title">Built for people.<br /><em>Engineered underneath.</em></h1>
         </div>
         <div className="hero-side">
-          <p>I design and ship AI-powered products end-to-end — compliance platforms, property SaaS, recruiting tools — and the secure, multi-tenant systems running underneath them.</p>
+          <p>I design and ship AI-powered products end-to-end (compliance platforms, property SaaS, recruiting tools) and the secure, multi-tenant systems running underneath them.</p>
           <div className="hero-ctas">
             <a href="#work" className="pill pill-hot pill-lg">Explore the work</a>
             <a href={featured.demo} target="_blank" rel="noreferrer" className="hero-link">Live: axiskyc.ae <Arrow size={12} /></a>
@@ -221,9 +283,9 @@ function About() {
         <p className="mono-tag rise" style={{ '--d': '.15s' }}>AI engineer & full-stack developer, Dubai</p>
         <h2 className="big rise" style={{ '--d': '.2s' }}>Build the system <em>underneath,</em><br />ship the <em>interface</em> on top.</h2>
         <div className="about-copy rise" style={{ '--d': '.3s' }}>
-          <p>My work lives where product engineering meets applied AI: authentication, data architecture, model orchestration, deployment — and the last 10% that makes a product feel finished.</p>
+          <p>My work lives where product engineering meets applied AI: authentication, data architecture, model orchestration, deployment, and the last 10% that makes a product feel finished.</p>
           <p>My newest build is <strong>AxisKYC</strong>, a multi-tenant KYC/AML platform with database-level tenant isolation, sanctions screening and a fully bilingual Arabic/English interface. Before it, I shipped property, recruiting, commerce and business-services products end-to-end.</p>
-          <p>Open to full-time roles and freelance builds — Dubai on-site, hybrid or remote.</p>
+          <p>Open to full-time roles and freelance builds: Dubai on-site, hybrid or remote.</p>
         </div>
         <div className="btn-row center rise" style={{ '--d': '.4s' }}>
           <Button href={MAILTO}>Start a chat</Button>
@@ -232,8 +294,8 @@ function About() {
       </div>
       <blockquote className="quote narrow">
         <svg className="rise" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M10 7H6a3 3 0 0 0-3 3v4h4v4l3-4v-7Zm11 0h-4a3 3 0 0 0-3 3v4h4v4l3-4v-7Z" /></svg>
-        <p className="rise" style={{ '--d': '.1s' }}>I like being close to the whole product — from the <em>database role</em> to the last pixel.</p>
-        <footer className="rise" style={{ '--d': '.2s' }}>— Mohammed Fahis</footer>
+        <p className="rise" style={{ '--d': '.1s' }}>I like being close to the whole product, from the <em>database role</em> to the last pixel.</p>
+        <footer className="rise" style={{ '--d': '.2s' }}>Mohammed Fahis</footer>
       </blockquote>
     </section>
   );
@@ -315,9 +377,9 @@ function Partner() {
   return (
     <section className="partner-wrap" id="contact">
       <div className="partner" ref={boxRef}>
-        <p className="kicker rise">07 — CONTACT</p>
+        <p className="kicker rise">07 · CONTACT</p>
         <h2 className="partner-title rise" style={{ '--d': '.1s' }}>Let’s build <em>something.</em></h2>
-        <p className="partner-sub rise" style={{ '--d': '.2s' }}>Roles, products, AI architecture, compliance tech — send me a message.</p>
+        <p className="partner-sub rise" style={{ '--d': '.2s' }}>Roles, products, AI architecture, compliance tech: send me a message.</p>
         <a href={MAILTO} className="btn btn-primary btn-avatar rise" style={{ '--d': '.3s' }}>
           <span className="avatar" aria-hidden="true">MF</span>Start a chat with Fahis
         </a>

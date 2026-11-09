@@ -120,7 +120,9 @@ html.theme-switching *, html.theme-switching *::before, html.theme-switching *::
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+/* the fixed nav is --nav-h tall; anchor jumps land 16px below it */
+:root { --nav-h: 56px; }
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 16px); }
 body {
   margin: 0; background: var(--bg); color: var(--body); font-family: var(--sans);
   overflow-x: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
@@ -197,9 +199,26 @@ em, i { font-style: normal; }
 /* ═════════════ STAGE ═════════════ */
 .stage { position: relative; height: 640px; height: var(--sh); overflow: hidden; background: var(--bg); }
 
-.nav { height: 56px; display: flex; align-items: center; gap: 56px; padding: 0 20px; position: relative; z-index: 6; }
+/* fixed top nav: above the page and the cursor light (z 5) and the bottom pill (z 50); the CV <dialog> is in the top layer */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 60; height: var(--nav-h);
+  display: flex; align-items: center; gap: 56px; padding: 0 var(--edge);
+  border-bottom: 1px solid transparent;
+  transition: height 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.nav.is-scrolled {
+  height: 52px; background: rgba(236, 236, 235, 0.72); border-bottom-color: var(--line); box-shadow: 0 6px 24px rgba(15, 17, 21, 0.06);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2); backdrop-filter: blur(14px) saturate(1.2);
+}
+html[data-theme="dark"] .nav.is-scrolled { background: rgba(11, 13, 16, 0.72); box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3); }
 .logo { display: flex; align-items: center; gap: 8px; color: var(--ink); font: 600 23px var(--sans); letter-spacing: -0.035em; }
-.nav-links { display: flex; gap: 38px; font: 500 13px var(--sans); color: var(--body); }
+.nav-links { position: relative; display: flex; gap: 38px; font: 500 13px var(--sans); color: var(--body); }
+.nav-links a[aria-current="true"] { color: var(--ink); }
+/* one crimson underline that slides to the active link */
+.nav-ink {
+  position: absolute; left: 0; bottom: -7px; height: 2px; width: 0; border-radius: 2px; background: var(--dot);
+  opacity: 0; pointer-events: none; transition: transform 0.3s var(--ease), width 0.3s var(--ease), opacity 0.2s;
+}
 .nav-links a, .nav-plain { transition: opacity 0.25s; }
 .nav-links a:hover, .nav-plain:hover { opacity: 0.6; }
 .nav-right { margin-left: auto; display: flex; align-items: center; gap: 20px; font: 500 12.5px var(--sans); }
@@ -675,7 +694,6 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
 
 @media (max-width: 767px) {
   :root { --ch: min(54vw, calc(var(--sh) * 0.45 - 120px)); --gap: 7vw; --radius: 3.5vw; --gutter: 28px; --section-pad: 72px; }
-  .nav { padding: 0 16px; }
   .nav-links, .nav-plain, .pill-ghost { display: none; }
   .nav-right .pill-hot { height: 30px; padding: 0 13px; font-size: 12px; }
   .theme-toggle { width: 30px; height: 30px; }
@@ -739,6 +757,7 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
 /* ═════════════ REDUCED MOTION ═════════════ */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  .nav, .nav-ink { transition: none; }
   .rise { opacity: 1; transform: none; }
   .rise.in, .stage .eyebrow, .stage .hero-title, .stage .hero-side, .stage .me, .belt, .scan, .badge { animation: none; }
   .marquee-track { animation: none; }

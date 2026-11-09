@@ -308,22 +308,74 @@ function CvViewer() {
 
 /* ───────────── sections ───────────── */
 
+/* Fixed top nav: transparent at the very top, a glass bar once scrolled (.is-scrolled, one passive rAF-throttled
+   listener). The link of the section in view is marked aria-current and a crimson underline slides to it. */
+const NAV_LINKS = [['work', 'Work'], ['about', 'About'], ['stack', 'Stack'], ['experience', 'Experience'], ['showreel', 'Showreel']];
+
+function TopNav() {
+  const bar = useRef(null), links = useRef({}), ink = useRef(null);
+  const [active, setActive] = useState(null);
+
+  useEffect(() => {
+    let raf = 0;
+    const update = () => { raf = 0; bar.current.classList.toggle('is-scrolled', window.scrollY >= 8); };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('scroll', onScroll); };
+  }, []);
+
+  // the section crossing a line ~45% down the viewport is the active one; none in the hero or contact
+  useEffect(() => {
+    const seen = new Map();
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => seen.set(e.target.id, e.isIntersecting));
+      const hit = NAV_LINKS.find(([id]) => seen.get(id));
+      setActive(hit ? hit[0] : null);
+    }, { rootMargin: '-45% 0px -54% 0px' });
+    NAV_LINKS.forEach(([id]) => { const el = document.getElementById(id); if (el) io.observe(el); });
+    return () => io.disconnect();
+  }, []);
+
+  // slide the underline under the active link (and re-measure on resize)
+  useEffect(() => {
+    const place = () => {
+      const a = active && links.current[active], el = ink.current;
+      if (!el) return;
+      if (!a) { el.style.opacity = '0'; return; }
+      el.style.opacity = '1';
+      el.style.transform = `translateX(${a.offsetLeft}px)`;
+      el.style.width = `${a.offsetWidth}px`;
+    };
+    place();
+    window.addEventListener('resize', place, { passive: true });
+    return () => window.removeEventListener('resize', place);
+  }, [active]);
+
+  return (
+    <header className="nav" ref={bar}>
+      <a href="#top" className="logo" aria-label={`${profile.name}, home`}><Mark /><span>Fahis</span></a>
+      <nav className="nav-links" aria-label="Primary">
+        {NAV_LINKS.map(([id, label]) => (
+          <a key={id} href={`#${id}`} ref={(el) => (links.current[id] = el)} aria-current={active === id ? 'true' : undefined}>{label}</a>
+        ))}
+        <span className="nav-ink" ref={ink} aria-hidden="true" />
+      </nav>
+      <div className="nav-right">
+        <ThemeToggle />
+        <CvLink className="nav-plain">CV</CvLink>
+        <a href={profile.socials[1].href} target="_blank" rel="noreferrer" className="nav-plain">GitHub</a>
+        <a href={profile.socials[0].href} target="_blank" rel="noreferrer" className="pill pill-ghost">LinkedIn</a>
+        <a href="#contact" className="pill pill-hot">Let’s talk</a>
+      </div>
+    </header>
+  );
+}
+
 function Stage() {
   return (
     <section className="stage" id="top" aria-label="Introduction">
-      <header className="nav">
-        <a href="#top" className="logo" aria-label={`${profile.name}, home`}><Mark /><span>Fahis</span></a>
-        <nav className="nav-links" aria-label="Primary">
-          <a href="#work">Work</a><a href="#about">About</a><a href="#stack">Stack</a><a href="#experience">Experience</a><a href="#showreel">Showreel</a>
-        </nav>
-        <div className="nav-right">
-          <ThemeToggle />
-          <CvLink className="nav-plain">CV</CvLink>
-          <a href={profile.socials[1].href} target="_blank" rel="noreferrer" className="nav-plain">GitHub</a>
-          <a href={profile.socials[0].href} target="_blank" rel="noreferrer" className="pill pill-ghost">LinkedIn</a>
-          <a href="#contact" className="pill pill-hot">Let’s talk</a>
-        </div>
-      </header>
+      <TopNav />
 
       <div className="hero">
         <div className="hero-left">

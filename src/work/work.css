@@ -9,8 +9,7 @@ html, body {
   overscroll-behavior: none; touch-action: none; -webkit-tap-highlight-color: transparent;
 }
 body { font-family: 'Inter Tight Variable', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
-canvas#gl { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
-body.is-pointer canvas#gl { cursor: pointer; }
+#stage { position: fixed; inset: 0; }
 
 /* corner navigation */
 .ui > * {

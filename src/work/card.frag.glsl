@@ -10,6 +10,9 @@ uniform float u_shade;
 uniform float u_shadeS;
 uniform float u_corner;
 uniform float u_alpha;
+uniform vec3 u_fadeCol;   // theme: colour receding parts fade toward (display space)
+uniform float u_fadeMax;  // theme: strongest fade (dark 0.8, light 0.55)
+uniform float u_ovLate;   // theme: 1 = caption/scrim drawn after the fade + light (light theme keeps 4.5:1)
 
 varying vec2 vUv;
 varying float vWx;
@@ -25,16 +28,16 @@ void main() {
   vec3 media = texture2D(u_media, u_crop.xy + vUv * u_crop.zw).rgb;
   vec3 rgb = u_mediaVideo > 0.5 ? media : toDisplay(media);
   vec4 ov = texture2D(u_overlay, vUv);
-  rgb = mix(rgb, toDisplay(ov.rgb), ov.a);
+  if (u_ovLate < 0.5) rgb = mix(rgb, toDisplay(ov.rgb), ov.a);
 
   vec2 qd = 2.0 * vUv - 1.0;
   float dome = (1.0 - qd.x * qd.x) * (1.0 - qd.y * qd.y);
 
-  // 2. Depth darkening: receding parts sink toward near-black.
+  // 2. Depth fade: receding parts sink toward near-black (dark) or the page colour (light).
   float D = max(u_sheetD, 1e-4);
   float depth = clamp((D - sheetZ(vWx)) / (2.0 * D), 0.0, 1.0);
   depth = clamp(depth + u_hover * dome * 0.35, 0.0, 1.0);
-  rgb = mix(rgb, vec3(0.059), u_shade * 0.8 * pow(depth, u_shadeS));
+  rgb = mix(rgb, u_fadeCol, u_shade * u_fadeMax * pow(depth, u_shadeS));
 
   // 3. Lighting from analytic slopes (in sheet space, then back to world).
   float q = sheetQ(vWx);
@@ -55,6 +58,8 @@ void main() {
   vec3 V = normalize(cameraPosition - vPos);
   vec3 Hh = normalize(L + V);
   rgb += pow(max(dot(n, Hh), 0.0), 48.0) * 0.35;
+
+  if (u_ovLate > 0.5) rgb = mix(rgb, toDisplay(ov.rgb), ov.a);
 
   // 4. Rounded corners (card space: aspect x 1).
   float aspect = u_res.x / u_res.y;

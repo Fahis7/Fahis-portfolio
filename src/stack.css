@@ -81,15 +81,38 @@ html[data-theme="dark"] .sp-stage {
 }
 
 .sp-card {
-  container-type: inline-size; position: relative; flex: 0 0 auto; overflow: hidden;
-  width: var(--card-w); aspect-ratio: 429 / 554; border: 1px solid var(--glass-line, rgba(255, 255, 255, 0.36));
+  container-type: inline-size; position: relative; flex: 0 0 auto; perspective: 1400px;
+  width: var(--card-w); aspect-ratio: 429 / 554;
   border-radius: calc(var(--card-w) * 17 / 429); color: #fff; font-family: var(--sans);
   --u: calc(100cqw / 429);
   box-shadow: 0 2px 4px rgba(50, 28, 39, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.24);
   transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
 }
 .sp-card:hover { transform: translateY(-4px); box-shadow: 0 18px 40px rgba(50, 28, 39, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.24); }
-.sp-card::before {
+/* ── flip: .sp-flipper turns in 3D; each face clips its own content and hides its back ── */
+.sp-flipper {
+  position: absolute; inset: 0; border-radius: inherit; transform-style: preserve-3d;
+  transition: transform 0.75s cubic-bezier(.2, .8, .2, 1);
+}
+.sp-card.is-flipped .sp-flipper { transform: rotateY(180deg); }
+/* a small "spin": scale dips to 0.96 mid-turn (the two names restart the dip on every flip) */
+.sp-card.has-flipped .sp-flipper { animation: spDipB 0.75s cubic-bezier(.2, .8, .2, 1); }
+.sp-card.has-flipped.is-flipped .sp-flipper { animation-name: spDipA; }
+@keyframes spDipA { 50% { scale: 0.96; } }
+@keyframes spDipB { 50% { scale: 0.96; } }
+.sp-face {
+  position: absolute; inset: 0; overflow: hidden; border-radius: inherit;
+  border: 1px solid var(--glass-line, rgba(255, 255, 255, 0.36));
+  -webkit-backface-visibility: hidden; backface-visibility: hidden;
+}
+.sp-back { transform: rotateY(180deg); }
+.sp-face[inert] { pointer-events: none; } /* the face that isn't showing never takes clicks */
+.sp-back-shade { position: absolute; inset: 0; z-index: 1; background: rgba(0, 0, 0, 0.28); pointer-events: none; }
+.sp-back-title {
+  position: absolute; z-index: 4; top: 7%; left: 7%; right: 7%; margin: 0; text-align: center;
+  font-size: calc(17 * var(--u)); font-weight: 600; line-height: 1.4; color: rgba(255, 255, 255, 0.92);
+}
+.sp-face::before {
   content: ''; position: absolute; inset: 0; z-index: 1; mix-blend-mode: screen; pointer-events: none;
   background: linear-gradient(102deg, rgba(255,255,255,.10), transparent 28%, rgba(255,255,255,.08) 62%, transparent 88%),
     radial-gradient(ellipse 85% 34% at 54% 7%, rgba(255,255,255,.24), transparent 72%);
@@ -231,7 +254,7 @@ html[data-theme="dark"] .sp-stage {
 .sp-card.has-tilt .sp-title, .sp-card.has-tilt .sp-metric { translate: calc(var(--tx) * -3px) calc(var(--ty) * -3px); }
 .sp-card.has-tilt:not(.is-tilting) .sp-gauge, .sp-card.has-tilt:not(.is-tilting) .sp-window, .sp-card.has-tilt:not(.is-tilting) .sp-map,
 .sp-card.has-tilt:not(.is-tilting) .sp-title, .sp-card.has-tilt:not(.is-tilting) .sp-metric {
-  transition: opacity 0.3s ease, translate 0.5s cubic-bezier(.2, .8, .2, 1);
+  transition: translate 0.5s cubic-bezier(.2, .8, .2, 1);
 }
 
 /* ── shared card type ── */
@@ -287,19 +310,14 @@ html[data-theme="dark"] .sp-stage {
 
 /* ── stack reveal (inside the card; layout never changes) ── */
 .sp-stack {
-  position: absolute; z-index: 7; top: 24%; left: 7%; right: 7%; bottom: 20%;
+  position: absolute; z-index: 7; top: 20%; left: 7%; right: 7%; bottom: 20%;
   padding: calc(16 * var(--u)) calc(18 * var(--u)); border-radius: calc(14 * var(--u));
   background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.3);
   -webkit-backdrop-filter: blur(calc(16 * var(--u))) saturate(1.1); backdrop-filter: blur(calc(16 * var(--u))) saturate(1.1);
   display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: calc(16 * var(--u));
-  opacity: 0; visibility: hidden; transform: translateY(calc(10 * var(--u))) scale(.98);
-  transition: opacity .35s ease, transform .45s var(--ease), visibility 0s .45s;
 }
 .sp-stack > div > span { display: block; font: 500 calc(11 * var(--u)) var(--mono); letter-spacing: .06em; text-transform: uppercase; opacity: .75; margin-bottom: calc(6 * var(--u)); }
 .sp-stack li { padding: calc(7 * var(--u)) 0; border-top: 1px solid rgba(255,255,255,.2); font-size: calc(15 * var(--u)); line-height: 1.3; }
-.sp-card.is-open .sp-stack { opacity: 1; visibility: visible; transform: none; transition: opacity .35s ease, transform .45s var(--ease), visibility 0s; }
-.sp-card .sp-gauge, .sp-card .sp-window, .sp-card .sp-map, .sp-card .sp-metric, .sp-card .sp-caption { transition: opacity .3s ease; }
-.sp-card.is-open .sp-gauge, .sp-card.is-open .sp-window, .sp-card.is-open .sp-map, .sp-card.is-open .sp-metric, .sp-card.is-open .sp-caption { opacity: 0; }
 
 /* ── entrance (plays once when the section scrolls into view) ── */
 .sp-pending .sp-line, .sp-pending .sp-intro, .sp-pending .sp-card { opacity: 0; }
@@ -354,6 +372,11 @@ html[data-theme="dark"] .sp-stage {
   .sp-pending .sp-line, .sp-pending .sp-intro, .sp-pending .sp-card { opacity: 1; }
   .sp-entrance *, .sp-entrance .sp-card { animation: none !important; }
   .sp-bg::before, .sp-bg::after, .sp-sweep, .sp-flow, .sp-node { animation: none; }
-  .sp-card, .sp-stack, .sp-learn-more { transition-duration: .01ms; }
-  .sp-card .sp-gauge, .sp-card .sp-window, .sp-card .sp-map, .sp-card .sp-metric, .sp-card .sp-caption { transition: none; }
+  .sp-card, .sp-learn-more { transition-duration: .01ms; }
+  /* no rotation: a quick crossfade between the faces */
+  .sp-flipper, .sp-card.is-flipped .sp-flipper { transform: none; transition: none; animation: none; }
+  .sp-back { transform: none; z-index: 1; opacity: 0; transition: opacity 0.2s ease; }
+  .sp-front { transition: opacity 0.2s ease; }
+  .sp-card.is-flipped .sp-back { opacity: 1; }
+  .sp-card.is-flipped .sp-front { opacity: 0; }
 }

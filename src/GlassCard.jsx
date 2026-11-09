@@ -8,7 +8,7 @@ import { DotText } from './DotText.jsx';
   page once (the Stack section renders it).
   Props: variant ('speed' | 'context' | 'connections'), title [line1, line2], dots, unit,
   caption [line1, line2], index (entrance stagger), id (reveal panel id),
-  reveal { groups: [{ label, items }], footer, openLabel, closeLabel }, actions (extra pills, shown
+  reveal { groups: [{ label, items }], footer, openLabel }, actions (extra pills, shown
   side by side with the reveal toggle), revealOnHover (desktop: hovering opens the panel; the button pins it).
 */
 
@@ -247,45 +247,69 @@ export function GlassCard({ id, variant, title, dots, unit, caption, index = 0, 
   }, []);
 
   // the button pins / unpins; unpinning also closes a hover-open panel
-  const onToggle = () => {
+  // The front button pins / unpins; "Back" unpins and closes a hover flip too.
+  // A keyboard activation (click with detail 0) moves focus to the face that just turned to the front.
+  const kbd = useRef(false), frontBtn = useRef(null), backBtn = useRef(null), turned = useRef(false);
+  const onToggle = (e) => {
+    kbd.current = e.detail === 0;
     if (pinned) { setPinned(false); closeHover(); } else setPinned(true);
   };
+  const onBack = (e) => { kbd.current = e.detail === 0; setPinned(false); closeHover(); };
+  useEffect(() => {
+    if (!turned.current && !open) return;
+    turned.current = true; // from now on each flip plays the scale dip
+    card.current?.classList.add('has-flipped');
+    if (kbd.current) { (open ? backBtn : frontBtn).current?.focus(); kbd.current = false; }
+  }, [open]);
+
   const toggle = (
-    <button type="button" className="sp-learn-more" aria-expanded={open} aria-controls={id} onClick={onToggle}>
-      {pinned ? (reveal.closeLabel || 'Close') : (reveal.openLabel || 'View stack')}
+    <button type="button" className="sp-learn-more" ref={frontBtn} aria-expanded={open} aria-controls={id} onClick={onToggle}>
+      {reveal.openLabel || 'View stack'}
     </button>
   );
   return (
     <article
       ref={card}
-      className={`sp-card sp-card--${variant} ${open ? 'is-open' : ''}`} style={{ '--entrance-delay': `${0.46 + index * 0.12}s` }}
+      className={`sp-card ${open ? 'is-flipped' : ''}`} style={{ '--entrance-delay': `${0.46 + index * 0.12}s` }}
       onPointerEnter={revealOnHover ? hoverIn : undefined} onPointerLeave={revealOnHover ? hoverOut : undefined}
     >
-      {variant === 'context' && <ContextGlow />}
-      <Grain />
-      <span className="sp-glare" aria-hidden="true" />
-      <h3 className="sp-title">{title[0]}<br />{title[1]}</h3>
-      {variant === 'speed' && <Gauge />}
-      {variant === 'context' && <ContextWindow />}
-      {variant === 'connections' && <ConnectionsMap />}
-      <p className={`sp-metric sp-metric--${variant}`}>
-        <span className="sp-dot-number"><DotText text={dots} radius={radius} /></span>
-        <span className="sp-unit">{unit}</span>
-        <span className="sr-only">{dots} {unit}</span>
-      </p>
-      <p className="sp-caption">{caption[0]}<br />{caption[1]}</p>
+      <div className="sp-flipper">
+        {/* FRONT: the card design */}
+        <div className={`sp-face sp-front sp-card--${variant}`} aria-hidden={open} inert={open}>
+          {variant === 'context' && <ContextGlow />}
+          <Grain />
+          <span className="sp-glare" aria-hidden="true" />
+          <h3 className="sp-title">{title[0]}<br />{title[1]}</h3>
+          {variant === 'speed' && <Gauge />}
+          {variant === 'context' && <ContextWindow />}
+          {variant === 'connections' && <ConnectionsMap />}
+          <p className={`sp-metric sp-metric--${variant}`}>
+            <span className="sp-dot-number"><DotText text={dots} radius={radius} /></span>
+            <span className="sp-unit">{unit}</span>
+            <span className="sr-only">{dots} {unit}</span>
+          </p>
+          <p className="sp-caption">{caption[0]}<br />{caption[1]}</p>
+          {actions ? <div className="sp-actions">{actions}{toggle}</div> : toggle}
+        </div>
 
-      <div className="sp-stack" id={id} aria-hidden={!open} inert={!open}>
-        {reveal.groups.map((g) => (
-          <div key={g.label}>
-            <span>{g.label}</span>
-            <ul>{g.items.map((it) => <li key={it}>{it}</li>)}</ul>
-            {reveal.footer}
+        {/* BACK: the same gradient, darkened, with the details */}
+        <div className={`sp-face sp-back sp-card--${variant}`} id={id} aria-hidden={!open} inert={!open}>
+          <span className="sp-back-shade" aria-hidden="true" />
+          <Grain />
+          <span className="sp-glare" aria-hidden="true" />
+          <p className="sp-back-title">{title[0]}<br />{title[1]}</p>
+          <div className="sp-stack">
+            {reveal.groups.map((g) => (
+              <div key={g.label}>
+                <span>{g.label}</span>
+                <ul>{g.items.map((it) => <li key={it}>{it}</li>)}</ul>
+                {reveal.footer}
+              </div>
+            ))}
           </div>
-        ))}
+          <button type="button" className="sp-learn-more" ref={backBtn} onClick={onBack}>Back</button>
+        </div>
       </div>
-
-      {actions ? <div className="sp-actions">{actions}{toggle}</div> : toggle}
     </article>
   );
 }

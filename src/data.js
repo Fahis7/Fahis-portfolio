@@ -449,36 +449,48 @@ export const marquee = ['Row-Level Security', 'RAG pipelines', 'Vision AI', 'KYC
 export const experience = [
   {
     time: '2026 to present', current: true, link: '#work-axiskyc',
-    card: { variant: 'speed', title: ['AM Audit', 'Lead Engineer'], dots: '2026', unit: '→ now', caption: ['Sole engineer behind', 'AxisKYC'] },
     tech: ['Django', 'PostgreSQL RLS', 'Next.js 16', 'React 19', 'TypeScript', 'Celery', 'Redis', 'Claude AI'],
     title: 'AI Full Stack Developer / Lead Engineer', company: 'AM Audit, Abdulla Al Mulla Auditing & Accounting',
     desc: 'Sole engineer behind AxisKYC, a live multi-tenant AML/KYC compliance SaaS for UAE compliance firms: PostgreSQL RLS, three database roles, sanctions / PEP / adverse-media screening, Claude Vision document OCR and four role-based portals.',
   },
   {
     time: 'May to Jun 2026', link: '#work-propai',
-    card: { variant: 'context', title: ['PropAI OS', 'Full Stack AI Developer'], dots: '2026', unit: 'May–Jun', caption: ['Zero Accounting,', 'Dubai'] },
     tech: ['Django 5', 'React 19', 'Groq Llama 4', 'pgvector', 'Celery', 'Docker'],
     title: 'Full Stack AI Developer', company: 'PropAI OS, Zero Accounting, Dubai',
     desc: 'Vision-AI maintenance triage, a smart rent pricing engine on live Dubai market data, and a pgvector RAG concierge in a multi-tenant SaaS with four portals and eight JWT roles.',
   },
   {
     time: 'Feb to Apr 2026', link: '#work-seek',
-    card: { variant: 'connections', title: ['Seek & Sync', 'Frontend & AI Integration'], dots: '2026', unit: 'Feb–Apr', caption: ['HR consultancy,', 'Abu Dhabi'] },
     tech: ['Next.js 14', 'TypeScript', 'Claude Haiku', 'Supabase', 'pgvector'],
     title: 'Frontend Developer & AI Integration', company: 'Seek & Sync HR Consultancy, Abu Dhabi',
     desc: 'Shipped a live HR consultancy platform with Claude Haiku CV parsing, vector matching on Supabase and automated recruiter alerts.',
   },
   {
     time: 'Apr 2025 to Jan 2026',
-    card: { variant: 'ocean', title: ['Bridgeon Solutions', 'Full Stack Intern'], dots: '2025', unit: 'Apr → Jan', caption: ['E-commerce backend,', 'Kerala, India'] },
     tech: ['Django', 'DRF', 'React', 'AWS EC2', 'Nginx', 'GitHub Actions'],
     title: 'Full Stack Developer Intern', company: 'Bridgeon Solutions LLP, Kerala, India',
     desc: 'Production e-commerce backend in Django REST Framework with JWT, Google OAuth and Firebase auth, deployed on AWS EC2 with Nginx, Gunicorn, SSL and GitHub Actions CI/CD.',
   },
 ];
 
-// Credential badges under the experience glass cards (icon: 'cap' | 'spark'; accent = crimson edge glow).
+// Education and programme: stops on the Experience timeline.
 export const credentials = [
-  { key: 'education', icon: 'cap', label: 'Education', date: '2022–2025', title: 'Bachelor’s in Computer Application', sub: 'Calicut University', dots: '2025', unit: '2022 →' },
-  { key: 'programme', icon: 'spark', label: 'Programme', date: '2025', title: 'One Million Prompters', sub: 'Dubai Future Foundation · Selected participant', accent: true, dots: '2025' },
+  { key: 'education', label: 'Education', date: '2022–2025', title: 'Bachelor’s in Computer Application', sub: 'Calicut University' },
+  { key: 'programme', label: 'Programme', date: '2025', title: 'One Million Prompters', sub: 'Dubai Future Foundation · Selected participant' },
+];
+
+/*
+  Experience timeline: oldest to newest, left to right. Text comes from `experience` and `credentials` above.
+  dots: the LED year on the card; node: the short label under the timeline node.
+*/
+const [amAudit, propAi, seekSync, bridgeon] = experience;
+const [education, programme] = credentials;
+const role = (x) => ({ title: x.title, company: x.company, desc: x.desc, tech: x.tech, link: x.link });
+export const timeline = [
+  { key: 'education', kicker: 'Education', dots: '2022', date: '2022–2025', node: '2022 · Calicut', title: education.title, company: education.sub },
+  { key: 'bridgeon', kicker: 'Role', dots: '2025', date: 'Apr 2025 – Jan 2026', node: '2025 · Bridgeon', ...role(bridgeon) },
+  { key: 'programme', kicker: 'Programme', dots: '2025', date: '2025', node: '2025 · 1M Prompters', title: programme.title, company: programme.sub },
+  { key: 'seek', kicker: 'Role', dots: '2026', date: 'Feb – Apr 2026', node: '2026 · Seek & Sync', ...role(seekSync) },
+  { key: 'propai', kicker: 'Role', dots: '2026', date: 'May – Jun 2026', node: '2026 · PropAI', ...role(propAi) },
+  { key: 'amaudit', kicker: 'Role', dots: 'NOW', date: '2026 → now', node: 'Now · AM Audit', current: true, ...role(amAudit) },
 ];

@@ -217,31 +217,12 @@ export function useTilt(card) {
   // the button pins / unpins; unpinning also closes a hover-open panel
 }
 
-/* ── ocean visual: a glowing server stack with status dots and a thin rising line chart ── */
-function ServerStack() {
-  const rows = [10, 52, 94];
-  return (
-    <svg className="sp-server" viewBox="0 0 300 138" aria-hidden="true">
-      {rows.map((y, i) => (
-        <g key={y}>
-          <rect x="8" y={y} width="196" height="34" rx="9" fill="rgba(210,245,255,.10)" stroke="rgba(210,245,255,.55)" strokeWidth="1.2" />
-          <rect x="22" y={y + 14} width="74" height="6" rx="3" fill="rgba(210,245,255,.38)" />
-          <circle cx="170" cy={y + 17} r="3.6" fill={i === 1 ? '#ffd88a' : '#9dffd6'} className="sp-led" style={{ '--n': i }} />
-          <circle cx="184" cy={y + 17} r="3.6" fill="rgba(210,245,255,.45)" />
-        </g>
-      ))}
-      <path d="M220 124 L240 108 L254 114 L270 86 L292 60" fill="none" stroke="#bff6ff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="sp-flow" />
-      <circle cx="292" cy="60" r="3.4" fill="#e8fdff" />
-    </svg>
-  );
-}
-
 /* ── card ── */
 // Only one card is open from hovering at a time: this holds the current one's "close" function.
 let hoverOwner = null;
 const finePointer = () => window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-export function GlassCard({ id, variant, title, dots, unit, caption, index = 0, reveal, actions, revealOnHover = false, corner = null }) {
+export function GlassCard({ id, variant, title, dots, unit, caption, index = 0, reveal, actions, revealOnHover = false }) {
   const [pinned, setPinned] = useState(false);   // opened with the button (stays open)
   const [hovered, setHovered] = useState(false); // opened by hovering (desktop, revealOnHover)
   const timer = useRef(0);
@@ -338,8 +319,6 @@ export function GlassCard({ id, variant, title, dots, unit, caption, index = 0, 
           {variant === 'speed' && <Gauge />}
           {variant === 'context' && <ContextWindow />}
           {variant === 'connections' && <ConnectionsMap />}
-          {variant === 'ocean' && <ServerStack />}
-          {corner && <span className="sp-corner">{corner}</span>}
           <p className={`sp-metric sp-metric--${variant}`}>
             <span className="sp-dot-number"><DotText text={dots} radius={radius} /></span>
             <span className="sp-unit">{unit}</span>
@@ -354,49 +333,17 @@ export function GlassCard({ id, variant, title, dots, unit, caption, index = 0, 
           <span className="sp-back-shade" aria-hidden="true" />
           <Grain />
           <span className="sp-glare" aria-hidden="true" />
-          <p className="sp-back-title">{(reveal.title || title).map((t, k) => <React.Fragment key={k}>{k > 0 && <br />}{t}</React.Fragment>)}</p>
-          {reveal.content
-            ? <div className="sp-stack sp-stack--free">{reveal.content}</div>
-            : (
-              <div className="sp-stack">
-                {reveal.groups.map((g) => (
-                  <div key={g.label}>
-                    <span>{g.label}</span>
-                    <ul>{g.items.map((it) => <li key={it}>{it}</li>)}</ul>
-                    {reveal.footer}
-                  </div>
-                ))}
+          <p className="sp-back-title">{title[0]}<br />{title[1]}</p>
+          <div className="sp-stack">
+            {reveal.groups.map((g) => (
+              <div key={g.label}>
+                <span>{g.label}</span>
+                <ul>{g.items.map((it) => <li key={it}>{it}</li>)}</ul>
+                {reveal.footer}
               </div>
-            )}
-          <button type="button" className="sp-learn-more" ref={backBtn} onClick={onBack}>Back</button>
-        </div>
-      </div>
-    </article>
-  );
-}
-
-/* ── compact glass badge: rigid 429×200 design, no button and no flip; tilt and glare like the cards ── */
-export function GlassBadge({ variant = 'graphite', glow = false, icon, title, sub, dots, unit, index = 0 }) {
-  const card = useRef(null);
-  useTilt(card);
-  return (
-    <article ref={card} className={`sp-card sp-card--badge${glow ? ' sp-card--glow' : ''}`} style={{ '--entrance-delay': `${0.46 + index * 0.12}s` }}>
-      <div className="sp-flipper">
-        <div className={`sp-face sp-front sp-card--${variant}`}>
-          <Grain />
-          <span className="sp-glare" aria-hidden="true" />
-          <div className="sp-badge-body">
-            <span className="sp-badge-icon" aria-hidden="true">{icon}</span>
-            <div className="sp-badge-text">
-              <h3 className="sp-badge-title">{title}</h3>
-              <p className="sp-badge-sub">{sub}</p>
-            </div>
-            <p className="sp-badge-metric">
-              <span className="sp-badge-dots" aria-hidden="true"><DotText text={dots} radius={1.55} /></span>
-              {unit && <span className="sp-badge-unit" aria-hidden="true">{unit}</span>}
-              <span className="sr-only">{unit ? `${unit} ${dots}` : dots}</span>
-            </p>
+            ))}
           </div>
+          <button type="button" className="sp-learn-more" ref={backBtn} onClick={onBack}>Back</button>
         </div>
       </div>
     </article>

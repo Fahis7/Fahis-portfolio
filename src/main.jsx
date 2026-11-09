@@ -19,8 +19,8 @@ import Portrait from './Portrait.jsx';
 import Showreel from './Showreel.jsx';
 import Quotes from './Quotes.jsx';
 import { DotText, DotWord, DotTitle } from './DotText.jsx';
-import { GlassCard, GlassBadge, useGlassEntrance } from './GlassCard.jsx';
-import { profile, projects, stackCards, toolkit, marquee, experience, credentials, quotes, offers, realShot } from './data.js';
+import { GlassCard, useGlassEntrance } from './GlassCard.jsx';
+import { profile, projects, stackCards, toolkit, marquee, timeline, quotes, offers, realShot } from './data.js';
 
 const BASE = import.meta.env.BASE_URL;
 const MAILTO = `mailto:${profile.email}`;
@@ -570,64 +570,110 @@ function About() {
   );
 }
 
-// Line icons for the credential cards (inline SVG, currentColor).
-const CRED_ICONS = {
-  cap: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M22 9.5 12 4.5 2 9.5l10 5 10-5Z" /><path d="M6 11.5v5c3.5 2.4 8.5 2.4 12 0v-5" /><path d="M22 9.5v5" />
-    </svg>
-  ),
-  spark: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
-      <path d="M12 3c.7 4.6 3.4 7.3 8 8-4.6.7-7.3 3.4-8 8-.7-4.6-3.4-7.3-8-8 4.6-.7 7.3-3.4 8-8Z" />
-    </svg>
-  ),
-};
-
-// Experience: the Stack masthead pattern, then the roles as glass cards (flip on hover for the details, like
-// Stack) and the credentials as compact glass badges. The cards are artwork: the same in both themes.
-function XpBack({ x }) {
-  return (
-    <>
-      <p className="xp-b-company">{x.company}</p>
-      <p className="xp-b-desc">{x.desc}</p>
-      {x.tech && <ul className="xp-b-chips" aria-label="Tech">{x.tech.map((t) => <li key={t}>{t}</li>)}</ul>}
-      {x.link && <a className="sp-stack-link" href={x.link}>View project ↘</a>}
-    </>
-  );
+/* Experience: a scroll-pinned horizontal timeline (desktop, motion allowed). The section is 100svh + (stops - 1) × 50svh
+   tall; its stage sticks for that distance and scroll progress p (0..1) drives one eased stop position f: each stop
+   holds still for the middle 60% of its slice and eases to the next in the other 40%. --f moves the playhead, the
+   orange fill and the card row; --k (0..1, distance to f) dims, shrinks and blurs the cards that aren't active.
+   Phones and reduced motion: a vertical timeline (newest first) whose line fills with scroll. */
+const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+function stopAt(p, n) {
+  const s = p * n;
+  for (let k = 1; k < n; k++) {
+    if (s < k - 0.2) return k - 1;
+    if (s <= k + 0.2) return k - 1 + easeInOut((s - (k - 0.2)) / 0.4);
+  }
+  return n - 1;
 }
+const PINNED = '(min-width: 768px) and (prefers-reduced-motion: no-preference)';
 
 function Experience() {
-  const glass = useRef(null);
-  useGlassEntrance(glass);
+  const n = timeline.length;
+  const sec = useRef(null), list = useRef(null), count = useRef(null), hint = useRef(null);
+  const cards = useRef([]), nodes = useRef([]);
+
+  useEffect(() => {
+    const el = sec.current, mq = window.matchMedia(PINNED);
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let raf = 0, pin = 1, last = -1;
+    const measure = () => { pin = Math.max(1, el.offsetHeight - window.innerHeight); };
+    const update = () => {
+      raf = 0;
+      if (mq.matches) {
+        const p = Math.min(1, Math.max(0, -el.getBoundingClientRect().top / pin));
+        const f = stopAt(p, n);
+        el.style.setProperty('--f', f.toFixed(4));
+        cards.current.forEach((c, i) => c?.style.setProperty('--k', Math.min(1, Math.abs(i - f)).toFixed(3)));
+        nodes.current.forEach((d, i) => { if (!d) return; d.style.setProperty('--k', Math.min(1, Math.abs(i - f)).toFixed(3)); d.classList.toggle('is-passed', i <= f + 0.01); });
+        const active = Math.round(f);
+        if (active !== last) { last = active; count.current.textContent = `${String(active + 1).padStart(2, '0')} / ${String(n).padStart(2, '0')}`; }
+        hint.current.classList.toggle('is-gone', p > 0.05);
+      } else {
+        const r = list.current.getBoundingClientRect();
+        const v = reduced.matches ? 1 : Math.min(1, Math.max(0, (window.innerHeight * 0.6 - r.top) / r.height));
+        el.style.setProperty('--vf', v.toFixed(4));
+      }
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    const onResize = () => { measure(); onScroll(); };
+    measure(); update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize, { passive: true });
+    mq.addEventListener('change', onResize);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onResize); mq.removeEventListener('change', onResize);
+    };
+  }, [n]);
+
+  // scroll so stop i sits in the middle of its hold plateau (pinned), or bring its card into view (vertical)
+  const goTo = (i, behavior = 'smooth') => {
+    const el = sec.current;
+    if (!window.matchMedia(PINNED).matches) { cards.current[i]?.scrollIntoView({ behavior, block: 'center' }); return; }
+    const top = el.getBoundingClientRect().top + window.scrollY, pin = el.offsetHeight - window.innerHeight;
+    window.scrollTo({ top: top + ((i + 0.5) / n) * pin, behavior });
+  };
+
   return (
-    <section className="section section--fill experience" id="experience">
-      <header className="sp-masthead xp-masthead rise">
-        <div>
-          <div className="section-label"><span>04</span>Experience</div>
-          <h2 className="big t-head">From first commit to full <DotWord text="ownership." /></h2>
-        </div>
-        <p className="xp-intro t-copy">Four roles, from backend internship to sole engineer of a live compliance SaaS.</p>
-      </header>
-      <div className="xp-glass sp-pending" ref={glass}>
-        <div className="xpg-row">
-          {experience.map((x, i) => (
-            <GlassCard
-              key={x.title} id={`xp-role-${i}`} index={i} revealOnHover
-              variant={x.card.variant} title={x.card.title} dots={x.card.dots} unit={x.card.unit} caption={x.card.caption}
-              corner={x.current && <span className="sp-now" role="img" aria-label="Current role"><DotText text="NOW" pitchX={4} radius={1.8} /></span>}
-              reveal={{ openLabel: 'View role', title: [x.title], content: <XpBack x={x} /> }}
-            />
+    <section className="section xpt" id="experience" ref={sec} style={{ '--n': n }}>
+      <div className="xpt-stage">
+        <header className="sp-masthead xp-masthead rise">
+          <div>
+            <div className="section-label"><span>04</span>Experience</div>
+            <h2 className="big t-head">From first commit to full <DotWord text="ownership." /></h2>
+          </div>
+          <p className="xp-intro t-copy">Four roles, from backend internship to sole engineer of a live compliance SaaS.</p>
+        </header>
+
+        <div className="xpt-track">
+          <span className="xpt-line" aria-hidden="true"><i /></span>
+          <span className="xpt-playhead" aria-hidden="true"><b /><i /></span>
+          {timeline.map((t, i) => (
+            <button key={t.key} type="button" className="xpt-node" style={{ '--i': i }} ref={(el) => (nodes.current[i] = el)} onClick={() => goTo(i)} aria-label={`Go to ${t.node}`}>
+              <span className="xpt-dot" /><span className="xpt-label">{t.node}</span>
+            </button>
           ))}
         </div>
-        <p className="xpg-swipe" aria-hidden="true">Swipe →</p>
-        <div className="xpg-creds">
-          {credentials.map((c, i) => (
-            <GlassBadge
-              key={c.key} index={experience.length + i} variant="graphite" glow={c.accent}
-              icon={CRED_ICONS[c.icon]} title={c.title} sub={c.sub} dots={c.dots} unit={c.unit}
-            />
-          ))}
+
+        <div className="xpt-viewport">
+          <span className="xpt-vline" aria-hidden="true"><i /></span>
+          <ol className="xpt-cards" ref={list}>
+            {timeline.map((t, i) => (
+              <li key={t.key} className="xpt-card" ref={(el) => (cards.current[i] = el)} style={{ '--i': i }}>
+                <span className="xpt-year" aria-hidden="true"><DotText text={t.dots} pitchX={4} radius={1.8} /></span>
+                <p className="xpt-date">{t.kicker} · {t.date}</p>
+                <h3 className="xpt-title">{t.title}</h3>
+                <p className="xpt-company">{t.company}</p>
+                {t.desc && <p className="xpt-desc t-copy">{t.desc}</p>}
+                {t.tech && <ul className="chips small" aria-label="Tech">{t.tech.map((x) => <li key={x}>{x}</li>)}</ul>}
+                {t.link && <a className="xpt-link" href={t.link} onFocus={() => window.matchMedia(PINNED).matches && goTo(i, 'instant')}>View project ↘</a>}
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <div className="xpt-meta" aria-hidden="true">
+          <span className="xpt-hint" ref={hint}>Scroll ↓</span>
+          <span className="xpt-count" ref={count}>01 / {String(n).padStart(2, '0')}</span>
         </div>
       </div>
     </section>
@@ -711,7 +757,7 @@ function Partner() {
 
 /* Cursor light: a soft orange spotlight that follows the pointer, plus a local highlight on the card under it.
    Fine pointers only, off with reduced motion. One passive, rAF-throttled pointermove listener writes CSS variables. */
-const LIGHT_CARDS = '.preview, .sp-card, .panel, .tk-tile';
+const LIGHT_CARDS = '.preview, .sp-card, .panel, .tk-tile, .xpt-card';
 const LIGHT_STRONG = '.reel, .panel-dark, .tk-term';
 function CursorLight() {
   const ref = useRef(null);

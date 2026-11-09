@@ -1,0 +1,63 @@
+/* Showreel page: always black, whatever the main site's theme. */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root { --u: calc(100vw / 1500); color-scheme: dark; }
+@media (max-width: 649px) { :root { --u: calc(100vw / 390); } }
+
+html, body {
+  background: #000; color: #fff; height: 100%; overflow: hidden;
+  overscroll-behavior: none; touch-action: none; -webkit-tap-highlight-color: transparent;
+}
+body { font-family: 'Inter Tight Variable', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+canvas#gl { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+body.is-pointer canvas#gl { cursor: pointer; }
+
+/* corner navigation */
+.ui > * {
+  position: fixed; z-index: 5; color: #fff; text-decoration: none; background: none; border: 0;
+  font: 500 max(9px, calc(10 * var(--u))) / 1.4 'Inter Tight Variable', system-ui, sans-serif;
+  text-transform: uppercase; letter-spacing: 0;
+  opacity: 0; transition: opacity 0.6s ease 0.2s;
+}
+.ui a { color: inherit; text-decoration: none; }
+.ui .dim { opacity: 0.5; }
+.ui a:focus-visible, .sr a:focus-visible { outline: 1px solid #fff; outline-offset: 4px; }
+body.ready .ui > * { opacity: 1; }
+.tl { left: calc(80 * var(--u)); top: calc(40 * var(--u)); }
+.tr { right: calc(80 * var(--u)); top: calc(40 * var(--u)); }
+.bl { left: calc(80 * var(--u)); bottom: calc(40 * var(--u)); }
+.br { right: calc(80 * var(--u)); bottom: calc(40 * var(--u)); }
+@media (max-width: 649px) {
+  .tl { left: calc(40 * var(--u)); top: calc(25 * var(--u)); }
+  .tr { right: calc(40 * var(--u)); top: calc(25 * var(--u)); }
+  .bl { left: calc(40 * var(--u)); bottom: calc(25 * var(--u)); }
+  .br { right: calc(40 * var(--u)); bottom: calc(25 * var(--u)); }
+}
+
+/* loader: three dashes */
+.loader {
+  position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; gap: 6px; z-index: 4;
+  transition: opacity 0.4s ease;
+}
+.loader i { display: block; height: 2px; width: 44px; background: #fff; animation: dash 1s ease-in-out infinite; }
+.loader i:nth-child(2) { animation-delay: 0.12s; }
+.loader i:nth-child(3) { width: 38px; animation-delay: 0.24s; }
+@keyframes dash { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
+body.ready .loader { opacity: 0; pointer-events: none; }
+
+/* phone veil */
+.veil {
+  position: fixed; inset: 0; z-index: 3; pointer-events: none; display: none;
+  background:
+    linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.77) 5%, rgba(0, 0, 0, 0.42) 10%, rgba(0, 0, 0, 0.14) 15%, rgba(0, 0, 0, 0.02) 20%, transparent 26%),
+    linear-gradient(to top, #000 0%, rgba(0, 0, 0, 0.77) 5%, rgba(0, 0, 0, 0.42) 10%, rgba(0, 0, 0, 0.14) 15%, rgba(0, 0, 0, 0.02) 20%, transparent 26%);
+}
+@media (max-width: 649px) { .veil { display: block; } }
+
+/* screen-reader list */
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  .loader i { animation: none; opacity: 0.6; }
+  .ui > *, .loader { transition: none; }
+}

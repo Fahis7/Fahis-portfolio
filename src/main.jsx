@@ -169,7 +169,7 @@ function Stage() {
       <header className="nav">
         <a href="#top" className="logo" aria-label={`${profile.name}, home`}><Mark /><span>Fahis</span></a>
         <nav className="nav-links" aria-label="Primary">
-          <a href="#work">Work</a><a href="#about">About</a><a href="#stack">Stack</a><a href="#experience">Experience</a>
+          <a href="#work">Work</a><a href="#about">About</a><a href="#stack">Stack</a><a href="#experience">Experience</a><a href={`${BASE}work.html`}>Showreel</a>
         </nav>
         <div className="nav-right">
           <ThemeToggle />
@@ -290,6 +290,7 @@ function MoreWork() {
       <div className="more-head">
         <div className="section-label rise"><span>02</span>More builds</div>
         <h2 className="big rise" style={{ '--d': '.1s' }}>Four more <em>builds.</em></h2>
+        <a className="hero-link showreel-link rise" style={{ '--d': '.2s' }} href={`${BASE}work.html`}>Enter the showreel <Arrow size={12} /></a>
       </div>
       <div className="projects">{others.map((p, i) => <Project key={p.id} p={p} i={i} />)}</div>
     </section>

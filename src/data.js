@@ -25,6 +25,7 @@ export const profile = {
   code:   what the scanner "prints" when the card dissolves (keep lines ≤ 50 chars)
   meta:   three short comment lines shown top-right of the code
   demo:   live URL, or null when offline (the site then links to `github` instead)
+  reel:   showreel media (public/showreel/): poster, video (or null), aspect = media width / height
   image:  optional real screenshot for the case-study preview, e.g. 'projects/axiskyc.webp'
           (put the file in public/projects/, ~1600×1020). The belt always uses the drawn card.
 */
@@ -46,6 +47,7 @@ export const projects = [
     stack: ['Django 5.2', 'DRF', 'PostgreSQL 16 + RLS', 'Celery', 'Redis', 'Next.js 16', 'TypeScript', 'Tailwind v4', 'Framer Motion', 'GitHub Actions'],
     demo: 'https://axiskyc.ae',
     github: 'https://github.com/Fahis7',
+    reel: { poster: 'showreel/axiskyc.webp', video: 'showreel/axiskyc.mp4', aspect: 1600 / 900 },
     meta: ['# live: axiskyc.ae', '# domain: regtech / fintech', '# tenants: isolated by RLS'],
     code: `# AxisKYC: KYC / AML compliance platform
 class Stack:
@@ -116,6 +118,7 @@ LOCALES = ("en", "ar")  # full RTL
     stack: ['Next.js', 'TypeScript', 'Tailwind CSS'],
     demo: 'https://zeroaccounting.ae/',
     github: 'https://github.com/Fahis7',
+    reel: { poster: 'showreel/zero.webp', video: 'showreel/zero.mp4', aspect: 1600 / 900 },
     meta: ['# live: zeroaccounting.ae', '# domain: audit / accounting', '# build: next.js'],
     code: `// Zero Accounting: business services site
 export const stack = {
@@ -153,6 +156,7 @@ export default function Page() {
     stack: ['Django 5', 'React 19', 'PostgreSQL', 'Groq Vision', 'pgvector', 'Docker'],
     demo: null,
     github: 'https://github.com/Fahis7',
+    reel: { poster: 'showreel/propai.webp', video: null, aspect: 1600 / 1019 },
     meta: ['# status: redeploying', '# domain: real estate', '# ai: vision + rag'],
     code: `# PropAI OS: multi-tenant property SaaS
 class Stack:
@@ -194,6 +198,7 @@ def price(unit):
     stack: ['React', 'Django', 'Claude Haiku', 'pgvector', 'Resend'],
     demo: 'https://seek-and-sync.netlify.app/',
     github: 'https://github.com/Fahis7',
+    reel: { poster: 'showreel/seek.webp', video: 'showreel/seek.mp4', aspect: 1600 / 900 },
     meta: ['# live: seek-and-sync.netlify.app', '# domain: hr / recruiting', '# ai: claude haiku'],
     code: `# Seek & Sync: AI recruiting platform
 class Stack:
@@ -232,6 +237,7 @@ def on_new_match(match):
     stack: ['Django', 'DRF', 'Firebase MFA', 'Cloudinary', 'PostgreSQL'],
     demo: 'https://horologiee.vercel.app/',
     github: 'https://github.com/Fahis7',
+    reel: { poster: 'showreel/horologie.webp', video: 'showreel/horologie.mp4', aspect: 1600 / 900 },
     meta: ['# live: horologiee.vercel.app', '# domain: luxury commerce', '# auth: 3-layer mfa'],
     code: `# Horologie: luxury watch commerce
 class Stack:

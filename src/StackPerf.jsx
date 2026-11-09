@@ -261,7 +261,7 @@ export default function StackPerf({ cards }) {
   }, []);
 
   return (
-    <section className="sp-stage sp-pending" id="stack" ref={ref} aria-labelledby="sp-headline">
+    <section className="section sp-stage sp-pending" id="stack" ref={ref} aria-labelledby="sp-headline">
       <div className="sp-bg" aria-hidden="true" />
       <FilterDefs />
       <header className="sp-masthead">

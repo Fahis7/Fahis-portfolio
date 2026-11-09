@@ -222,7 +222,7 @@ function Marquee() {
 function Featured() {
   const p = featured;
   return (
-    <section className="featured wrap" id="work">
+    <section className="section featured" id="work">
       <div className="section-label rise"><span>01</span>Featured work</div>
       <div className="featured-head" id={`work-${p.id}`}>
         <div className="rise" style={{ '--d': '.1s' }}>
@@ -295,7 +295,7 @@ function Project({ p, i }) {
 
 function MoreWork() {
   return (
-    <section className="more wrap">
+    <section className="section more">
       <div className="more-head">
         <div className="section-label rise"><span>02</span>More builds</div>
         <h2 className="big rise" style={{ '--d': '.1s' }}>Four more <em>builds.</em></h2>
@@ -308,7 +308,7 @@ function MoreWork() {
 
 function About() {
   return (
-    <section className="about" id="about">
+    <section className="section about" id="about">
       <div className="narrow">
         <div className="section-label center rise"><span>03</span>About</div>
         <p className="about-name rise" style={{ '--d': '.1s' }}>Mohammed Fahis</p>
@@ -335,7 +335,7 @@ function About() {
 
 function Experience() {
   return (
-    <section className="experience wrap" id="experience">
+    <section className="section section--fill experience" id="experience">
       <div className="section-label rise"><span>05</span>Experience</div>
       <h2 className="big rise" style={{ '--d': '.1s' }}>From first commit to <em>full ownership.</em></h2>
       <ol className="timeline">
@@ -356,7 +356,7 @@ function Experience() {
 
 function WorkTogether() {
   return (
-    <section className="together wrap">
+    <section className="section section--fill together">
       <div className="together-head">
         <div className="section-label rise"><span>06</span>Work together</div>
         <h2 className="big rise" style={{ '--d': '.1s' }}>Two ways to <em>work together.</em></h2>
@@ -411,7 +411,7 @@ function Partner() {
     return () => box.removeEventListener('mousemove', onMove);
   }, []);
   return (
-    <section className="partner-wrap" id="contact">
+    <section className="section section--fill partner-wrap" id="contact">
       <div className="partner" ref={boxRef}>
         <p className="kicker rise">07 · CONTACT</p>
         <h2 className="partner-title rise" style={{ '--d': '.1s' }}>Let’s build <em>something.</em></h2>
@@ -427,10 +427,48 @@ function Partner() {
   );
 }
 
+/* Cursor light: a soft orange spotlight that follows the pointer, plus a local highlight on the card under it.
+   Fine pointers only, off with reduced motion. One passive, rAF-throttled pointermove listener writes CSS variables. */
+const LIGHT_CARDS = '.preview, .sp-card, .panel, .offer, .timeline li';
+const LIGHT_STRONG = '.reel, .panel-dark, .offer-dark';
+function CursorLight() {
+  const ref = useRef(null);
+  useEffect(() => {
+    const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
+    if (!fine.matches || reducedMotion()) return;
+    const root = document.documentElement, light = ref.current;
+    root.classList.add('has-light');
+    let x = 0, y = 0, target = null, raf = 0;
+    const frame = () => {
+      raf = 0;
+      light.style.setProperty('--mx', `${x}px`);
+      light.style.setProperty('--my', `${y}px`);
+      const strong = root.getAttribute('data-theme') === 'dark' || !!target?.closest?.(LIGHT_STRONG);
+      light.classList.toggle('is-strong', strong);
+      light.classList.add('is-on');
+      const card = target?.closest?.(LIGHT_CARDS);
+      if (card) {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--lx', `${x - r.left}px`);
+        card.style.setProperty('--ly', `${y - r.top}px`);
+      }
+    };
+    const move = (e) => { x = e.clientX; y = e.clientY; target = e.target; if (!raf) raf = requestAnimationFrame(frame); };
+    const out = (e) => { if (!e.relatedTarget) light.classList.remove('is-on'); };
+    window.addEventListener('pointermove', move, { passive: true });
+    document.addEventListener('pointerout', out, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf); root.classList.remove('has-light');
+      window.removeEventListener('pointermove', move); document.removeEventListener('pointerout', out);
+    };
+  }, []);
+  return <div className="cursor-light" ref={ref} aria-hidden="true" />;
+}
+
 function Footer() {
   return (
     <>
-      <footer className="footer wrap">
+      <footer className="section footer">
         <Button href={MAILTO}>Start a chat</Button>
         <div className="footer-cols">
           <Arrow size={20} />
@@ -481,6 +519,7 @@ function App() {
       </main>
       <Footer />
       <BottomNav />
+      <CursorLight />
     </>
   );
 }

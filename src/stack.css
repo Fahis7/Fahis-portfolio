@@ -28,6 +28,12 @@
   font-optical-sizing: auto; text-rendering: geometricPrecision;
 }
 
+/* shared section sizing: same content width and vertical padding as the other sections */
+.sp-stage.section {
+  --content-max: 100%; margin-top: 0;
+  padding: var(--section-pad) max(var(--section-gutter), calc((100% - var(--section-w)) / 2));
+}
+
 html[data-theme="dark"] .sp-stage {
   --paper: #0f1114;
   --sp-ink: #f2f3f5;
@@ -56,14 +62,14 @@ html[data-theme="dark"] .sp-stage {
 .sp-masthead .section-label { margin-bottom: 18px; }
 .sp-headline {
   margin: 0; max-width: 100%; color: var(--sp-ink); font-family: var(--sans);
-  font-size: clamp(24px, min(3.1vw, 5.9vh), 47px); font-weight: 400; letter-spacing: 0.015em; line-height: 1.223;
+  font-size: var(--section-h2); font-weight: 400; letter-spacing: 0.015em; line-height: 1.223;
 }
 .sp-line { display: flex; align-items: center; white-space: nowrap; }
 .sp-dot-word { display: inline-block; flex: 0 0 auto; height: 0.766em; margin-left: 0.319em; color: var(--sp-dot); transform: translateY(0.085em); }
 .sp-dot-word svg, .sp-dot-number svg { display: block; height: 100%; width: auto; overflow: visible; }
 .sp-intro {
   container-type: inline-size; width: 100%; margin: 0 0 0.3em; color: var(--sp-copy); font-family: var(--sans);
-  font-size: clamp(13px, min(1.36vw, 2.6vh), 20.6px); font-weight: 400; letter-spacing: -0.017em; line-height: 1.62;
+  font-size: var(--section-text); font-weight: 400; letter-spacing: -0.017em; line-height: 1.62;
 }
 .sp-break { display: none; }
 @container (min-width: 26.5em) { .sp-break { display: inline; } }
@@ -295,7 +301,7 @@ html[data-theme="dark"] .sp-stage {
   .sp-card:last-child { grid-column: 1 / -1; justify-self: center; }
 }
 @media (max-width: 767px) {
-  .sp-stage { height: auto; min-height: 100svh; max-height: none; overflow: visible; margin-top: 60px; --pad-bottom: 40px; }
+  .sp-stage { height: auto; min-height: 100svh; max-height: none; overflow: visible; }
   .sp-masthead { grid-template-columns: minmax(0, 1fr); }
   .sp-headline { font-size: 30px; }
   .sp-intro { font-size: 15px; }

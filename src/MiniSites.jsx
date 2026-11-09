@@ -117,7 +117,7 @@ function Horologie() {
   return (
     <div className="ms ms-horo">
       <div className="ms-nav">
-        <div className="ms-logo serif">Horologie</div>
+        <div className="ms-logo wordmark">Horologie</div>
         <Menu items={['COLLECTION', 'ATELIER', 'ACCOUNT']} current="COLLECTION" />
       </div>
       <div className="ms-dial" aria-hidden="true">

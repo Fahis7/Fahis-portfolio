@@ -11,7 +11,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 const pad2 = (n) => String(n).padStart(2, '0');
 const SLIDE_MS = 800;
 
-// '*word*' → italic accent
+// '*word*' → crimson accent
 const Accent = ({ text }) => text.split('*').map((t, i) => (i % 2 ? <em key={i}>{t}</em> : t));
 
 const ArrowIcon = ({ dir }) => (

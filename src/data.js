@@ -416,7 +416,7 @@ export const offers = [
 ];
 
 /*
-  About quotes (sliding carousel). Wrap words in *asterisks* for the italic orange accent.
+  About quotes (sliding carousel). Wrap words in *asterisks* for the crimson accent.
 */
 export const quotes = [
   { text: 'I like being close to the whole product, from the *database role* to the last pixel.', author: 'Mohammed Fahis' },

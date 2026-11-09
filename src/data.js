@@ -48,7 +48,11 @@ export const projects = [
       { value: '3', label: 'Postgres roles (RLS)' },
       { value: 'EN · AR', label: 'full RTL support' },
     ],
-    stack: ['Django 5.2', 'DRF', 'PostgreSQL 16 + RLS', 'Celery', 'Redis', 'Next.js 16', 'TypeScript', 'Tailwind v4', 'Framer Motion', 'GitHub Actions'],
+    stack: [
+      'Django 5.2', 'DRF', 'PostgreSQL 16 + RLS', 'Celery', 'Redis', 'Next.js 16', 'TypeScript', 'Tailwind v4', 'Framer Motion', 'GitHub Actions',
+      'Gunicorn', 'CentOS', 'Sanctions.io API', 'Row-Level Security', 'Next.js Route Handlers', 'httpOnly cookies',
+      'PDF + QR certificates', 'English + Arabic RTL', 'Real PostgreSQL tests', 'N+1 query guards',
+    ],
     demo: 'https://axiskyc.ae',
     github: 'https://github.com/Fahis7',
     reel: { poster: 'showreel/axiskyc.webp', video: 'showreel/axiskyc.mp4', aspect: 1600 / 900 },

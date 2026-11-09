@@ -209,12 +209,15 @@ function Stage() {
   );
 }
 
-function Marquee() {
-  const items = [...marquee, ...marquee];
+// Scrolling strip of mono labels with ✦ separators (decorative: aria-hidden; give screen readers a list next to it).
+// Short lists are repeated so one half of the track always outruns wide screens; speed (s per pass of `items`) stays the same.
+function Marquee({ items, direction = 'left', speed = 40, className = '' }) {
+  const reps = Math.ceil(20 / items.length);
+  const half = Array.from({ length: reps }, () => items).flat();
   return (
-    <div className="marquee" aria-hidden="true">
-      <div className="marquee-track">
-        {items.map((m, i) => <span key={i} className="marquee-item"><span className="marquee-text">{m}</span><i>✦</i></span>)}
+    <div className={`marquee ${className}`} aria-hidden="true" style={{ '--marquee-speed': `${speed * reps}s` }}>
+      <div className={`marquee-track${direction === 'right' ? ' is-reverse' : ''}`}>
+        {[...half, ...half].map((m, i) => <span key={i} className="marquee-item"><span className="marquee-text">{m}</span><i>✦</i></span>)}
       </div>
     </div>
   );
@@ -269,7 +272,8 @@ function Featured() {
         </div>
       </div>
 
-      <ul className="chips rise" aria-label="AxisKYC tech stack">{p.stack.map((s) => <li key={s}>{s}</li>)}</ul>
+      <ul className="sr-only" aria-label="AxisKYC tech stack">{p.stack.map((s) => <li key={s}>{s}</li>)}</ul>
+      <Marquee items={p.stack} direction="right" speed={50} className="marquee--bleed rise" />
     </section>
   );
 }
@@ -503,7 +507,7 @@ function App() {
       <a className="skip-link" href="#work">Skip to work</a>
       <main>
         <Stage />
-        <Marquee />
+        <Marquee items={marquee} />
         <Featured />
         <Showreel projects={projects} />
         <MoreWork />

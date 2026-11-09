@@ -384,7 +384,10 @@ em { font-style: italic; }
 
 /* ═════════════ MARQUEE ═════════════ */
 .marquee { overflow: hidden; padding: 16px 0; border-block: 1px solid var(--line); background: var(--paper); }
-.marquee-track { display: flex; width: max-content; animation: marquee 40s linear infinite; }
+.marquee-track { display: flex; width: max-content; animation: marquee var(--marquee-speed, 40s) linear infinite; }
+.marquee-track.is-reverse { animation-direction: reverse; }
+/* full-bleed inside a section (like the metrics strip) */
+.marquee--bleed { width: 100vw; margin: 36px calc(50% - 50vw) 0; }
 .marquee:hover .marquee-track { animation-play-state: paused; }
 /* one uniform, quiet style; opacity (not a fixed grey) so it follows the theme. The trailing 20px keeps the loop seamless. */
 .marquee-item { display: inline-flex; align-items: center; gap: 20px; padding-right: 20px; white-space: nowrap; }
@@ -618,7 +621,7 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
   .footer { flex-direction: column; }
   .footer-cols { gap: 36px; }
   .copyright { flex-direction: column; gap: 6px; }
-  .marquee-track { animation-duration: 22s; }
+  .marquee-track { animation-duration: calc(var(--marquee-speed, 40s) * 0.55); }
   .marquee { padding-block: 12px; }
   .marquee-text { font-size: 11px; }
   .btn { height: 44px; padding: 0 22px; font-size: 14px; }

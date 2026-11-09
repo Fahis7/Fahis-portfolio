@@ -227,51 +227,9 @@ export default function Page() {
 }`,
   },
   {
-    id: 'propai',
-    site: 'propai',
-    num: '04',
-    title: 'PropAI OS',
-    kicker: 'REAL ESTATE / VISION AI',
-    tagline: 'Operating system for Dubai property teams',
-    role: 'Architecture → production · demo offline',
-    desc: 'A multi-tenant SaaS for Dubai property teams. Four role-based portals, async jobs, five-service Docker orchestration and AI features designed for real production workflows.',
-    highlights: ['Vision-AI maintenance triage powered by Groq Vision', 'RAG concierge over property data using pgvector', 'Smart market pricing and four role-based portals with 8 JWT roles'],
-    metrics: [
-      { value: '4', label: 'role-based portals' },
-      { value: '8', label: 'JWT roles' },
-      { value: '5', label: 'Docker services' },
-    ],
-    stack: ['Django 5', 'React 19', 'PostgreSQL', 'Groq Vision', 'pgvector', 'Docker'],
-    demo: null,
-    github: 'https://github.com/Fahis7',
-    reel: { poster: 'showreel/propai.webp', video: null, aspect: 1600 / 1019 },
-    meta: ['# status: redeploying', '# domain: real estate', '# ai: vision + rag'],
-    code: `# PropAI OS: multi-tenant property SaaS
-class Stack:
-    backend  = "Django 5 + DRF"
-    frontend = "React 19"
-    database = "PostgreSQL + pgvector"
-    vision   = "Groq Llama 4 Scout Vision"
-    infra    = "Docker Compose · 5 services"
-
-PORTALS   = 4   # role-based
-JWT_ROLES = 8
-
-def triage(ticket):
-    label = vision.classify(ticket.photo)
-    return route(ticket, label)
-
-def concierge(question):
-    docs = pgvector.similar(embed(question))
-    return llm.answer(question, docs)
-
-def price(unit):
-    return market_model.estimate(unit)`,
-  },
-  {
     id: 'seek',
     site: 'seek',
-    num: '05',
+    num: '04',
     title: 'Seek & Sync',
     kicker: 'HR / AI RECRUITING',
     tagline: 'AI recruiting for an Abu Dhabi consultancy',
@@ -310,7 +268,7 @@ def on_new_match(match):
   {
     id: 'horologie',
     site: 'horologie',
-    num: '06',
+    num: '05',
     title: 'Horologie',
     kicker: 'LUXURY COMMERCE / ANALYTICS',
     tagline: 'Premium e-commerce engine for timepieces',
@@ -345,6 +303,48 @@ def product_media(watch):
     )
 
 analytics.live(dashboard="ops")`,
+  },
+  {
+    id: 'propai',
+    site: 'propai',
+    num: '06',
+    title: 'PropAI OS',
+    kicker: 'REAL ESTATE / VISION AI',
+    tagline: 'Operating system for Dubai property teams',
+    role: 'Architecture → production · demo offline',
+    desc: 'A multi-tenant SaaS for Dubai property teams. Four role-based portals, async jobs, five-service Docker orchestration and AI features designed for real production workflows.',
+    highlights: ['Vision-AI maintenance triage powered by Groq Vision', 'RAG concierge over property data using pgvector', 'Smart market pricing and four role-based portals with 8 JWT roles'],
+    metrics: [
+      { value: '4', label: 'role-based portals' },
+      { value: '8', label: 'JWT roles' },
+      { value: '5', label: 'Docker services' },
+    ],
+    stack: ['Django 5', 'React 19', 'PostgreSQL', 'Groq Vision', 'pgvector', 'Docker'],
+    demo: null,
+    github: 'https://github.com/Fahis7',
+    reel: { poster: 'showreel/propai.webp', video: null, aspect: 1600 / 1019 },
+    meta: ['# status: redeploying', '# domain: real estate', '# ai: vision + rag'],
+    code: `# PropAI OS: multi-tenant property SaaS
+class Stack:
+    backend  = "Django 5 + DRF"
+    frontend = "React 19"
+    database = "PostgreSQL + pgvector"
+    vision   = "Groq Llama 4 Scout Vision"
+    infra    = "Docker Compose · 5 services"
+
+PORTALS   = 4   # role-based
+JWT_ROLES = 8
+
+def triage(ticket):
+    label = vision.classify(ticket.photo)
+    return route(ticket, label)
+
+def concierge(question):
+    docs = pgvector.similar(embed(question))
+    return llm.answer(question, docs)
+
+def price(unit):
+    return market_model.estimate(unit)`,
   },
 ];
 

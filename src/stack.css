@@ -82,30 +82,31 @@ html[data-theme="dark"] .sp-stage {
 
 .sp-card {
   container-type: inline-size; position: relative; flex: 0 0 auto; perspective: 1400px;
-  width: var(--card-w); aspect-ratio: 429 / 554;
+  width: var(--card-w); aspect-ratio: 429 / 554; border: 1px solid transparent; /* keeps --u (100cqw) exactly as before the flip */
   border-radius: calc(var(--card-w) * 17 / 429); color: #fff; font-family: var(--sans);
   --u: calc(100cqw / 429);
   box-shadow: 0 2px 4px rgba(50, 28, 39, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.24);
   transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
 }
 .sp-card:hover { transform: translateY(-4px); box-shadow: 0 18px 40px rgba(50, 28, 39, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.24); }
-/* ── flip: .sp-flipper turns in 3D; each face clips its own content and hides its back ── */
-.sp-flipper {
-  position: absolute; inset: 0; border-radius: inherit; transform-style: preserve-3d;
-  transition: transform 0.75s cubic-bezier(.2, .8, .2, 1);
-}
-.sp-card.is-flipped .sp-flipper { transform: rotateY(180deg); }
+/* ── flip. At rest: flat, no 3D, no transform, back face hidden (exactly the old card).
+   .is-3d (only while flipping / flipped) turns on preserve-3d; the face turned away is visibility: hidden. ── */
+.sp-flipper { position: absolute; inset: -1px; border-radius: inherit; }
+.sp-card.is-3d .sp-flipper { transform-style: preserve-3d; will-change: transform; transition: transform 0.75s cubic-bezier(.2, .8, .2, 1); }
+.sp-card.is-3d.is-flipped .sp-flipper { transform: rotateY(180deg); }
 /* a small "spin": scale dips to 0.96 mid-turn (the two names restart the dip on every flip) */
-.sp-card.has-flipped .sp-flipper { animation: spDipB 0.75s cubic-bezier(.2, .8, .2, 1); }
-.sp-card.has-flipped.is-flipped .sp-flipper { animation-name: spDipA; }
+.sp-card.is-3d .sp-flipper { animation: spDipB 0.75s cubic-bezier(.2, .8, .2, 1); }
+.sp-card.is-3d.is-flipped .sp-flipper { animation-name: spDipA; }
 @keyframes spDipA { 50% { scale: 0.96; } }
 @keyframes spDipB { 50% { scale: 0.96; } }
 .sp-face {
   position: absolute; inset: 0; overflow: hidden; border-radius: inherit;
-  border: 1px solid var(--glass-line, rgba(255, 255, 255, 0.36));
-  -webkit-backface-visibility: hidden; backface-visibility: hidden;
+  border: 1px solid var(--glass-line, rgba(255, 255, 255, 0.36)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24);
 }
-.sp-back { transform: rotateY(180deg); }
+.sp-card.is-3d .sp-face { -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+.sp-back { visibility: hidden; transform: rotateY(180deg); }
+.sp-card.show-back .sp-back { visibility: visible; }
+.sp-card.hide-front .sp-front { visibility: hidden; }
 .sp-face[inert] { pointer-events: none; } /* the face that isn't showing never takes clicks */
 .sp-back-shade { position: absolute; inset: 0; z-index: 1; background: rgba(0, 0, 0, 0.28); pointer-events: none; }
 .sp-back-title {
@@ -312,8 +313,7 @@ html[data-theme="dark"] .sp-stage {
 .sp-stack {
   position: absolute; z-index: 7; top: 20%; left: 7%; right: 7%; bottom: 20%;
   padding: calc(16 * var(--u)) calc(18 * var(--u)); border-radius: calc(14 * var(--u));
-  background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.3);
-  -webkit-backdrop-filter: blur(calc(16 * var(--u))) saturate(1.1); backdrop-filter: blur(calc(16 * var(--u))) saturate(1.1);
+  background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.3);
   display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: calc(16 * var(--u));
 }
 .sp-stack > div > span { display: block; font: 500 calc(11 * var(--u)) var(--mono); letter-spacing: .06em; text-transform: uppercase; opacity: .75; margin-bottom: calc(6 * var(--u)); }

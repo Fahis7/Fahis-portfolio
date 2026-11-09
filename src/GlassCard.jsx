@@ -255,12 +255,43 @@ export function GlassCard({ id, variant, title, dots, unit, caption, index = 0, 
     if (pinned) { setPinned(false); closeHover(); } else setPinned(true);
   };
   const onBack = (e) => { kbd.current = e.detail === 0; setPinned(false); closeHover(); };
+
+  // Flip state lives in classes set here (React only renders the constant "sp-card", so it never wipes the
+  // classes this file adds by hand). 3D (.is-3d: preserve-3d, backface-visibility, will-change) exists only
+  // while flipping or flipped; at rest the card is exactly the flat card. The face turned away is
+  // visibility: hidden once the turn has finished (transitionend, with a timeout fallback).
+  const flipDone = useRef(0);
   useEffect(() => {
-    if (!turned.current && !open) return;
-    turned.current = true; // from now on each flip plays the scale dip
-    card.current?.classList.add('has-flipped');
+    const el = card.current, flipper = el?.querySelector('.sp-flipper');
+    if (!el || !flipper) return;
+    if (!turned.current && !open) return; // first render: nothing to do
+    turned.current = true;
+    clearTimeout(flipDone.current);
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const after = (fn) => {
+      let done = false;
+      const end = (e) => { if (e && (e.target !== flipper || e.propertyName !== 'transform')) return; if (done) return; done = true; flipper.removeEventListener('transitionend', end); fn(); };
+      flipper.addEventListener('transitionend', end);
+      flipDone.current = setTimeout(() => end(), reduced ? 260 : 900);
+    };
+    if (open) {
+      el.classList.remove('hide-front');
+      el.classList.add('show-back');
+      if (reduced) el.classList.add('is-flipped');
+      else {
+        el.classList.add('is-3d');
+        requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('is-flipped'))); // 3D applies first
+      }
+      after(() => { if (el.classList.contains('is-flipped')) el.classList.add('hide-front'); });
+    } else {
+      el.classList.remove('hide-front', 'is-flipped');
+      after(() => { if (!el.classList.contains('is-flipped')) el.classList.remove('is-3d', 'show-back'); });
+    }
+  }, [open]);
+  useEffect(() => {
     if (kbd.current) { (open ? backBtn : frontBtn).current?.focus(); kbd.current = false; }
   }, [open]);
+  useEffect(() => () => clearTimeout(flipDone.current), []);
 
   const toggle = (
     <button type="button" className="sp-learn-more" ref={frontBtn} aria-expanded={open} aria-controls={id} onClick={onToggle}>
@@ -270,7 +301,7 @@ export function GlassCard({ id, variant, title, dots, unit, caption, index = 0, 
   return (
     <article
       ref={card}
-      className={`sp-card ${open ? 'is-flipped' : ''}`} style={{ '--entrance-delay': `${0.46 + index * 0.12}s` }}
+      className="sp-card" style={{ '--entrance-delay': `${0.46 + index * 0.12}s` }}
       onPointerEnter={revealOnHover ? hoverIn : undefined} onPointerLeave={revealOnHover ? hoverOut : undefined}
     >
       <div className="sp-flipper">

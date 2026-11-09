@@ -16,8 +16,45 @@
         document.documentElement.setAttribute('data-theme', t);
         var m = document.querySelector('meta[name="theme-color"]');
         if (m) m.setAttribute('content', t === 'dark' ? '#0b0d10' : '#ececeb');
+        // the preloader shows once per browser session; later visits skip it before anything paints
+        try { if (sessionStorage.getItem('fahis-loaded')) document.documentElement.classList.add('pl-skip'); } catch (e) {}
       })();
     </script>
+    <style>
+      /* preloader (inline so it paints before any JS); the page's own CSS loads with the app */
+      #preloader {
+        position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; background: #ececeb; color: #0f1115;
+        font-family: Inter, system-ui, -apple-system, 'Segoe UI', sans-serif; -webkit-font-smoothing: antialiased;
+      }
+      html[data-theme="dark"] #preloader { background: #0b0d10; color: #f2f3f5; }
+      .pl-skip #preloader { display: none; }
+      .pl-box { display: flex; flex-direction: column; align-items: center; text-align: center; }
+      .pl-mark { width: 56px; height: 56px; filter: drop-shadow(0 0 16px rgba(255, 90, 31, 0.45)); }
+      .pl-name { margin: 18px 0 0; font-size: 18px; font-weight: 500; letter-spacing: -0.01em; }
+      .pl-role { margin: 6px 0 0; font: 500 11px 'IBM Plex Mono', ui-monospace, monospace; letter-spacing: 0.08em; opacity: 0.5; }
+      .pl-track { position: relative; width: 160px; height: 2px; margin-top: 26px; border-radius: 2px; background: rgba(127, 127, 127, 0.25); }
+      .pl-fill { position: absolute; inset: 0; border-radius: inherit; background: #ff5a1f; transform: scaleX(0); transform-origin: 0 50%; }
+      .pl-tick {
+        position: absolute; top: -5px; left: 0; width: 2px; height: 12px; margin-left: -1px; border-radius: 2px; background: #ff7a3c;
+        box-shadow: 0 0 8px 2px rgba(255, 90, 31, 0.8);
+      }
+      .pl-pct { margin: 12px 0 0; font: 500 11px 'IBM Plex Mono', ui-monospace, monospace; letter-spacing: 0.06em; opacity: 0.6; font-variant-numeric: tabular-nums; }
+      .pl-sr { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+      /* exit: an orange scanner sweeps up while the overlay wipes away behind it */
+      .pl-sweep {
+        position: absolute; left: 0; right: 0; bottom: 0; height: 2px; opacity: 0; background: #ff5a1f;
+        box-shadow: 0 0 12px 3px rgba(255, 90, 31, 0.85), 0 0 40px 12px rgba(255, 90, 31, 0.35);
+      }
+      #preloader.is-leaving { animation: plWipe 0.6s cubic-bezier(0.65, 0, 0.35, 1) forwards; }
+      #preloader.is-leaving .pl-sweep { opacity: 1; animation: plSweep 0.6s cubic-bezier(0.65, 0, 0.35, 1) forwards; }
+      @keyframes plWipe { to { clip-path: inset(0 0 100% 0); } }
+      @keyframes plSweep { to { transform: translateY(-100vh); } }
+      @media (prefers-reduced-motion: reduce) {
+        #preloader.is-leaving { animation: plFade 0.3s ease forwards; }
+        #preloader.is-leaving .pl-sweep { display: none; }
+        @keyframes plFade { to { opacity: 0; } }
+      }
+    </style>
 
     <title>Mohammed Fahis | One engineer. Everything underneath.</title>
     <meta name="description" content="Mohammed Fahis is a Dubai-based AI Engineer and Full Stack Developer. Builder of AxisKYC (KYC/AML compliance), PropAI OS and more: multi-tenant SaaS, RAG and vision-AI from blank screen to production." />
@@ -60,9 +97,68 @@
 
   </head>
   <body>
+    <div id="preloader" role="status" aria-live="polite">
+      <span class="pl-sr">Loading portfolio</span>
+      <div class="pl-box" aria-hidden="true">
+        <svg class="pl-mark" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#0f1115"/><path d="M15 45V19l10 14 10-14v26M45 45V19h8" fill="none" stroke="#eef0f2" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p class="pl-name">Mohammed Fahis</p>
+        <p class="pl-role">AI ENGINEER · DUBAI</p>
+        <div class="pl-track"><span class="pl-fill"></span><span class="pl-tick"></span></div>
+        <p class="pl-pct">00</p>
+      </div>
+      <span class="pl-sweep"></span>
+    </div>
     <div id="root"></div>
+    <script>
+      // Preloader: progress from real loading (page load, fonts, portrait images, the first belt poster), eased and never
+      // backwards. Exits when loaded and 700ms have passed (always by 3.5s): a scanner sweep, then the hero entrance plays.
+      (function () {
+        var html = document.documentElement, el = document.getElementById('preloader'), root = document.getElementById('root');
+        if (!el) return;
+        if (html.classList.contains('pl-skip')) { el.remove(); return; }
+        html.classList.add('is-preloading');
+        root.setAttribute('aria-busy', 'true');
+        var BASE = '/Fahis-portfolio/'; // vite base (vite.config.js); inline scripts aren't rewritten
+        var fill = el.querySelector('.pl-fill'), tick = el.querySelector('.pl-tick'), pct = el.querySelector('.pl-pct');
+        var total = 5, done = 0, shown = 0, start = performance.now(), finished = false, raf = 0;
+        var step = function () { done = Math.min(total, done + 1); };
+        ['me/fahis-bw.webp', 'me/fahis-cutout.webp', 'showreel/axiskyc.webp'].forEach(function (src) {
+          var img = new Image(); img.onload = img.onerror = step; img.src = BASE + src;
+        });
+        var onLoad = function () {
+          step();
+          (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(step, step);
+        };
+        if (document.readyState === 'complete') onLoad(); else window.addEventListener('load', onLoad);
+        var frame = function () {
+          var target = done / total;
+          shown = Math.max(shown, shown + (target - shown) * 0.12);
+          if (target - shown < 0.002) shown = target;
+          fill.style.transform = 'scaleX(' + shown.toFixed(4) + ')';
+          tick.style.left = (shown * 100).toFixed(2) + '%';
+          pct.textContent = String(Math.round(shown * 100)).padStart(2, '0');
+          if (done >= total && shown >= 0.999 && performance.now() - start >= 700) return finish();
+          raf = requestAnimationFrame(frame);
+        };
+        var finish = function () {
+          if (finished) return; finished = true; cancelAnimationFrame(raf);
+          fill.style.transform = 'scaleX(1)'; tick.style.left = '100%'; pct.textContent = '100';
+          el.classList.add('is-leaving');
+          var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          setTimeout(function () {
+            html.classList.remove('is-preloading'); // the hero entrance animations start now
+            root.removeAttribute('aria-busy');
+            try { sessionStorage.setItem('fahis-loaded', '1'); } catch (e) {}
+            el.remove();
+          }, reduced ? 300 : 600);
+        };
+        raf = requestAnimationFrame(frame);
+        setTimeout(finish, 3500); // failsafe
+      })();
+    </script>
     <noscript>
       <style>
+        #preloader { display: none; }
         .noscript { color: #0f1115; }
         @media (prefers-color-scheme: dark) {
           body { background: #0b0d10; }

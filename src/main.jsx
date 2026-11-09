@@ -20,6 +20,7 @@ import Showreel from './Showreel.jsx';
 import Quotes from './Quotes.jsx';
 import { DotText, DotWord, DotTitle } from './DotText.jsx';
 import { GlassCard, Grain, useGlassEntrance, useTilt } from './GlassCard.jsx';
+import { initScrollFx, onScrollFrame, motionOK } from './scrollfx.js';
 import { profile, projects, stackCards, toolkit, marquee, experience, credentials, quotes, offers, realShot } from './data.js';
 
 const BASE = import.meta.env.BASE_URL;
@@ -203,8 +204,9 @@ function Preview({ p, className = '', d, rise = true }) {
 function ProjectPreview({ p }) {
   const l = previewLink(p);
   return (
-    <div className="preview-wrap rise" style={{ '--d': '.15s' }}>
+    <div className="preview-wrap">
       <Preview p={p} rise={false} />
+      <span className="scanfx" aria-hidden="true" />
       <a className="preview-caption" href={l.href} target="_blank" rel="noreferrer">{l.label} <Arrow size={12} /></a>
     </div>
   );
@@ -493,7 +495,7 @@ function Collapse({ id, open, label, children }) {
 function Project({ p, i, after }) {
   return (
     <article className={`project ${i % 2 ? 'flip' : ''}`} id={`work-${p.id}`}>
-      <div className="project-text rise">
+      <div className="project-text">
         <p className="kicker">
           <span className="mono">{p.num}</span> {p.kicker}
           {!p.demo && <span className="kicker-status"> · DEMO OFFLINE</span>}
@@ -872,6 +874,48 @@ function Footer() {
   );
 }
 
+/* Work progress: a small fixed indicator at the left edge while the Work section is on screen (desktop,
+   motion allowed): "01 / 06", a vertical orange progress line and the project numbers (click to jump). */
+function WorkProgress() {
+  const root = useRef(null), bar = useRef(null), count = useRef(null), btns = useRef([]);
+  const N = projects.length, pad = (v) => String(v).padStart(2, '0');
+  useEffect(() => {
+    if (!motionOK()) return undefined;
+    const work = document.getElementById('work');
+    const items = projects.map((p) => document.getElementById(`work-${p.id}`));
+    let on = false, last = -1;
+    return onScrollFrame(() => {
+      const vh = window.innerHeight, r = work.getBoundingClientRect();
+      const inView = r.top < vh * 0.5 && r.bottom > vh * 0.5;
+      if (inView !== on) { on = inView; root.current.classList.toggle('is-on', on); }
+      if (!on) return false;
+      bar.current.style.transform = `scaleY(${Math.min(1, Math.max(0, (vh * 0.5 - r.top) / r.height)).toFixed(4)})`;
+      let a = 0;
+      items.forEach((el, i) => { if (el && el.getBoundingClientRect().top < vh * 0.5) a = i; });
+      if (a !== last) {
+        last = a;
+        count.current.textContent = `${pad(a + 1)} / ${pad(N)}`;
+        btns.current.forEach((b, i) => (i === a ? b.setAttribute('aria-current', 'true') : b.removeAttribute('aria-current')));
+      }
+      return false;
+    });
+  }, [N]);
+  const jump = (id) => document.getElementById(`work-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  return (
+    <nav className="wp" ref={root} aria-label="Projects">
+      <span className="wp-count" ref={count}>01 / {pad(N)}</span>
+      <div className="wp-rail">
+        <span className="wp-line" aria-hidden="true"><i ref={bar} /></span>
+        <ol>
+          {projects.map((p, i) => (
+            <li key={p.id}><button type="button" ref={(el) => (btns.current[i] = el)} onClick={() => jump(p.id)} aria-label={`${p.num} ${p.title}`}>{p.num}</button></li>
+          ))}
+        </ol>
+      </div>
+    </nav>
+  );
+}
+
 function BottomNav() {
   const [show, setShow] = useState(false);
   // shown after the hero, hidden whenever the footer is on screen, so it never covers it
@@ -895,6 +939,7 @@ function BottomNav() {
 
 function App() {
   useRiseOnScroll();
+  useEffect(() => initScrollFx(), []); // shared scroll effects (after every section has rendered)
   return (
     <>
       <a className="skip-link" href="#work">Skip to work</a>
@@ -911,6 +956,7 @@ function App() {
       </main>
       <Footer />
       <BottomNav />
+      <WorkProgress />
       <CvViewer />
       <CursorLight />
     </>

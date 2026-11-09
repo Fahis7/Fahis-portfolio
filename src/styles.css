@@ -259,7 +259,10 @@ html[data-theme="dark"] .nav.is-scrolled { background: rgba(11, 13, 16, 0.72); b
    (the portrait's --p lift needs its own transform) */
 @keyframes heroIn { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
 .stage .eyebrow, .stage .hero-title, .stage .hero-side, .stage .me { animation: heroIn 0.9s ease-out backwards; }
-.stage .me, .stage .eyebrow { animation-delay: 0.05s; } .stage .hero-title { animation-delay: 0.12s; } .stage .hero-side { animation-delay: 0.22s; }
+.stage .me, .stage .eyebrow { animation-delay: 0.05s; }
+/* while the preloader shows (index.html), the hero entrance waits at its first frame */
+html.is-preloading .stage .eyebrow, html.is-preloading .stage .hero-title, html.is-preloading .stage .hero-side, html.is-preloading .stage .me,
+html.is-preloading .belt, html.is-preloading .scan, html.is-preloading .badge { animation-play-state: paused; } .stage .hero-title { animation-delay: 0.12s; } .stage .hero-side { animation-delay: 0.22s; }
 
 /* belt */
 .belt {
@@ -1020,3 +1023,88 @@ html.cv-lock { overflow: hidden; }
 .tk-dlabel { font: 500 11px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255, 255, 255, 0.5); }
 .tk-domains ul { display: flex; flex-wrap: wrap; gap: 8px; }
 .tk-domains li { padding: 6px 11px; border-radius: 999px; border: 1px solid rgba(224, 86, 122, 0.7); color: #fff; font: 400 11.5px var(--mono); }
+
+/* ═════════════ SCROLL EFFECTS (scrollfx.js) ═════════════
+   Every "before" state is scoped to html.fx-ready, which is only set when motion is allowed. */
+@keyframes fxUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes fxFromL { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
+@keyframes fxFromR { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+@keyframes fxPop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: none; } }
+@keyframes fxDot { from { opacity: 0; } }
+@keyframes fxFade { from { opacity: 0; } to { opacity: 1; transform: none; } }
+@keyframes fxMask {
+  from { opacity: 1; clip-path: inset(0 0 100% 0); transform: translateY(0.3em); }
+  to { opacity: 1; clip-path: inset(-10% -2% -25% -2%); transform: none; }
+}
+/* project preview: scanned in left → right behind an orange scanner line (the shadow stays outside the clip) */
+@keyframes fxScan { from { clip-path: inset(-40px 100% -60px -40px); } to { clip-path: inset(-40px -40px -60px -40px); } }
+@keyframes fxScanMove { from { opacity: 1; transform: translateX(-100%); } to { opacity: 1; transform: none; } }
+@keyframes fxScanOut { to { opacity: 0; } }
+@keyframes fxSpark { 50% { opacity: 0.35; } }
+
+.project-text > :nth-child(2) { --n: 1; } .project-text > :nth-child(3) { --n: 2; } .project-text > :nth-child(4) { --n: 3; }
+.project-text > :nth-child(5) { --n: 4; } .project-text > :nth-child(6) { --n: 5; } .project-text > :nth-child(7) { --n: 6; }
+.project-text > :nth-child(8) { --n: 7; } .project-text > :nth-child(9) { --n: 8; }
+.project-text .chips li:nth-child(2) { --c: 1; } .project-text .chips li:nth-child(3) { --c: 2; } .project-text .chips li:nth-child(4) { --c: 3; }
+.project-text .chips li:nth-child(5) { --c: 4; } .project-text .chips li:nth-child(6) { --c: 5; } .project-text .chips li:nth-child(7) { --c: 6; }
+
+html.fx-ready .fx-proj .project-text > * { opacity: 0; }
+html.fx-ready .fx-proj.fx-in .project-text > * { animation: fxUp 0.6s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(0.1s + var(--n, 0) * 0.06s); }
+html.fx-ready .fx-proj.fx-in .project-text > .kicker { animation-name: fxFromL; animation-delay: 0s; }
+html.fx-ready .fx-proj.flip.fx-in .project-text > .kicker { animation-name: fxFromR; }
+html.fx-ready .fx-proj.fx-in .project-text > .chips { animation: none; opacity: 1; }
+html.fx-ready .fx-proj .project-text > .chips li { opacity: 0; }
+html.fx-ready .fx-proj.fx-in .project-text > .chips li { animation: fxPop 0.35s cubic-bezier(.2, .9, .3, 1.3) both; animation-delay: calc(0.42s + var(--c, 0) * 0.03s); }
+html.fx-ready .fx-proj:not(.fx-in) .dot-title circle { opacity: 0; }
+html.fx-ready .fx-proj.fx-in .dot-title circle { animation: fxDot 0.25s ease-out both; animation-delay: calc(0.25s + var(--dl, 0s)); }
+
+.preview-wrap { position: relative; }
+.scanfx { display: none; }
+html.fx-ready .scanfx { display: block; position: absolute; z-index: 3; left: 0; top: 0; width: 100%; aspect-ratio: 1.57; pointer-events: none; opacity: 0; }
+html.fx-ready .scanfx::after {
+  content: ''; position: absolute; right: -2px; top: -3%; bottom: -3%; width: 3px; border-radius: 3px;
+  background: linear-gradient(180deg, #ff7a3c, var(--hot) 12%, var(--hot) 88%, #ff7a3c);
+  box-shadow: 0 0 10px 2px rgba(255, 90, 31, 0.85), 0 0 34px 10px rgba(255, 90, 31, 0.38);
+}
+html.fx-ready .scanfx::before {
+  content: ''; position: absolute; right: 6px; top: 18%; width: 2px; height: 2px; background: #ff8a3d;
+  box-shadow: -7px 16px 0 #ffb06a, -13px -10px 0 #ff5a1f, -4px 44px 0 #ffd9b5, -17px 70px 0 #ff6b2c,
+    -9px 104px 0 #ff8a3d, -21px 138px 0 #ffb06a, -6px 172px 0 #ff5a1f, -14px 206px 0 #ffd9b5;
+  animation: fxSpark 0.14s steps(2) infinite;
+}
+html.fx-ready .fx-proj:not(.fx-in) .preview { clip-path: inset(-40px 100% -60px -40px); }
+html.fx-ready .fx-proj.fx-in .preview { animation: fxScan 0.9s cubic-bezier(.65, 0, .25, 1) 0.15s both; }
+html.fx-ready .fx-proj.fx-in .scanfx { animation: fxScanMove 0.9s cubic-bezier(.65, 0, .25, 1) 0.15s both, fxScanOut 0.25s linear 1.05s forwards; }
+/* parallax: the screenshot moves slower than the page (--py from scrollfx.js), scaled so no edge shows */
+html.fx-ready .project .preview :is(img.shot, .shot-video, .ms) { transform: translateY(calc(var(--py, 0) * 6%)) scale(1.12); will-change: transform; }
+/* images fade from grayscale + blur as they enter */
+html.fx-ready .fx-proj .preview :is(img.shot, .ms) { transition: filter 1s ease 0.4s; }
+html.fx-ready .fx-proj:not(.fx-in) .preview :is(img.shot, .ms) { filter: grayscale(1) blur(4px); }
+html.fx-ready .xp-icon { transition: filter 0.8s ease 0.2s; }
+html.fx-ready .xp-item.rise:not(.in) .xp-icon { filter: grayscale(1) blur(4px); }
+
+/* section headings: the label fades in, the h2 reveals from a clip mask; LED words light up dot by dot */
+html.fx-ready .section-label.rise.in { animation-name: fxFade; }
+html.fx-ready :is(h2.big, h2.partner-title).rise { opacity: 1; transform: none; clip-path: inset(0 0 100% 0); }
+html.fx-ready :is(h2.big, h2.partner-title).rise.in { animation: fxMask 0.8s cubic-bezier(.2, .8, .2, 1) both; animation-delay: var(--d, 0s); }
+html.fx-ready .rise:not(.in) .dot-word circle { opacity: 0; }
+html.fx-ready .rise.in .dot-word circle { animation: fxDot 0.25s ease-out both; animation-delay: calc(var(--d, 0s) + 0.35s + var(--dl, 0s)); }
+
+/* Work progress indicator (WorkProgress in main.jsx): desktop only, shown while Work is on screen */
+.wp { display: none; }
+@media (min-width: 1100px) and (prefers-reduced-motion: no-preference) {
+  .wp {
+    position: fixed; z-index: 40; left: calc(var(--edge) / 2); top: 50%; transform: translate(-50%, -50%);
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+    opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0s 0.3s;
+  }
+  .wp.is-on { opacity: 1; visibility: visible; transition: opacity 0.3s ease; }
+  .wp-count { font: 500 10.5px var(--mono); letter-spacing: 0.04em; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .wp-rail { display: flex; gap: 10px; }
+  .wp-line { position: relative; width: 1px; background: var(--line); }
+  .wp-line i { position: absolute; inset: 0; background: var(--hot); transform-origin: 50% 0; transform: scaleY(0); }
+  .wp ol { display: grid; gap: 8px; }
+  .wp button { padding: 0; border: 0; background: none; cursor: pointer; font: 500 10.5px var(--mono); color: var(--muted); transition: color 0.2s; }
+  .wp button:hover, .wp button[aria-current="true"] { color: var(--ink); }
+  .wp button[aria-current="true"] { color: var(--hot-btn); }
+}

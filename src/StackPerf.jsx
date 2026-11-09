@@ -223,7 +223,7 @@ export default function StackPerf({ cards }) {
       <FilterDefs />
       <header className="sp-masthead">
         <div>
-          <div className="section-label"><span>04</span>Stack</div>
+          <div className="section-label"><span>03</span>Stack</div>
           <h2 className="sp-headline" id="sp-headline">
             <span className="sp-line">Built for <span className="sp-dot-word" aria-label="Production"><DotText text="Production" pitchX={4} radius={1.8} /></span></span>
             <span className="sp-line">Across the Stack</span>

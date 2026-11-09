@@ -43,6 +43,12 @@ export const projects = [
     tagline: 'AI-powered KYC / AML compliance platform',
     role: 'Architecture → production',
     desc: 'A multi-tenant compliance platform for compliance officers and audit firms in the UAE: automated PEP, sanctions, UAE Local List and adverse-media screening, an MLRO review workflow, verifiable KYC certificates and a full training LMS, in English and Arabic.',
+    badge: 'NEW',
+    highlights: [
+      'Automated PEP, sanctions, UAE Local List and adverse-media screening with risk bands',
+      'Row-Level Security isolation across tenants, with 3 Postgres roles',
+      'Verifiable PDF certificates, MLRO review queue and full Arabic / English RTL',
+    ],
     metrics: [
       { value: '4', label: 'screening lists' },
       { value: '3', label: 'Postgres roles (RLS)' },

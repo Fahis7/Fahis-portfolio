@@ -400,9 +400,6 @@ em { font-style: italic; }
 @keyframes marquee { to { transform: translateX(-50%); } }
 
 /* ═════════════ FEATURED (AxisKYC) ═════════════ */
-.featured-head { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 6vw; align-items: end; margin-bottom: 44px; }
-.featured-head .big { margin-top: 14px; }
-.featured-intro p { font-size: var(--section-text); line-height: 1.65; color: var(--body); }
 
 .preview {
   position: relative; display: block; aspect-ratio: 1.57; border-radius: 28px; overflow: hidden; container-type: inline-size;
@@ -477,6 +474,18 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
 .project.flip .project-text { order: 2; }
 .project-text .kicker .mono { color: var(--hot-btn); margin-right: 6px; }
 .kicker-status { color: var(--muted); }
+.kicker-tag {
+  display: inline-block; margin-left: 8px; padding: 2px 7px; border-radius: 999px; vertical-align: 1px;
+  background: var(--hot-soft); color: var(--hot-btn); font: 500 10px var(--mono); letter-spacing: 0.06em;
+}
+/* collapsible case study under a project entry (AxisKYC) */
+.case-toggle {
+  display: inline-block; margin-top: 20px; padding: 0 0 2px; border: 0; border-bottom: 1px solid var(--pill-line); background: none; cursor: pointer;
+  font: 500 13.5px var(--sans); color: var(--body); transition: color 0.25s, border-color 0.25s;
+}
+.case-toggle:hover { color: var(--hot-btn); border-color: var(--hot-btn); }
+/* clip only vertically while the height animates, so the full-bleed strips inside keep their width */
+.case { overflow-x: visible; overflow-y: clip; transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
 .serif-title { font: 400 clamp(40px, 4.6vw, 64px) / 1 var(--serif); letter-spacing: -0.03em; color: var(--ink); margin: 12px 0 10px; }
 .lede { font: italic 400 20px var(--serif); color: var(--navy-2); opacity: 0.75; margin-bottom: 16px; }
 .project-text > p:not(.kicker):not(.lede) { font-size: var(--section-text); line-height: 1.65; color: var(--body); margin-bottom: 14px; }
@@ -589,7 +598,7 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
 
 /* ═════════════ RESPONSIVE ═════════════ */
 @media (max-width: 1000px) {
-  .featured-head, .project, .project.flip, .about-grid { grid-template-columns: 1fr; gap: 32px; }
+  .project, .project.flip, .about-grid { grid-template-columns: 1fr; gap: 32px; }
   .project.flip .project-text { order: 0; }
   .project .preview-wrap { order: -1; }
   .features { grid-template-columns: 1fr; }

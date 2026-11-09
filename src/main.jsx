@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 // Self-hosted fonts
@@ -26,7 +26,6 @@ import { profile, projects, stackCards, marquee, experience, quotes, realShot } 
 const BASE = import.meta.env.BASE_URL;
 const MAILTO = `mailto:${profile.email}`;
 const featured = projects[0];
-const others = projects.slice(1);
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ───────────── hooks ───────────── */
@@ -224,27 +223,10 @@ function Marquee({ items, direction = 'left', speed = 40, className = '' }) {
   );
 }
 
-function Featured() {
-  const p = featured;
+/* AxisKYC case study: the blocks that used to make up the Featured section, unchanged. */
+function CaseStudy({ p }) {
   return (
-    <section className="section featured" id="work">
-      <div className="section-label rise"><span>01</span>Featured work</div>
-      <div className="featured-head" id={`work-${p.id}`}>
-        <div className="rise" style={{ '--d': '.1s' }}>
-          <p className="kicker">{p.kicker} · NEW</p>
-          <h2 className="big t-head"><DotWord text={p.title} lead /><br />{p.tagline}.</h2>
-        </div>
-        <div className="featured-intro rise" style={{ '--d': '.2s' }}>
-          <p className="t-copy">{p.desc}</p>
-          <div className="btn-row">
-            {p.demo && <Button href={p.demo} external>Visit {shortUrl(p.demo)} <Arrow /></Button>}
-            <Button href={p.github} variant="secondary" external>GitHub</Button>
-          </div>
-        </div>
-      </div>
-
-      <Preview p={p} className="preview-xl" d=".3s" />
-
+    <>
       <div className="metrics rise" style={{ '--d': '.1s' }}>
         {p.metrics.map((m) => <div key={m.label}><strong>{m.value}</strong><span>{m.label}</span></div>)}
         <div><strong>Real PG</strong><span>integration tests in CI</span></div>
@@ -275,39 +257,99 @@ function Featured() {
 
       <ul className="sr-only" aria-label="AxisKYC tech stack">{p.stack.map((s) => <li key={s}>{s}</li>)}</ul>
       <Marquee items={p.stack} direction="right" speed={50} className="marquee--bleed rise" />
-    </section>
+    </>
   );
 }
 
-function Project({ p, i }) {
+// Height-animated disclosure. Closed = `hidden` (still in the DOM); 0.5 s height animation, instant with reduced motion.
+function Collapse({ id, open, label, children }) {
+  const ref = useRef(null), mounted = useRef(false);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!mounted.current) { mounted.current = true; return; }
+    const instant = reducedMotion();
+    const finish = (fn) => {
+      const end = (e) => { if (e && e.target !== el) return; el.removeEventListener('transitionend', end); fn(); };
+      el.addEventListener('transitionend', end);
+      return end;
+    };
+    if (open) {
+      el.hidden = false;
+      if (!instant) {
+        const h = el.scrollHeight;
+        el.style.height = '0px';
+        void el.offsetHeight;
+        el.style.height = `${h}px`;
+        finish(() => { el.style.height = ''; });
+      }
+      // bring the top of the case study into view if it opened below the fold
+      const top = el.getBoundingClientRect().top;
+      if (top > window.innerHeight * 0.8) window.scrollBy({ top: top - window.innerHeight * 0.35, behavior: instant ? 'auto' : 'smooth' });
+    } else if (instant) {
+      el.hidden = true;
+    } else {
+      el.style.height = `${el.scrollHeight}px`;
+      void el.offsetHeight;
+      el.style.height = '0px';
+      finish(() => { el.hidden = true; el.style.height = ''; });
+    }
+  }, [open]);
+  return <div id={id} ref={ref} className="case" role="region" aria-label={label} hidden>{children}</div>;
+}
+
+function Project({ p, i, after }) {
   return (
     <article className={`project ${i % 2 ? 'flip' : ''}`} id={`work-${p.id}`}>
       <div className="project-text rise">
-        <p className="kicker"><span className="mono">{p.num}</span> {p.kicker}{!p.demo && <span className="kicker-status"> · DEMO OFFLINE</span>}</p>
+        <p className="kicker">
+          <span className="mono">{p.num}</span> {p.kicker}
+          {!p.demo && <span className="kicker-status"> · DEMO OFFLINE</span>}
+          {p.badge && <span className="kicker-tag">{p.badge}</span>}
+        </p>
         <h3 className="serif-title">{p.title}</h3>
         <p className="lede">{p.tagline}</p>
         <p>{p.desc}</p>
         <ul className="ticks">{p.highlights.map((h) => <li key={h}>{h}</li>)}</ul>
-        <ul className="chips small">{p.stack.map((s) => <li key={s}>{s}</li>)}</ul>
+        <ul className="chips small">{p.stack.slice(0, 6).map((s) => <li key={s}>{s}</li>)}</ul>
         <div className="btn-row">
           {p.demo && <Button href={p.demo} external>Open live <Arrow /></Button>}
           <Button href={p.github} variant="secondary" external>GitHub</Button>
         </div>
+        {after}
       </div>
       <ProjectPreview p={p} />
     </article>
   );
 }
 
-function MoreWork() {
+// A project entry with its full case study folded underneath (AxisKYC).
+function ProjectWithCase({ p, i }) {
+  const [open, setOpen] = useState(false);
+  const id = `case-${p.id}`;
+  const toggle = (
+    <button type="button" className="case-toggle" aria-expanded={open} aria-controls={id} onClick={() => setOpen((o) => !o)}>
+      {open ? 'Close case study ↑' : 'Read the full case study ↓'}
+    </button>
+  );
   return (
-    <section className="section more">
+    <div className="project-group">
+      <Project p={p} i={i} after={toggle} />
+      <Collapse id={id} open={open} label={`${p.title} case study`}><CaseStudy p={p} /></Collapse>
+    </div>
+  );
+}
+
+function Work() {
+  return (
+    <section className="section more" id="work">
       <div className="more-head">
-        <div className="section-label rise"><span>02</span>More builds</div>
-        <h2 className="big rise" style={{ '--d': '.1s' }}>Four more <em>builds.</em></h2>
+        <div className="section-label rise"><span>01</span>Work</div>
+        <h2 className="big t-head rise" style={{ '--d': '.1s' }}>Five builds, four <DotWord text="live." /></h2>
         <a className="hero-link showreel-link rise" style={{ '--d': '.2s' }} href={`${BASE}work.html`}>Open the full showreel <Arrow size={12} /></a>
       </div>
-      <div className="projects">{others.map((p, i) => <Project key={p.id} p={p} i={i} />)}</div>
+      <div className="projects">
+        {projects.map((p, i) => (p.features ? <ProjectWithCase key={p.id} p={p} i={i} /> : <Project key={p.id} p={p} i={i} />))}
+      </div>
     </section>
   );
 }
@@ -315,7 +357,7 @@ function MoreWork() {
 function About() {
   return (
     <section className="section about" id="about">
-      <div className="section-label rise"><span>03</span>About</div>
+      <div className="section-label rise"><span>02</span>About</div>
       <div className="about-grid">
         <h2 className="big t-head rise" style={{ '--d': '.1s' }}>Build the system <DotWord text="underneath," /><br />ship the interface on top.</h2>
         <div className="about-body">
@@ -338,7 +380,7 @@ function About() {
 function Experience() {
   return (
     <section className="section section--fill experience" id="experience">
-      <div className="section-label rise"><span>05</span>Experience</div>
+      <div className="section-label rise"><span>04</span>Experience</div>
       <h2 className="big rise" style={{ '--d': '.1s' }}>From first commit to <em>full ownership.</em></h2>
       <ol className="timeline">
         {experience.map((x, i) => (
@@ -360,7 +402,7 @@ function WorkTogether() {
   return (
     <section className="section section--fill together">
       <div className="together-head">
-        <div className="section-label rise"><span>06</span>Work together</div>
+        <div className="section-label rise"><span>05</span>Work together</div>
         <h2 className="big rise" style={{ '--d': '.1s' }}>Two ways to <em>work together.</em></h2>
       </div>
       <div className="together-grid">
@@ -414,7 +456,7 @@ function Partner() {
   }, []);
   return (
     <section className="section section--fill partner" id="contact" ref={boxRef}>
-      <p className="kicker rise">07 · CONTACT</p>
+      <p className="kicker rise">06 · CONTACT</p>
       <h2 className="partner-title rise" style={{ '--d': '.1s' }}>Let’s build <em>something.</em></h2>
       <p className="partner-sub rise" style={{ '--d': '.2s' }}>Roles, products, AI architecture, compliance tech: send me a message.</p>
       <a href={MAILTO} className="btn btn-primary btn-avatar rise" style={{ '--d': '.3s' }}>
@@ -509,9 +551,8 @@ function App() {
       <main>
         <Stage />
         <Marquee items={marquee} />
-        <Featured />
+        <Work />
         <Showreel projects={projects} />
-        <MoreWork />
         <About />
         <StackPerf cards={stackCards} />
         <Experience />

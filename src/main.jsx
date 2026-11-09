@@ -18,7 +18,7 @@ import MiniSite from './MiniSites.jsx';
 import Portrait from './Portrait.jsx';
 import Showreel from './Showreel.jsx';
 import Quotes from './Quotes.jsx';
-import { DotWord, DotTitle } from './DotText.jsx';
+import { DotText, DotWord, DotTitle } from './DotText.jsx';
 import { GlassCard, useGlassEntrance } from './GlassCard.jsx';
 import { profile, projects, stackCards, marquee, experience, credentials, quotes, offers, realShot } from './data.js';
 
@@ -485,26 +485,56 @@ function About() {
   );
 }
 
+// Experience: sticky intro on the left, role cards on the right along a spine whose orange fill
+// follows the scroll (passive, rAF-throttled). Reduced motion: the spine is simply full.
 function Experience() {
+  const list = useRef(null);
+  useEffect(() => {
+    const el = list.current;
+    if (reducedMotion()) { el.style.setProperty('--xp', '1'); return; }
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const r = el.getBoundingClientRect();
+      const p = Math.min(1, Math.max(0, (window.innerHeight * 0.6 - r.top) / r.height));
+      el.style.setProperty('--xp', p.toFixed(4));
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll); };
+  }, []);
   return (
     <section className="section section--fill experience" id="experience">
-      <div className="section-label rise"><span>04</span>Experience</div>
-      <h2 className="big rise" style={{ '--d': '.1s' }}>From first commit to <em>full ownership.</em></h2>
-      <ol className="timeline">
-        {experience.map((x, i) => (
-          <li key={x.title} className="rise" style={{ '--d': `${0.15 + i * 0.08}s` }}>
-            <span className="mono">{x.time}</span>
-            <div>
-              <h3>{x.title}</h3>
-              {x.company && <p className="company">{x.company}</p>}
-              <p>{x.desc}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
-      <ul className="credentials rise">
-        {credentials.map((c) => <li key={c.label}><span className="kicker">{c.label}</span>{c.text}</li>)}
-      </ul>
+      <div className="xp-grid">
+        <div className="xp-head rise">
+          <div className="section-label"><span>04</span>Experience</div>
+          <h2 className="big t-head">From first commit to full <DotWord text="ownership." /></h2>
+          <p className="xp-intro t-copy">Four roles, from backend internship to sole engineer of a live compliance SaaS.</p>
+        </div>
+        <div className="xp-list" ref={list}>
+          <span className="xp-spine" aria-hidden="true"><i /></span>
+          <ol className="xp-cards">
+            {experience.map((x, i) => (
+              <li key={x.title} className="xp-card rise" style={{ '--d': `${i * 0.08}s` }}>
+                <div className="xp-top">
+                  <span className="xp-date">{x.time}</span>
+                  {x.current && <span className="xp-now"><DotText text="NOW" pitchX={4} radius={1.8} /><span className="sr-only">Current role</span></span>}
+                </div>
+                <h3 className="xp-title">{x.title}</h3>
+                {x.company && <p className="xp-company">{x.company}</p>}
+                <p className="xp-desc t-copy">{x.desc}</p>
+                {x.tech && <ul className="chips small" aria-label="Tech">{x.tech.map((t) => <li key={t}>{t}</li>)}</ul>}
+                {x.link && <a className="xp-link" href={x.link}>View project ↘</a>}
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+      <div className="metrics xp-strip rise" style={{ '--n': credentials.length }}>
+        {credentials.map((c) => <div key={c.label}><span className="kicker">{c.label}</span><span className="xp-cred">{c.text}</span></div>)}
+      </div>
     </section>
   );
 }
@@ -586,7 +616,7 @@ function Partner() {
 
 /* Cursor light: a soft orange spotlight that follows the pointer, plus a local highlight on the card under it.
    Fine pointers only, off with reduced motion. One passive, rAF-throttled pointermove listener writes CSS variables. */
-const LIGHT_CARDS = '.preview, .sp-card, .panel, .timeline li';
+const LIGHT_CARDS = '.preview, .sp-card, .panel, .xp-card';
 const LIGHT_STRONG = '.reel, .panel-dark';
 function CursorLight() {
   const ref = useRef(null);

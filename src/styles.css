@@ -558,15 +558,37 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
 .quotes-btn:hover { border-color: var(--hot-btn); color: var(--hot-btn); }
 
 /* ═════════════ EXPERIENCE ═════════════ */
-.timeline { margin-top: 44px; }
-.timeline li { display: grid; grid-template-columns: 200px 1fr; gap: 30px; padding: 30px 0; border-top: 1px solid var(--line); }
-.timeline li > span { font-size: 12.5px; color: var(--hot-btn); padding-top: 8px; }
-.timeline h3 { font: 500 30px var(--sans); color: var(--ink); letter-spacing: -0.01em; margin-bottom: 10px; }
-.timeline .company { font: 500 12px var(--mono); color: var(--muted); margin-bottom: 10px; }
-.timeline p { font-size: var(--section-text); line-height: 1.65; color: var(--body); max-width: 68ch; }
-.credentials { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 40px; margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--line); }
-.credentials li { font-size: 15px; line-height: 1.5; color: var(--copy); }
-.credentials .kicker { display: block; margin-bottom: 6px; }
+.xp-grid { display: grid; grid-template-columns: minmax(0, 35fr) minmax(0, 65fr); gap: clamp(32px, 5vw, 80px); align-items: start; }
+.xp-head { position: sticky; top: 96px; }
+.xp-intro { margin-top: 18px; font-size: var(--section-text); }
+/* spine: 1px line down the cards column, orange fill follows the scroll (--xp, set in Experience) */
+.xp-list { position: relative; padding-left: 36px; --xp: 0; }
+.xp-spine { position: absolute; left: 8px; top: 8px; bottom: 8px; width: 1px; background: var(--line); }
+.xp-spine i { position: absolute; inset: 0; background: var(--hot); transform-origin: 50% 0; transform: scaleY(var(--xp)); }
+.xp-cards { display: grid; gap: 16px; }
+.xp-card { position: relative; padding: 28px 32px; border-radius: 28px; background: var(--paper); box-shadow: var(--shadow-card); }
+.xp-card::before {
+  content: ''; position: absolute; left: -32.5px; top: 34px; width: 9px; height: 9px; border-radius: 50%;
+  background: var(--hot); box-shadow: 0 0 0 4px var(--bg);
+}
+.xp-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.xp-date { padding: 6px 11px; border-radius: 999px; background: var(--bg); box-shadow: var(--shadow-secondary); font: 400 11.5px var(--mono); color: var(--body); }
+.xp-now { display: block; height: 14px; color: var(--dot); }
+.xp-now svg { display: block; height: 100%; width: auto; overflow: visible; }
+.xp-title { font: 500 22px / 1.25 var(--sans); letter-spacing: -0.01em; color: var(--ink); }
+.xp-company { margin-top: 6px; font: 500 11.5px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.xp-desc { margin-top: 14px; font-size: var(--section-text); max-width: 68ch; }
+.xp-card .chips.small { margin-top: 18px; }
+.xp-link {
+  display: block; width: fit-content; margin: 18px 0 0 auto; padding-bottom: 2px; border-bottom: 1px solid var(--pill-line);
+  font: 500 13px var(--sans); color: var(--body); transition: color 0.25s, border-color 0.25s;
+}
+.xp-link:hover { color: var(--hot-btn); border-color: var(--hot-btn); }
+/* education + programme: the metrics strip style */
+.xp-strip { margin-top: clamp(48px, 7vw, 88px); }
+.xp-strip div { flex-direction: column; align-items: flex-start; gap: 6px; }
+.xp-strip .kicker { font: 500 11.5px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.xp-strip .xp-cred { font: 400 15px / 1.5 var(--sans); color: var(--copy); }
 
 /* ═════════════ WORK TOGETHER ═════════════ */
 .together { display: grid; grid-template-columns: 0.75fr 1.25fr; gap: 48px; align-items: start; }
@@ -663,12 +685,19 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
   /* phones: Explore + View CV + Download on one row */
   .hero-ctas .hero-cv { height: 34px; padding: 0 14px; font-size: 12.5px; }
   .hero-dl { font-size: 12.5px; }
-  .credentials { grid-template-columns: 1fr; }
+  .xp-grid { grid-template-columns: 1fr; }
+  .xp-head { position: static; }
+  .xp-list { padding-left: 24px; }
+  .xp-spine { left: 12px; }
+  .xp-card { padding: 22px; }
+  .xp-card::before { left: -16.5px; top: 28px; }
+  .metrics.xp-strip { grid-template-columns: 1fr; }
+  .metrics.xp-strip div { border-left: 0; padding-inline: 0; }
+  .metrics.xp-strip div + div { border-top: 1px solid var(--line); }
   .codes { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 30vw); mask-image: linear-gradient(90deg, transparent 0, #000 30vw); }
   .preview { border-radius: 18px; }
   .preview-url { right: 10px; bottom: 10px; padding: 6px 10px; font-size: 10.5px; }
   .metrics div { padding: 16px; }
-  .timeline li { grid-template-columns: 1fr; gap: 8px; }
   .panel { padding: 28px 24px 30px; border-radius: 28px; }
   .together-grid { flex-direction: column; align-items: center; --card-w: min(100cqw, 429px); }
   .footer { flex-direction: column; }
@@ -719,9 +748,9 @@ html[data-theme="dark"] { --spot-card: 0.2; }
 
 /* cards: one orange radial at the cursor, shown at --spot-edge on a 1px ring (so the edge nearest the cursor glows)
    and at --spot-card inside, via a two-layer mask */
-.has-light :where(.preview, .sp-card, .panel, .timeline li) { position: relative; }
+.has-light :where(.preview, .sp-card, .panel, .xp-card) { position: relative; }
 .has-light :where(.panel-dark, .sp-card) { --spot-card: 0.2; }
-.has-light :is(.preview, .sp-card, .panel, .timeline li)::after {
+.has-light :is(.preview, .sp-card, .panel, .xp-card)::after {
   --fill: rgba(0, 0, 0, calc(var(--spot-card) / var(--spot-edge)));
   content: ''; position: absolute; inset: 0; z-index: 3; padding: 1px; border-radius: inherit; pointer-events: none;
   opacity: 0; transition: opacity 0.3s ease;
@@ -731,7 +760,7 @@ html[data-theme="dark"] { --spot-card: 0.2; }
   mask: linear-gradient(var(--fill) 0 0), linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: add, exclude;
 }
-.has-light :is(.preview, .sp-card, .panel, .timeline li):hover::after { opacity: 1; }
+.has-light :is(.preview, .sp-card, .panel, .xp-card):hover::after { opacity: 1; }
 
 /* ═════════════ TYPOGRAPHY (Stack section style) ═════════════
    Headings: Inter 400, +0.015em, line-height 1.223, one LED dot accent word (DotWord).

@@ -432,25 +432,33 @@ export const marquee = ['Row-Level Security', 'RAG pipelines', 'Vision AI', 'KYC
 // Tip: recruiters scan for company names + dates. Add `company` when you can.
 export const experience = [
   {
-    time: '2026 to present', title: 'AI Full Stack Developer / Lead Engineer', company: 'AM Audit, Abdulla Al Mulla Auditing & Accounting',
+    time: '2026 to present', current: true, link: '#work-axiskyc',
+    tech: ['Django', 'PostgreSQL RLS', 'Next.js 16', 'React 19', 'TypeScript', 'Celery', 'Redis', 'Claude AI'],
+    title: 'AI Full Stack Developer / Lead Engineer', company: 'AM Audit, Abdulla Al Mulla Auditing & Accounting',
     desc: 'Sole engineer behind AxisKYC, a live multi-tenant AML/KYC compliance SaaS for UAE compliance firms: PostgreSQL RLS, three database roles, sanctions / PEP / adverse-media screening, Claude Vision document OCR and four role-based portals.',
   },
   {
-    time: 'May to Jun 2026', title: 'Full Stack AI Developer', company: 'PropAI OS, Zero Accounting, Dubai',
+    time: 'May to Jun 2026', link: '#work-propai',
+    tech: ['Django 5', 'React 19', 'Groq Llama 4', 'pgvector', 'Celery', 'Docker'],
+    title: 'Full Stack AI Developer', company: 'PropAI OS, Zero Accounting, Dubai',
     desc: 'Vision-AI maintenance triage, a smart rent pricing engine on live Dubai market data, and a pgvector RAG concierge in a multi-tenant SaaS with four portals and eight JWT roles.',
   },
   {
-    time: 'Feb to Apr 2026', title: 'Frontend Developer & AI Integration', company: 'Seek & Sync HR Consultancy, Abu Dhabi',
+    time: 'Feb to Apr 2026', link: '#work-seek',
+    tech: ['Next.js 14', 'TypeScript', 'Claude Haiku', 'Supabase', 'pgvector'],
+    title: 'Frontend Developer & AI Integration', company: 'Seek & Sync HR Consultancy, Abu Dhabi',
     desc: 'Shipped a live HR consultancy platform with Claude Haiku CV parsing, vector matching on Supabase and automated recruiter alerts.',
   },
   {
-    time: 'Apr 2025 to Jan 2026', title: 'Full Stack Developer Intern', company: 'Bridgeon Solutions LLP, Kerala, India',
+    time: 'Apr 2025 to Jan 2026',
+    tech: ['Django', 'DRF', 'React', 'AWS EC2', 'Nginx', 'GitHub Actions'],
+    title: 'Full Stack Developer Intern', company: 'Bridgeon Solutions LLP, Kerala, India',
     desc: 'Production e-commerce backend in Django REST Framework with JWT, Google OAuth and Firebase auth, deployed on AWS EC2 with Nginx, Gunicorn, SSL and GitHub Actions CI/CD.',
   },
 ];
 
-// Shown in a small row under the experience timeline.
+// Full-bleed strip under the experience cards.
 export const credentials = [
-  { label: 'Education', text: 'Bachelor’s in Computer Application, Calicut University, 2022 to 2025' },
-  { label: 'Programme', text: 'One Million Prompters, Dubai Future Foundation, 2025' },
+  { label: 'Education', text: 'Bachelor’s in Computer Application · Calicut University · 2022–2025' },
+  { label: 'Programme', text: 'One Million Prompters · Dubai Future Foundation · 2025' },
 ];

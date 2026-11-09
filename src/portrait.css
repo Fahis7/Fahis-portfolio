@@ -21,7 +21,7 @@
   background: linear-gradient(90deg, rgba(255, 110, 50, 0.5), transparent); filter: blur(4px);
 }
 .me-tag {
-  position: absolute; z-index: 3; left: 10px; bottom: 9px; padding: 4px 8px 4px 7px; border-radius: 99px;
+  position: absolute; z-index: 3; left: 10px; top: 50%; transform: translateY(-50%); padding: 4px 8px 4px 7px; border-radius: 99px;
   display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;
   font: 500 10px 'IBM Plex Mono', ui-monospace, monospace; letter-spacing: 0.02em; color: #ffd9c4; background: rgba(15, 17, 21, 0.7);
   pointer-events: none; transition: opacity 0.2s ease;
@@ -34,6 +34,6 @@
 
 @media (max-width: 767px) {
   .me { height: auto; width: 124px; border-radius: 14px; }
-  .me-tag { left: 6px; bottom: 6px; padding: 3px 6px 3px 5px; gap: 4px; font-size: 9px; }
+  .me-tag { left: 6px; padding: 3px 6px 3px 5px; gap: 4px; font-size: 9px; }
   .me-dot { width: 5px; height: 5px; }
 }

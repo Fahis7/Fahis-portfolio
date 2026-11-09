@@ -403,6 +403,9 @@ export const stackCards = [
   Full toolkit (Stack section, under the glass cards). Every skill from the CV, by group.
   `wide` spans the full grid width with crimson-outlined chips.
 */
+// The tab the toolkit panel opens on, by group key (the label lowercased, e.g. 'AI / LLM' → 'ai_llm').
+export const toolkitDefaultTab = 'ai_llm';
+
 export const toolkit = [
   { label: 'Languages', items: ['Python', 'TypeScript', 'JavaScript', 'SQL'] },
   { label: 'AI / LLM', items: ['Claude API (Haiku, Vision)', 'Groq Llama 4 Vision', 'Llama 3.3 70B', 'OpenAI GPT-4', 'Hugging Face Transformers', 'RAG pipelines', 'pgvector embeddings', 'Vector search', 'Document OCR (Tesseract, MRZ)', 'CV parsing / NLP', 'Prompt engineering', 'AI evaluation'] },

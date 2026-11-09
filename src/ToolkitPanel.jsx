@@ -4,7 +4,7 @@ import {
   siReact, siNextdotjs, siTailwindcss, siSwr, siFramer, siSupabase, siFirebase, siJsonwebtokens, siDocker, siGithubactions,
   siDigitalocean, siRailway, siVercel, siNetlify, siNginx, siGunicorn, siLetsencrypt, siCloudinary, siCloudflare, siSentry, siVitest,
 } from 'simple-icons'; // CC0; only these icons end up in this chunk
-import { ToolkitView } from './Toolkit.jsx';
+import { ToolkitView, defaultTabIndex } from './Toolkit.jsx';
 
 // Lazy chunk: tab behaviour, logos and the cursor logo trail. Keys are the exact item names in data.js `toolkit`.
 const BRANDS = {
@@ -71,7 +71,7 @@ const brandSvg = (icon) => `<svg viewBox="0 0 24 24" fill="${trailColor(icon.hex
 const lineSvg = (paths) => `<svg viewBox="0 0 24 24" fill="none" stroke="#ff7a3c" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths.map((d) => `<path d="${d}"/>`).join('')}</svg>`;
 
 export default function ToolkitPanel({ toolkit }) {
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(() => defaultTabIndex(toolkit));
   const tabs = useRef([]), term = useRef(null), trail = useRef(null);
 
   // Cursor logo trail (like the contact trail), desktop only, off with reduced motion and on touch.

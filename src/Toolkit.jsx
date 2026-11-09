@@ -1,6 +1,7 @@
 import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import { DotText } from './DotText.jsx';
 import { Grain } from './GlassCard.jsx';
+import { toolkitDefaultTab } from './data.js';
 
 /*
   Full toolkit: one dark terminal-style panel (artwork, the same in both themes).
@@ -10,6 +11,8 @@ import { Grain } from './GlassCard.jsx';
 */
 
 export const groupKey = (label) => label.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+// index of the default tab among the tab groups (Domains isn't a tab); falls back to the first
+export const defaultTabIndex = (toolkit) => Math.max(0, toolkit.filter((g) => !g.wide).findIndex((g) => groupKey(g.label) === toolkitDefaultTab));
 const monogram = (name) => name.replace(/[^A-Za-z0-9]/g, '').slice(0, 2);
 
 // Brand logos are filled simple-icons paths ({ path }); generic tools use line icons ({ line: [d, ...] }).
@@ -92,7 +95,7 @@ export default function Toolkit({ toolkit }) {
     io.observe(ref.current);
     return () => io.disconnect();
   }, []);
-  const shell = <ToolkitView toolkit={toolkit} />;
+  const shell = <ToolkitView toolkit={toolkit} active={defaultTabIndex(toolkit)} />;
   return (
     <div className="toolkit rise" ref={ref}>
       {near ? <Suspense fallback={shell}><Panel toolkit={toolkit} /></Suspense> : shell}

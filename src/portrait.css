@@ -32,12 +32,8 @@
 @keyframes meDot { 50% { opacity: 0.45; transform: scale(0.75); } }
 @media (prefers-reduced-motion: reduce) { .me-dot { animation: none; } }
 
-/* hero layout: portrait beside the eyebrow + headline */
-.hero-left { display: flex; gap: 26px; align-items: center; }
-
 @media (max-width: 767px) {
   .me { height: auto; width: 124px; border-radius: 14px; }
   .me-tag { left: 6px; bottom: 6px; padding: 3px 6px 3px 5px; gap: 4px; font-size: 9px; }
   .me-dot { width: 5px; height: 5px; }
-  .hero-left { gap: 16px; }
 }

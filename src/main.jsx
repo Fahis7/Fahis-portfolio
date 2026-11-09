@@ -21,7 +21,7 @@ import Quotes from './Quotes.jsx';
 import { DotText, DotWord, DotTitle, GLYPHS } from './DotText.jsx';
 import { GlassCard, Grain, useGlassEntrance, useTilt } from './GlassCard.jsx';
 import { initScrollFx, onScrollFrame, motionOK } from './scrollfx.js';
-import { profile, projects, stackCards, toolkit, marquee, experience, credentials, quotes, offers, realShot } from './data.js';
+import { profile, projects, heroStats, stackCards, toolkit, marquee, experience, credentials, quotes, offers, realShot } from './data.js';
 
 const BASE = import.meta.env.BASE_URL;
 const MAILTO = `mailto:${profile.email}`;
@@ -423,9 +423,8 @@ function HeroTagline() {
     if (!m || !el) return undefined;
     const fit = () => {
       const w = (sel) => Math.max(...[...m.querySelectorAll(sel)].map((n) => n.getBoundingClientRect().width));
-      // space for the text column: the portrait row minus the portrait and the gap (independent of our own min-width)
-      const row = el.closest('.hero-left'), me = row?.querySelector('.me');
-      const avail = row ? row.clientWidth - (me?.offsetWidth || 0) - (parseFloat(getComputedStyle(row).columnGap) || 0) : Infinity;
+      // space for line 2: the h1's own width (a block in a fixed-fraction column, so independent of our min-width)
+      const avail = el.closest('h1')?.clientWidth || Infinity;
       const line = w('.hl2-m-line');
       const wrap = line > avail + 1;
       setBox({ wrap, minW: Math.ceil(wrap ? Math.max(w('.hl2-m-plain'), w('.hl2-m-led')) : line) });
@@ -512,34 +511,72 @@ function HeroTagline() {
   );
 }
 
+/* hero proof strip: LED numbers that count up once, after the preloader / hero entrance (instant with reduced motion) */
+const fmtStat = (n, suffix = '') => `${Math.round(n).toLocaleString('en-US')}${suffix}`;
+function HeroProof() {
+  const ref = useRef(null);
+  const [t, setT] = useState(() => (reducedMotion() ? 1 : 0)); // 0..1 progress of the count
+  useEffect(() => {
+    if (reducedMotion()) return undefined;
+    let alive = true, raf = 0;
+    (async () => {
+      while (alive && document.documentElement.classList.contains('is-preloading')) await new Promise((r) => setTimeout(r, 100));
+      await Promise.all((ref.current?.getAnimations?.() || []).map((a) => a.finished.catch(() => {})));
+      const start = performance.now(), dur = 1100;
+      const step = (now) => {
+        if (!alive) return;
+        const k = Math.min(1, (now - start) / dur);
+        setT(1 - (1 - k) ** 3); // ease out
+        if (k < 1) raf = requestAnimationFrame(step);
+      };
+      raf = requestAnimationFrame(step);
+    })();
+    return () => { alive = false; cancelAnimationFrame(raf); };
+  }, []);
+  return (
+    <ul className="hero-proof" ref={ref}>
+      {heroStats.map((st) => (
+        <li key={st.label}>
+          <span className="hero-proof-num" aria-hidden="true"><DotText text={fmtStat(st.value * t, t >= 1 ? st.suffix : '')} pitchX={4} radius={1.8} /></span>
+          <span className="hero-proof-label">{st.label}</span>
+          <span className="sr-only">{fmtStat(st.value, st.suffix)} {st.label}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function Stage() {
   return (
     <section className="stage" id="top" aria-label="Introduction">
       <TopNav />
 
       <div className="hero">
-        <div className="hero-left">
-          <Portrait
-            photo={import.meta.env.BASE_URL + 'me/fahis-bw.webp'}
-            cutout={import.meta.env.BASE_URL + 'me/fahis-cutout.webp'}
-            alt="Mohammed Fahis" />
-          <div>
-            <p className="eyebrow"><span className="eyebrow-name">Mohammed Fahis · </span>AI Engineer · Dubai</p>
-            <h1 className="hero-title t-head" aria-label="One engineer. Everything underneath.">One engineer.<br /><HeroTagline /></h1>
-          </div>
-        </div>
-        <div className="hero-side">
-          <p className="t-copy">I'm Fahis, an AI and full-stack engineer in Dubai. I was the sole engineer behind AxisKYC, a live compliance platform that has screened 1,000+ profiles for UAE firms, and I like owning products like that from start to finish.</p>
+        <div className="hero-main">
+          <p className="eyebrow"><span className="eyebrow-name">Mohammed Fahis · </span>AI Engineer · Dubai</p>
+          <h1 className="hero-title t-head" aria-label="One engineer. Everything underneath.">One engineer.<br /><HeroTagline /></h1>
+          <p className="hero-intro t-copy">I'm Fahis, an AI and full-stack engineer in Dubai. I was the sole engineer behind AxisKYC, a live compliance platform that has screened 1,000+ profiles for UAE firms, and I like owning products like that from start to finish.</p>
           <div className="hero-ctas">
             <a href="#work" className="pill pill-hot pill-lg">Explore the work</a>
             <CvLink className="pill pill-ghost pill-lg hero-cv">View CV</CvLink>
             <CvDownload className="hero-link hero-dl">Download ↓</CvDownload>
           </div>
         </div>
+        <div className="hero-aside">
+          <Portrait
+            photo={import.meta.env.BASE_URL + 'me/fahis-bw.webp'}
+            cutout={import.meta.env.BASE_URL + 'me/fahis-cutout.webp'}
+            alt="Mohammed Fahis" />
+          <p className="hero-status"><span className="ft-pulse" aria-hidden="true" />Available now · Dubai <DubaiClock /> GST</p>
+        </div>
+        <HeroProof />
       </div>
 
-      <Belt projects={projects} />
-      <p className="belt-hint" aria-hidden="true">Drag to scrub · click a card for its case study</p>
+      {/* desktop: an invisible full-stage layer (the belt keeps its 45% geometry); phones: the belt follows the hero */}
+      <div className="belt-zone">
+        <Belt projects={projects} />
+        <p className="belt-hint" aria-hidden="true">Drag to scrub · click a card for its case study</p>
+      </div>
     </section>
   );
 }

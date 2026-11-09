@@ -348,6 +348,17 @@ def price(unit):
   },
 ];
 
+/*
+  Hero proof strip. Builds and Live are counted from \`projects\` (live = has a demo URL), so they stay true.
+  The other two are AxisKYC figures from the CV: 1,000+ profiles screened in production, 1,255 regression tests.
+*/
+export const heroStats = [
+  { value: projects.length, label: 'Builds' },
+  { value: projects.filter((p) => p.demo).length, label: 'Live' },
+  { value: 1000, suffix: '+', label: 'Profiles screened' },
+  { value: 1255, label: 'Tests passing' },
+];
+
 export const skills = [
   { key: 'ai', title: 'AI / LLM', items: ['Claude (Anthropic)', 'Groq Llama 4 Scout Vision', 'OpenAI GPT-4', 'RAG & pgvector', 'Hugging Face', 'LangChain & prompt engineering'] },
   { key: 'backend', title: 'Backend', items: ['Python', 'Django 5 / DRF', 'FastAPI', 'PostgreSQL + RLS', 'Celery + Redis', 'JWT / OAuth2', 'MongoDB / Supabase'] },

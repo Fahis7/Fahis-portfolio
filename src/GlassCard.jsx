@@ -198,6 +198,54 @@ export function GlassCard({ id, variant, title, dots, unit, caption, index = 0, 
   };
   useEffect(() => () => { clearTimeout(timer.current); if (hoverOwner === closeHover) hoverOwner = null; }, []);
 
+  // 3D tilt + glare + depth toward the cursor (desktop only; off on touch and with reduced motion).
+  // --tx / --ty (-1..1) ease toward the cursor each frame (lerp 0.15); the rect is cached on enter / resize / scroll,
+  // never read in the loop. On leave the loop stops and CSS eases everything back to flat.
+  const card = useRef(null);
+  useEffect(() => {
+    const el = card.current;
+    if (!el || !finePointer() || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    el.classList.add('has-tilt');
+    let rect = null, raf = 0, on = false, x = 0, y = 0, gx = 0, gy = 0;
+    const measure = () => { rect = el.getBoundingClientRect(); };
+    const clamp = (v) => Math.max(-1, Math.min(1, v));
+    const frame = () => {
+      x += (gx - x) * 0.15; y += (gy - y) * 0.15;
+      el.style.setProperty('--tx', x.toFixed(4));
+      el.style.setProperty('--ty', y.toFixed(4));
+      raf = on ? requestAnimationFrame(frame) : 0;
+    };
+    const enter = (e) => {
+      if (e.pointerType !== 'mouse') return;
+      measure(); on = true;
+      el.classList.add('is-tilting');
+      if (!raf) raf = requestAnimationFrame(frame);
+    };
+    const move = (e) => {
+      if (!on || !rect) return;
+      gx = clamp(((e.clientX - rect.left) / rect.width) * 2 - 1);
+      gy = clamp(((e.clientY - rect.top) / rect.height) * 2 - 1);
+      el.style.setProperty('--gx', `${((gx + 1) * 50).toFixed(2)}%`); // glare follows the cursor exactly
+      el.style.setProperty('--gy', `${((gy + 1) * 50).toFixed(2)}%`);
+    };
+    const leave = () => {
+      on = false; cancelAnimationFrame(raf); raf = 0; x = y = gx = gy = 0;
+      el.classList.remove('is-tilting');
+      el.style.setProperty('--tx', '0'); el.style.setProperty('--ty', '0');
+    };
+    const remeasure = () => { if (on) measure(); };
+    el.addEventListener('pointerenter', enter);
+    el.addEventListener('pointermove', move, { passive: true });
+    el.addEventListener('pointerleave', leave);
+    window.addEventListener('resize', remeasure, { passive: true });
+    window.addEventListener('scroll', remeasure, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      el.removeEventListener('pointerenter', enter); el.removeEventListener('pointermove', move); el.removeEventListener('pointerleave', leave);
+      window.removeEventListener('resize', remeasure); window.removeEventListener('scroll', remeasure);
+    };
+  }, []);
+
   // the button pins / unpins; unpinning also closes a hover-open panel
   const onToggle = () => {
     if (pinned) { setPinned(false); closeHover(); } else setPinned(true);
@@ -209,11 +257,13 @@ export function GlassCard({ id, variant, title, dots, unit, caption, index = 0, 
   );
   return (
     <article
+      ref={card}
       className={`sp-card sp-card--${variant} ${open ? 'is-open' : ''}`} style={{ '--entrance-delay': `${0.46 + index * 0.12}s` }}
       onPointerEnter={revealOnHover ? hoverIn : undefined} onPointerLeave={revealOnHover ? hoverOut : undefined}
     >
       {variant === 'context' && <ContextGlow />}
       <Grain />
+      <span className="sp-glare" aria-hidden="true" />
       <h3 className="sp-title">{title[0]}<br />{title[1]}</h3>
       {variant === 'speed' && <Gauge />}
       {variant === 'context' && <ContextWindow />}

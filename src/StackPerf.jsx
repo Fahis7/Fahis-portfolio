@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { DotText } from './DotText.jsx';
+import { DotWord } from './DotText.jsx';
 import { FilterDefs, GlassCard, useGlassEntrance } from './GlassCard.jsx';
 import Toolkit from './Toolkit.jsx';
 
@@ -23,7 +23,7 @@ export default function StackPerf({ cards, toolkit }) {
           <div>
             <div className="section-label"><span>03</span>Stack</div>
             <h2 className="sp-headline" id="sp-headline">
-              <span className="sp-line">Built for <span className="sp-dot-word" aria-label="Production"><DotText text="Production" pitchX={4} radius={1.8} /></span></span>
+              <span className="sp-line">Built for <DotWord text="Production" /></span>
               <span className="sp-line">Across the Stack</span>
             </h2>
           </div>

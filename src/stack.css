@@ -63,9 +63,8 @@ html[data-theme="dark"] .sp-stage {
   margin: 0; max-width: 100%; color: var(--sp-ink); font-family: var(--sans);
   font-size: var(--section-h2); font-weight: 400; letter-spacing: 0.015em; line-height: 1.223;
 }
-.sp-line { display: flex; align-items: center; white-space: nowrap; }
-.sp-dot-word { display: inline-block; flex: 0 0 auto; height: 0.766em; margin-left: 0.319em; color: var(--sp-dot); transform: translateY(0.085em); }
-.sp-dot-word svg, .sp-dot-number svg { display: block; height: 100%; width: auto; overflow: visible; }
+.sp-line { display: flex; align-items: baseline; white-space: nowrap; }
+.sp-dot-number svg { display: block; height: 100%; width: auto; overflow: visible; }
 .sp-intro {
   container-type: inline-size; width: 100%; margin: 0 0 0.3em; color: var(--sp-copy); font-family: var(--sans);
   font-size: var(--section-text); font-weight: 400; letter-spacing: -0.017em; line-height: 1.62;

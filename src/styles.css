@@ -802,9 +802,17 @@ html[data-theme="dark"] { --spot-card: 0.2; }
    Smaller headings: Inter 500, -0.01em. Body copy: Inter 400, 1.62, -0.017em, --copy. Sizes come from each element. */
 .t-head { font-family: var(--sans); font-weight: 400; font-style: normal; letter-spacing: 0.015em; line-height: 1.223; color: var(--ink); }
 .t-head em { font-style: normal; color: inherit; opacity: 1; }
-.dot-word { display: inline-block; height: 0.766em; margin-left: 0.319em; color: var(--dot); transform: translateY(0.085em); }
+/* LED accent word sized as the same type as its heading: the box is exactly the ink of the dot glyphs
+   (top of row 0 to the bottom of the baseline row, 27.6 of the 28 viewBox units) and is --dot-asc tall,
+   Inter's measured ascender / cap height (0.7275em). As an inline-block with no text, its bottom sits on the
+   baseline, so the dots' tops meet the text's ascenders and the bottom row sits on the baseline. */
+:root { --dot-asc: 0.7275em; }
+.dot-word { display: inline-block; vertical-align: baseline; height: var(--dot-asc); margin-left: 0.28em; color: var(--dot); }
 .dot-word--lead { margin-left: 0; }
-.dot-word svg { display: block; height: 100%; width: auto; overflow: visible; }
+.dot-word svg {
+  display: block; height: calc(100% * 28 / 27.6); width: auto; overflow: visible;
+  transform: translateY(calc(100% * 0.25 / 28)); /* the top dots start 0.25 units above the viewBox */
+}
 .t-sub { font-family: var(--sans); font-weight: 500; font-style: normal; letter-spacing: -0.01em; }
 .t-copy { font-family: var(--sans); font-weight: 400; line-height: 1.62; letter-spacing: -0.017em; color: var(--copy); }
 

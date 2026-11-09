@@ -260,6 +260,17 @@ html[data-theme="dark"] .nav.is-scrolled { background: rgba(11, 13, 16, 0.72); b
 @keyframes heroIn { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
 .stage .eyebrow, .stage .hero-title, .stage .hero-side, .stage .me { animation: heroIn 0.9s ease-out backwards; }
 .stage .me, .stage .eyebrow { animation-delay: 0.05s; }
+/* hero line 2: typing tagline (HeroTagline in main.jsx). min-width (set from JS) = the widest full line, so nothing
+   below moves; on narrow phones the LED word sits on its own line for every phrase (.hl2--wrap) */
+.hl2 { position: relative; display: inline-block; min-height: 1.223em; text-align: left; white-space: nowrap; }
+.hl2--wrap .hl2-plain, .hl2--wrap .hl2-ledpart { display: block; min-height: 1.223em; }
+.hl2--wrap .hl2-led { margin-left: 0; }
+.hl2.is-printing .hl2-led circle { animation: hlPrint 0.45s ease-out; } /* the newest columns glow, then settle */
+@keyframes hlPrint { from { fill: #ff8a4c; stroke: rgba(255, 110, 50, 0.55); stroke-width: 2.4px; } }
+.hl2-caret { display: inline-block; width: 2px; height: 0.78em; margin-left: 0.07em; border-radius: 1px; background: var(--hot); vertical-align: -0.04em; }
+.hl2-caret.is-blink { animation: hlBlink 1s steps(1) infinite; }
+@keyframes hlBlink { 50% { opacity: 0; } }
+.hl2-measure { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; align-items: flex-start; visibility: hidden; pointer-events: none; white-space: nowrap; }
 /* while the preloader shows (index.html), the hero entrance waits at its first frame */
 html.is-preloading .stage .eyebrow, html.is-preloading .stage .hero-title, html.is-preloading .stage .hero-side, html.is-preloading .stage .me,
 html.is-preloading .belt, html.is-preloading .scan, html.is-preloading .badge { animation-play-state: paused; } .stage .hero-title { animation-delay: 0.12s; } .stage .hero-side { animation-delay: 0.22s; }

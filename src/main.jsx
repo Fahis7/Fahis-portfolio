@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 // Self-hosted fonts
@@ -18,7 +18,7 @@ import MiniSite from './MiniSites.jsx';
 import Portrait from './Portrait.jsx';
 import Showreel from './Showreel.jsx';
 import Quotes from './Quotes.jsx';
-import { DotText, DotWord, DotTitle } from './DotText.jsx';
+import { DotText, DotWord, DotTitle, GLYPHS } from './DotText.jsx';
 import { GlassCard, Grain, useGlassEntrance, useTilt } from './GlassCard.jsx';
 import { initScrollFx, onScrollFrame, motionOK } from './scrollfx.js';
 import { profile, projects, stackCards, toolkit, marquee, experience, credentials, quotes, offers, realShot } from './data.js';
@@ -374,6 +374,144 @@ function TopNav() {
   );
 }
 
+/* ── hero line 2: a typing tagline whose plain words AND LED word change ──
+   hold → the LED word un-prints right → left, the plain words delete → type the next plain words → the LED word
+   prints left → right (each new column glows orange) → the full stop. Starts after the preloader and the hero
+   entrance; pauses while the hero is off screen, the tab is hidden or the pointer is on the headline.
+   Reduced motion: the static "Everything underneath." (the h1's aria-label carries the text either way). */
+const TAGLINES = [
+  ['Everything', 'underneath'], ['Zero', 'handoffs'], ['Idea to', 'production'],
+  ['Secure by', 'default'], ['AI that', 'ships'], ['Built to', 'last'],
+];
+// LED word as dots tagged with their column, plus the x where each column ends (for a growing viewBox)
+function ledColumns(word) {
+  const dots = [], colEnd = []; let x = 0;
+  for (const ch of word) {
+    const g = GLYPHS[ch];
+    if (!g) { x += 12; continue; }
+    for (let c = 0; c < g[0].length; c++) {
+      const col = colEnd.length;
+      g.forEach((row, y) => { if (row[c] === '1') dots.push([x + c * 4 + 1.55, y * 4 + 1.55, col]); });
+      colEnd.push(x + c * 4 + 4);
+    }
+    x += (g[0].length + 1) * 4;
+  }
+  return { dots, colEnd, width: x };
+}
+function LedWord({ led, cols }) {
+  if (!cols) return null;
+  const w = cols >= led.colEnd.length ? led.width : led.colEnd[cols - 1];
+  return (
+    <span className="dot-word hl2-led">
+      <svg viewBox={`0 0 ${w} 28`} fill="currentColor" aria-hidden="true">
+        {led.dots.filter((d) => d[2] < cols).map(([cx, cy, col]) => <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r="1.8" data-c={col} />)}
+      </svg>
+    </span>
+  );
+}
+
+function HeroTagline() {
+  const leds = useMemo(() => TAGLINES.map(([, w]) => ledColumns(w)), []);
+  const reduced = useMemo(() => reducedMotion(), []);
+  const [st, setSt] = useState({ i: 0, plain: TAGLINES[0][0], cols: leds[0].colEnd.length, stop: true, caret: 'led', busy: false, live: false, print: false });
+  const [box, setBox] = useState({ minW: 0, wrap: false });
+  const root = useRef(null), measure = useRef(null);
+
+  // min-width from the widest full line; wrap the LED word onto its own line if that doesn't fit (phones)
+  useEffect(() => {
+    const m = measure.current, el = root.current;
+    if (!m || !el) return undefined;
+    const fit = () => {
+      const w = (sel) => Math.max(...[...m.querySelectorAll(sel)].map((n) => n.getBoundingClientRect().width));
+      // space for the text column: the portrait row minus the portrait and the gap (independent of our own min-width)
+      const row = el.closest('.hero-left'), me = row?.querySelector('.me');
+      const avail = row ? row.clientWidth - (me?.offsetWidth || 0) - (parseFloat(getComputedStyle(row).columnGap) || 0) : Infinity;
+      const line = w('.hl2-m-line');
+      const wrap = line > avail + 1;
+      setBox({ wrap, minW: Math.ceil(wrap ? Math.max(w('.hl2-m-plain'), w('.hl2-m-led')) : line) });
+    };
+    fit();
+    document.fonts?.ready.then(fit);
+    window.addEventListener('resize', fit, { passive: true });
+    return () => window.removeEventListener('resize', fit);
+  }, []);
+
+  useEffect(() => {
+    if (reduced) return undefined;
+    let alive = true, offscreen = false, hover = false;
+    const paused = () => document.hidden || offscreen || hover;
+    // waits that only count down while not paused, so everything resumes where it left off
+    const sleep = (ms) => new Promise((res) => {
+      let left = ms, last = performance.now();
+      const step = () => {
+        if (!alive) return;
+        const now = performance.now();
+        if (!paused()) left -= now - last;
+        last = now;
+        if (left <= 0) res(); else setTimeout(step, Math.min(left, 40));
+      };
+      setTimeout(step, Math.min(ms, 40));
+    });
+    const h1 = root.current.closest('h1');
+    const io = new IntersectionObserver(([e]) => { offscreen = !e.isIntersecting; });
+    io.observe(h1);
+    const enter = () => { hover = true; }, leave = () => { hover = false; };
+    h1.addEventListener('pointerenter', enter); h1.addEventListener('pointerleave', leave);
+    const set = (patch) => alive && setSt((s) => ({ ...s, ...patch }));
+
+    (async () => {
+      // after the preloader (if any) and the hero entrance
+      while (alive && document.documentElement.classList.contains('is-preloading')) await sleep(100);
+      await Promise.all((h1.getAnimations?.() || []).map((a) => a.finished.catch(() => {})));
+      let i = 0;
+      set({ live: true });
+      while (alive) {
+        set({ busy: false, caret: 'led' });
+        await sleep(i === 0 ? 3500 : 2600);
+        set({ busy: true, stop: false, print: false });
+        for (let c = leds[i].colEnd.length; c >= 0 && alive; c--) { set({ cols: c }); await sleep(18); }
+        set({ caret: 'plain' });
+        for (let k = TAGLINES[i][0].length; k >= 0 && alive; k--) { set({ plain: TAGLINES[i][0].slice(0, k) }); await sleep(28); }
+        await sleep(250);
+        i = (i + 1) % TAGLINES.length;
+        set({ i });
+        const word = TAGLINES[i][0];
+        for (let k = 1; k <= word.length && alive; k++) { set({ plain: word.slice(0, k) }); await sleep(55 + (Math.random() * 30 - 15)); }
+        set({ caret: 'led', print: true }); // only dots printed from now on get the orange glow
+        for (let c = 1; c <= leds[i].colEnd.length && alive; c++) { set({ cols: c }); await sleep(30); }
+        set({ stop: true });
+      }
+    })();
+    return () => {
+      alive = false; io.disconnect();
+      h1.removeEventListener('pointerenter', enter); h1.removeEventListener('pointerleave', leave);
+    };
+  }, [reduced, leds]);
+
+  const caret = <span className={`hl2-caret${st.busy ? '' : ' is-blink'}`} />;
+  const showCaret = !reduced && st.live;
+  return (
+    <span ref={root} className={`hl2${box.wrap ? ' hl2--wrap' : ''}${st.print ? ' is-printing' : ''}`} style={box.minW ? { minWidth: box.minW } : undefined} aria-hidden="true">
+      <span className="hl2-plain">{st.plain}{showCaret && st.caret === 'plain' && caret}</span>
+      {!box.wrap && ' '}
+      <span className="hl2-ledpart">
+        <LedWord led={leds[st.i]} cols={st.cols} />
+        {st.stop && '.'}
+        {showCaret && st.caret === 'led' && caret}
+      </span>
+      {/* hidden copies of every full line, measured for the min-width */}
+      <span className="hl2-measure" ref={measure}>
+        {TAGLINES.map(([plain], k) => (
+          <span key={plain} className="hl2-m-line">
+            <span className="hl2-m-plain">{plain}</span>{' '}
+            <span className="hl2-m-led"><LedWord led={leds[k]} cols={leds[k].colEnd.length} />.</span>
+          </span>
+        ))}
+      </span>
+    </span>
+  );
+}
+
 function Stage() {
   return (
     <section className="stage" id="top" aria-label="Introduction">
@@ -387,7 +525,7 @@ function Stage() {
             alt="Mohammed Fahis" />
           <div>
             <p className="eyebrow"><span className="eyebrow-name">Mohammed Fahis · </span>AI Engineer · Dubai</p>
-            <h1 className="hero-title t-head" aria-label="One engineer. Everything underneath.">One engineer.<br />Everything <DotWord text="underneath." /></h1>
+            <h1 className="hero-title t-head" aria-label="One engineer. Everything underneath.">One engineer.<br /><HeroTagline /></h1>
           </div>
         </div>
         <div className="hero-side">

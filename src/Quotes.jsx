@@ -130,7 +130,6 @@ export default function Quotes({ quotes }) {
           <button type="button" className="quotes-btn" aria-label="Next quote" onClick={() => go(1, true)}><ArrowIcon dir={1} /></button>
         </div>
       </div>
-      <p className="quotes-sign" aria-hidden="true">Mohammed Fahis</p>
     </section>
   );
 }

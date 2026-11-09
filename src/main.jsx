@@ -188,7 +188,7 @@ function Stage() {
             cutout={import.meta.env.BASE_URL + 'me/fahis-cutout.webp'}
             alt="Mohammed Fahis" />
           <div>
-            <p className="eyebrow">Mohammed Fahis · AI Engineer · Dubai</p>
+            <p className="eyebrow"><span className="eyebrow-name">Mohammed Fahis · </span>AI Engineer · Dubai</p>
             <h1 className="hero-title">Built for people.<br /><em>Engineered underneath.</em></h1>
           </div>
         </div>

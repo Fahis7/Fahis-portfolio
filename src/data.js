@@ -15,7 +15,7 @@ export const profile = {
   socials: [
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/mohammed-fahis-mt' },
     { label: 'GitHub', href: 'https://github.com/Fahis7' },
-    { label: 'WhatsApp', href: 'https://wa.me/971542897949' },
+    { label: 'WhatsApp', href: 'https://wa.me/971542894979' },
   ],
 };
 

@@ -214,7 +214,7 @@ function Marquee() {
   return (
     <div className="marquee" aria-hidden="true">
       <div className="marquee-track">
-        {items.map((m, i) => <span key={i} className={i % 2 ? 'serif' : ''}>{m}<i>✦</i></span>)}
+        {items.map((m, i) => <span key={i} className="marquee-item"><span className="marquee-text">{m}</span><i>✦</i></span>)}
       </div>
     </div>
   );

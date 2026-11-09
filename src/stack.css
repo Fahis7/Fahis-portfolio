@@ -3,8 +3,6 @@
    Rigid 429×554 glass cards. Inside a card, 1u = card width / 429.
    ═══════════════════════════════════════════════════════════ */
 
-.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
-
 .sp-stage {
   --sp-ink: #202020;
   --sp-copy: #4a4a4a;

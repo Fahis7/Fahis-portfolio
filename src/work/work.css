@@ -6,6 +6,7 @@
   --u: calc(100vw / 1500);
   --bg: #ececeb;   /* homepage light background; the ribbon reads it in light mode */
   --ink: #0f1115;  /* homepage light ink */
+  --hot: #ff5a1f;
   --page-bg: #000; --page-ink: #fff; --veil: 0, 0, 0;
   color-scheme: dark;
 }
@@ -31,11 +32,15 @@ body { font-family: 'Inter Tight Variable', system-ui, sans-serif; -webkit-font-
 .ui a:focus-visible, .ui button:focus-visible, .sr a:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
 /* top-right: theme toggle, 24px left of "Profile", styled as a corner label */
 .tr { display: flex; align-items: center; gap: 24px; }
+/* theme toggle: the icon only, in a transparent 36px click area */
 .theme {
-  display: inline-flex; align-items: center; gap: 6px; padding: 0; border: 0; background: none; cursor: pointer;
-  color: inherit; font: inherit; text-transform: uppercase; letter-spacing: inherit;
+  display: inline-grid; place-items: center; width: 36px; height: 36px; margin: -11px 0; padding: 0;
+  border: 0; border-radius: 8px; background: none; box-shadow: none; cursor: pointer; color: var(--page-ink);
 }
-.theme svg { width: 1.2em; height: 1.2em; flex: none; }
+.theme svg { width: 16px; height: 16px; opacity: 0.75; transition: opacity 0.2s ease; }
+.theme:hover svg { opacity: 1; }
+.ui .theme:focus { outline: none; }
+.ui .theme:focus-visible { outline: 2px solid var(--hot); outline-offset: 3px; }
 body.ready .ui > * { opacity: 1; }
 .tl { left: calc(80 * var(--u)); top: calc(40 * var(--u)); }
 .tr { right: calc(80 * var(--u)); top: calc(40 * var(--u)); }

@@ -22,7 +22,7 @@ const ICON = {
 const button = document.getElementById('theme');
 const paintButton = (t) => {
   const dark = t === 'dark';
-  button.innerHTML = `${dark ? ICON.sun : ICON.moon}<span>${dark ? 'Light' : 'Dark'}</span>`;
+  button.innerHTML = dark ? ICON.sun : ICON.moon; // icon only; the aria-label names the action
   button.setAttribute('aria-pressed', String(dark));
   button.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
 };

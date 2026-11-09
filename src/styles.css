@@ -227,12 +227,15 @@ html[data-theme="dark"] .nav.is-scrolled { background: rgba(11, 13, 16, 0.72); b
 .nav-links a, .nav-plain { transition: opacity 0.25s; }
 .nav-links a:hover, .nav-plain:hover { opacity: 0.6; }
 .nav-right { margin-left: auto; display: flex; align-items: center; gap: 20px; font: 500 12.5px var(--sans); }
+/* theme toggle: the icon only (no circle), in a transparent 36px click area */
 .theme-toggle {
-  display: inline-grid; place-items: center; width: 32px; height: 32px; padding: 0; border-radius: 999px; cursor: pointer;
-  border: 1px solid var(--pill-line); background: var(--pill-fill); color: var(--ink); transition: transform 0.35s var(--ease);
+  display: inline-grid; place-items: center; width: 36px; height: 36px; padding: 0; cursor: pointer;
+  border: 0; border-radius: 8px; background: none; box-shadow: none; color: var(--ink);
 }
-.theme-toggle:hover { transform: translateY(-2px); }
-.theme-toggle svg { display: block; }
+.theme-toggle svg { display: block; opacity: 0.75; transition: opacity 0.2s ease; }
+.theme-toggle:hover svg { opacity: 1; }
+.theme-toggle:focus { outline: none; }
+.theme-toggle:focus-visible { outline: 2px solid var(--hot); outline-offset: 3px; }
 
 .hero {
   position: absolute; left: 0; right: 0; top: 56px; height: calc(var(--sh) * 0.55 - 56px); z-index: 5;
@@ -739,7 +742,6 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
   :root { --ch: min(54vw, calc(var(--sh) * 0.45 - 120px)); --gap: 7vw; --radius: 3.5vw; --gutter: 28px; --section-pad: 72px; }
   .nav-links, .nav-plain, .pill-ghost { display: none; }
   .nav-right .pill-hot { height: 30px; padding: 0 13px; font-size: 12px; }
-  .theme-toggle { width: 30px; height: 30px; }
   .hero { grid-template-columns: 1fr; gap: 14px; padding: 0 var(--gutter); }
   .hero-side { justify-self: stretch; max-width: none; }
   .hero-title { font-size: 29px; }

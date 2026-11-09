@@ -12,10 +12,12 @@ import '@fontsource/ibm-plex-mono/latin-400.css';
 import '@fontsource/ibm-plex-mono/latin-500.css';
 import './styles.css';
 import './stack.css';
+import './portrait.css';
 
 import Belt from './Belt.jsx';
 import StackPerf from './StackPerf.jsx';
 import MiniSite from './MiniSites.jsx';
+import Portrait from './Portrait.jsx';
 import { profile, projects, stackCards, marquee, experience } from './data.js';
 
 const BASE = import.meta.env.BASE_URL;
@@ -180,9 +182,15 @@ function Stage() {
       </header>
 
       <div className="hero">
-        <div>
-          <p className="eyebrow">Mohammed Fahis · AI Engineer · Dubai</p>
-          <h1 className="hero-title">Built for people.<br /><em>Engineered underneath.</em></h1>
+        <div className="hero-left">
+          <Portrait
+            photo={import.meta.env.BASE_URL + 'me/fahis-bw.webp'}
+            cutout={import.meta.env.BASE_URL + 'me/fahis-cutout.webp'}
+            alt="Mohammed Fahis" />
+          <div>
+            <p className="eyebrow">Mohammed Fahis · AI Engineer · Dubai</p>
+            <h1 className="hero-title">Built for people.<br /><em>Engineered underneath.</em></h1>
+          </div>
         </div>
         <div className="hero-side">
           <p>I design and ship AI-powered products end-to-end (compliance platforms, property SaaS, recruiting tools) and the secure, multi-tenant systems running underneath them.</p>

@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://fahis7.github.io/Fahis-portfolio/sitemap.xml

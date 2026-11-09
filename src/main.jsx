@@ -19,7 +19,8 @@ import StackPerf from './StackPerf.jsx';
 import MiniSite from './MiniSites.jsx';
 import Portrait from './Portrait.jsx';
 import Showreel from './Showreel.jsx';
-import { profile, projects, stackCards, marquee, experience, realShot } from './data.js';
+import Quotes from './Quotes.jsx';
+import { profile, projects, stackCards, marquee, experience, quotes, realShot } from './data.js';
 
 const BASE = import.meta.env.BASE_URL;
 const MAILTO = `mailto:${profile.email}`;
@@ -324,11 +325,7 @@ function About() {
           </div>
         </div>
       </div>
-      <blockquote className="quote">
-        <svg className="rise" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M10 7H6a3 3 0 0 0-3 3v4h4v4l3-4v-7Zm11 0h-4a3 3 0 0 0-3 3v4h4v4l3-4v-7Z" /></svg>
-        <p className="rise" style={{ '--d': '.1s' }}>I like being close to the whole product, from the <em>database role</em> to the last pixel.</p>
-        <footer className="rise" style={{ '--d': '.2s' }}>Mohammed Fahis</footer>
-      </blockquote>
+      <Quotes quotes={quotes} />
     </section>
   );
 }

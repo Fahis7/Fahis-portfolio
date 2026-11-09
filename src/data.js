@@ -299,6 +299,18 @@ export const stackCards = [
   },
 ];
 
+/*
+  About quotes (sliding carousel). Wrap words in *asterisks* for the italic orange accent.
+*/
+export const quotes = [
+  { text: 'I like being close to the whole product, from the *database role* to the last pixel.', author: 'Mohammed Fahis' },
+  { text: 'Security isn’t a feature you add at the end. In AxisKYC it *starts at the database role*.', author: 'Mohammed Fahis' },
+  { text: 'AI is only useful when it fits a *real workflow*: a compliance officer’s queue, a tenant’s broken tap, a recruiter’s inbox.', author: 'Mohammed Fahis' },
+  { text: 'The *last 10%* is where a product starts to feel finished, so that’s where I spend the extra time.', author: 'Mohammed Fahis' },
+  { text: 'If it isn’t tested against a *real database*, it isn’t tested.', author: 'Mohammed Fahis' },
+  { text: 'Ship it, watch it, fix it. *Production* is where the real feedback lives.', author: 'Mohammed Fahis' },
+];
+
 export const marquee = ['Row-Level Security', 'RAG pipelines', 'Vision AI', 'KYC / AML screening', 'Multi-tenant SaaS', 'Celery workers', 'Arabic + RTL', 'pgvector search', 'CI/CD', 'PDF + QR certificates'];
 
 // Tip: recruiters scan for company names + dates. Add `company` when you can.

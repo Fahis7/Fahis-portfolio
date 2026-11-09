@@ -483,7 +483,31 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
 .quote { margin: clamp(64px, 9svh, 110px) 0 0; padding: 0; text-align: left; color: var(--ink); }
 .quote p { font: italic 400 var(--section-h2) / 1.1 var(--serif); letter-spacing: -0.02em; color: var(--navy-2); margin: 18px 0; }
 .quote p em { color: var(--hot-btn); }
-.quote footer { font: italic 400 14px var(--sans); color: var(--quote-foot); }
+.quote figcaption { font: italic 400 14px var(--sans); color: var(--quote-foot); }
+
+/* quote carousel (Quotes.jsx): every slide sits in the same grid cell, so the height fits the longest quote */
+.quotes { outline-offset: 8px; }
+.quotes-viewport { display: grid; overflow: hidden; touch-action: pan-y; }
+.quote-slide {
+  grid-area: 1 / 1; margin: 0; visibility: hidden; opacity: 0;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.quote-slide.is-current { visibility: visible; opacity: 1; }
+.quote-slide blockquote { margin: 0; }
+.quotes-controls { display: flex; align-items: center; gap: 20px; margin-top: 32px; }
+.quotes-count { font: 500 12.5px var(--mono); letter-spacing: 0.04em; color: var(--muted); font-variant-numeric: tabular-nums; }
+.quotes-bar { position: relative; flex: 0 1 200px; height: 2px; border-radius: 2px; overflow: hidden; background: var(--line); }
+.quotes-bar i { position: absolute; inset: 0; background: var(--hot); transform: scaleX(0); transform-origin: 0 50%; }
+.quotes-bar i.is-running { animation: quoteBar 5s linear forwards; }
+.quotes.is-paused .quotes-bar i { animation-play-state: paused; }
+.quotes.is-static .quotes-bar { display: none; }
+@keyframes quoteBar { to { transform: scaleX(1); } }
+.quotes-nav { display: flex; gap: 10px; margin-left: auto; }
+.quotes-btn {
+  display: grid; place-items: center; width: 48px; height: 48px; padding: 0; border-radius: 50%; cursor: pointer;
+  border: 1px solid var(--pill-line); background: transparent; color: var(--ink); transition: border-color 0.3s, color 0.3s;
+}
+.quotes-btn:hover { border-color: var(--hot-btn); color: var(--hot-btn); }
 
 /* ═════════════ EXPERIENCE ═════════════ */
 .timeline { margin-top: 44px; }

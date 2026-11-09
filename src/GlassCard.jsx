@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { DotText } from './DotText.jsx';
 
 /*
@@ -9,7 +9,7 @@ import { DotText } from './DotText.jsx';
   Props: variant ('speed' | 'context' | 'connections'), title [line1, line2], dots, unit,
   caption [line1, line2], index (entrance stagger), id (reveal panel id),
   reveal { groups: [{ label, items }], footer, openLabel, closeLabel }, actions (extra pills, shown
-  side by side with the reveal toggle).
+  side by side with the reveal toggle), revealOnHover (desktop: hovering opens the panel; the button pins it).
 */
 
 /* ── shared filters (defined once) ── */
@@ -167,16 +167,51 @@ function ConnectionsMap() {
 }
 
 /* ── card ── */
-export function GlassCard({ id, variant, title, dots, unit, caption, index = 0, reveal, actions }) {
-  const [open, setOpen] = useState(false);
+// Only one card is open from hovering at a time: this holds the current one's "close" function.
+let hoverOwner = null;
+const finePointer = () => window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+export function GlassCard({ id, variant, title, dots, unit, caption, index = 0, reveal, actions, revealOnHover = false }) {
+  const [pinned, setPinned] = useState(false);   // opened with the button (stays open)
+  const [hovered, setHovered] = useState(false); // opened by hovering (desktop, revealOnHover)
+  const timer = useRef(0);
+  const open = pinned || hovered;
   const radius = variant === 'context' ? 2.32 : 1.55;
+
+  // stable across renders, so hoverOwner comparisons keep working
+  const closeRef = useRef(null);
+  if (!closeRef.current) closeRef.current = () => { clearTimeout(timer.current); setHovered(false); if (hoverOwner === closeRef.current) hoverOwner = null; };
+  const closeHover = closeRef.current;
+  const hoverIn = (e) => {
+    if (!revealOnHover || e.pointerType !== 'mouse' || !finePointer()) return;
+    clearTimeout(timer.current); // moving back in cancels a pending close
+    timer.current = setTimeout(() => {
+      if (hoverOwner && hoverOwner !== closeHover) hoverOwner();
+      hoverOwner = closeHover;
+      setHovered(true);
+    }, 120); // hover intent
+  };
+  const hoverOut = (e) => {
+    if (!revealOnHover || e.pointerType !== 'mouse') return;
+    clearTimeout(timer.current);
+    timer.current = setTimeout(closeHover, 200);
+  };
+  useEffect(() => () => { clearTimeout(timer.current); if (hoverOwner === closeHover) hoverOwner = null; }, []);
+
+  // the button pins / unpins; unpinning also closes a hover-open panel
+  const onToggle = () => {
+    if (pinned) { setPinned(false); closeHover(); } else setPinned(true);
+  };
   const toggle = (
-    <button type="button" className="sp-learn-more" aria-expanded={open} aria-controls={id} onClick={() => setOpen(!open)}>
-      {open ? (reveal.closeLabel || 'Close') : (reveal.openLabel || 'View stack')}
+    <button type="button" className="sp-learn-more" aria-expanded={open} aria-controls={id} onClick={onToggle}>
+      {pinned ? (reveal.closeLabel || 'Close') : (reveal.openLabel || 'View stack')}
     </button>
   );
   return (
-    <article className={`sp-card sp-card--${variant} ${open ? 'is-open' : ''}`} style={{ '--entrance-delay': `${0.46 + index * 0.12}s` }}>
+    <article
+      className={`sp-card sp-card--${variant} ${open ? 'is-open' : ''}`} style={{ '--entrance-delay': `${0.46 + index * 0.12}s` }}
+      onPointerEnter={revealOnHover ? hoverIn : undefined} onPointerLeave={revealOnHover ? hoverOut : undefined}
+    >
       {variant === 'context' && <ContextGlow />}
       <Grain />
       <h3 className="sp-title">{title[0]}<br />{title[1]}</h3>

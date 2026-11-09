@@ -33,7 +33,7 @@ export default function StackPerf({ cards, toolkit }) {
         </header>
         <div className="sp-cards" aria-label="Stack capabilities">
           {cards.map((c, i) => (
-            <GlassCard key={c.key} id={`sp-stack-${c.key}`} variant={c.variant} title={c.title} dots={c.dots} unit={c.unit} caption={c.caption} index={i} reveal={{ groups: c.groups }} />
+            <GlassCard key={c.key} id={`sp-stack-${c.key}`} variant={c.variant} title={c.title} dots={c.dots} unit={c.unit} caption={c.caption} index={i} reveal={{ groups: c.groups }} revealOnHover />
           ))}
         </div>
       </div>

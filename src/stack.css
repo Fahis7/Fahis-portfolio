@@ -332,4 +332,5 @@ html[data-theme="dark"] .sp-stage {
   .sp-entrance *, .sp-entrance .sp-card { animation: none !important; }
   .sp-bg::before, .sp-bg::after, .sp-sweep, .sp-flow, .sp-node { animation: none; }
   .sp-card, .sp-stack, .sp-learn-more { transition-duration: .01ms; }
+  .sp-card .sp-gauge, .sp-card .sp-window, .sp-card .sp-map, .sp-card .sp-metric, .sp-card .sp-caption { transition: none; }
 }

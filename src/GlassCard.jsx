@@ -34,7 +34,7 @@ export const FilterDefs = () => (
   </svg>
 );
 
-const Grain = () => (
+export const Grain = () => (
   <svg className="sp-grain" viewBox="0 0 429 554" preserveAspectRatio="none" aria-hidden="true">
     <rect width="429" height="554" filter="url(#spCardNoise)" />
   </svg>

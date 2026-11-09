@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { DotText } from './DotText.jsx';
 import { FilterDefs, GlassCard, useGlassEntrance } from './GlassCard.jsx';
+import Toolkit from './Toolkit.jsx';
 
 /*
   Stack section: "Built for Production / Across the Stack".
@@ -37,20 +38,7 @@ export default function StackPerf({ cards, toolkit }) {
         </div>
       </div>
 
-      <div className="toolkit">
-        <div className="toolkit-head rise">
-          <span className="toolkit-label">Full toolkit</span>
-          <span className="toolkit-count">{toolkit.reduce((n, g) => n + g.items.length, 0)} tools</span>
-        </div>
-        <div className="toolkit-grid">
-          {toolkit.map((g, i) => (
-            <div key={g.label} className={`tk-group rise${g.wide ? ' tk-group--wide' : ''}`} style={{ '--d': `${(i % 3) * 0.06}s` }}>
-              <h3 className="tk-name">{g.label}</h3>
-              <ul className="chips small">{g.items.map((it) => <li key={it}>{it}</li>)}</ul>
-            </div>
-          ))}
-        </div>
-      </div>
+      <Toolkit toolkit={toolkit} />
     </section>
   );
 }

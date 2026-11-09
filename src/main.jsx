@@ -673,8 +673,8 @@ function Partner() {
 
 /* Cursor light: a soft orange spotlight that follows the pointer, plus a local highlight on the card under it.
    Fine pointers only, off with reduced motion. One passive, rAF-throttled pointermove listener writes CSS variables. */
-const LIGHT_CARDS = '.preview, .sp-card, .panel, .xp-card, .tk-group';
-const LIGHT_STRONG = '.reel, .panel-dark';
+const LIGHT_CARDS = '.preview, .sp-card, .panel, .xp-card, .tk-tile';
+const LIGHT_STRONG = '.reel, .panel-dark, .tk-term';
 function CursorLight() {
   const ref = useRef(null);
   useEffect(() => {

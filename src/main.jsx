@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 // Self-hosted fonts
@@ -18,8 +18,8 @@ import MiniSite from './MiniSites.jsx';
 import Portrait from './Portrait.jsx';
 import Showreel from './Showreel.jsx';
 import Quotes from './Quotes.jsx';
-import { DotText, DotWord, DotTitle } from './DotText.jsx';
-import { GlassCard, useGlassEntrance, useTilt } from './GlassCard.jsx';
+import { DotText, DotWord, DotTitle, GLYPHS } from './DotText.jsx';
+import { GlassCard, Grain, useGlassEntrance, useTilt } from './GlassCard.jsx';
 import { profile, projects, stackCards, toolkit, marquee, experience, credentials, quotes, offers, realShot } from './data.js';
 
 const BASE = import.meta.env.BASE_URL;
@@ -210,13 +210,13 @@ function ProjectPreview({ p }) {
   );
 }
 
-function CopyEmail() {
+function CopyEmail({ label = 'Copy email', className = 'copy' }) {
   const [copied, setCopied] = useState(false);
   const copy = async () => {
     try { await navigator.clipboard.writeText(profile.email); setCopied(true); setTimeout(() => setCopied(false), 1800); }
     catch { window.location.href = MAILTO; }
   };
-  return <button type="button" className="copy" onClick={copy} aria-live="polite">{copied ? 'Copied ✓' : 'Copy email'}</button>;
+  return <button type="button" className={className} onClick={copy} aria-live="polite">{copied ? 'Copied ✓' : label}</button>;
 }
 
 // Real screenshot for live projects (realShot in data.js), otherwise the drawn mini-site.
@@ -822,32 +822,122 @@ function CursorLight() {
   return <div className="cursor-light" ref={ref} aria-hidden="true" />;
 }
 
-function Footer() {
+/* ── footer: always dark (artwork, like the toolkit panel), a glowing orange top edge like the hero scanner ── */
+const BUILT = new Date(__BUILD_DATE__).toLocaleDateString('en-GB', { month: 'short', year: 'numeric', timeZone: 'Asia/Dubai' });
+const dubaiTime = () => new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Dubai' }).format(new Date());
+
+function DubaiClock() {
+  const [t, setT] = useState(dubaiTime);
+  useEffect(() => { const id = setInterval(() => setT(dubaiTime()), 30000); return () => clearInterval(id); }, []);
+  return <time>{t}</time>;
+}
+
+// Huge LED "FAHIS" spanning the content width. Dots near the cursor glow crimson (radius ~140px, soft falloff):
+// desktop only, rAF-throttled, off with reduced motion. The svg rect is cached on enter / scroll / resize.
+function FooterSignature() {
+  const svg = useRef(null);
+  const { dots, width } = useMemo(() => {
+    const out = []; let x = 0;
+    for (const ch of 'FAHIS') {
+      const g = GLYPHS[ch];
+      g.forEach((row, y) => [...row].forEach((bit, col) => { if (bit === '1') out.push([x + col * 4 + 1.55, y * 4 + 1.55]); }));
+      x += (g[0].length + 1) * 4;
+    }
+    return { dots: out, width: x - 4 };
+  }, []);
+  useEffect(() => {
+    const el = svg.current;
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches || reducedMotion()) return;
+    const circles = [...el.querySelectorAll('circle')];
+    let rect = null, raf = 0, mx = -1e4, my = -1e4;
+    const measure = () => { rect = el.getBoundingClientRect(); };
+    const paint = () => {
+      raf = 0;
+      const k = rect.width / (width + 4); // px per viewBox unit (the viewBox starts at -2 and is width + 4 wide)
+      circles.forEach((c, i) => {
+        const [cx, cy] = dots[i];
+        const d = Math.hypot(rect.left + (cx + 2) * k - mx, rect.top + (cy + 2) * k - my);
+        const t = Math.max(0, 1 - d / 140) ** 1.6;
+        c.style.fill = t > 0.01 ? `rgba(224, 86, 122, ${(0.08 + 0.92 * t).toFixed(3)})` : '';
+      });
+    };
+    const move = (e) => { mx = e.clientX; my = e.clientY; if (!rect) measure(); if (!raf) raf = requestAnimationFrame(paint); };
+    const leave = () => { mx = my = -1e4; if (!raf) raf = requestAnimationFrame(paint); };
+    const remeasure = () => { rect = null; };
+    const host = el.parentElement;
+    host.addEventListener('pointerenter', measure);
+    host.addEventListener('pointermove', move, { passive: true });
+    host.addEventListener('pointerleave', leave);
+    window.addEventListener('scroll', remeasure, { passive: true });
+    window.addEventListener('resize', remeasure, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      host.removeEventListener('pointerenter', measure); host.removeEventListener('pointermove', move); host.removeEventListener('pointerleave', leave);
+      window.removeEventListener('scroll', remeasure); window.removeEventListener('resize', remeasure);
+    };
+  }, [dots, width]);
   return (
-    <>
-      <footer className="section footer">
-        <Button href={MAILTO}>Start a chat</Button>
-        <div className="footer-cols">
-          <Arrow size={20} />
-          <div><a href="#work">Work</a><a href="#about">About</a><a href="#stack">Stack</a><a href="#experience">Experience</a><CvLink>CV</CvLink></div>
-          <div>{profile.socials.map((s) => <a key={s.label} href={s.href} target="_blank" rel="noreferrer">{s.label}</a>)}</div>
+    <div className="ft-sig" aria-hidden="true">
+      <svg ref={svg} viewBox={`-2 -2 ${width + 4} 32`}>
+        {dots.map(([cx, cy], i) => <circle key={i} cx={cx} cy={cy} r="1.8" />)}
+      </svg>
+    </div>
+  );
+}
+
+function Footer() {
+  const toTop = () => window.scrollTo({ top: 0, behavior: reducedMotion() ? 'instant' : 'smooth' });
+  return (
+    <footer className="ft">
+      <Grain />
+      <div className="ft-cols">
+        <div className="ft-col">
+          <p className="ft-status"><span className="ft-pulse" aria-hidden="true" />Available now</p>
+          <p className="ft-meta">Dubai, UAE · <DubaiClock /> GST</p>
+          <a href={MAILTO} className="btn btn-light ft-cta">Start a chat</a>
         </div>
-      </footer>
-      <div className="copyright wrap"><span>© {new Date().getFullYear()} {profile.name}</span><span>{profile.location}</span></div>
-    </>
+        <nav className="ft-col" aria-label="Footer">
+          <p className="ft-label">Navigate</p>
+          <ul className="ft-links">
+            <li><a href="#work">Work</a></li><li><a href="#showreel">Showreel</a></li><li><a href="#about">About</a></li>
+            <li><a href="#stack">Stack</a></li><li><a href="#experience">Experience</a></li><li><CvLink>CV</CvLink></li>
+          </ul>
+        </nav>
+        <div className="ft-col">
+          <p className="ft-label">Connect</p>
+          <ul className="ft-links">
+            {profile.socials.map((s) => <li key={s.label}><a href={s.href} target="_blank" rel="noreferrer">{s.label} ↗</a></li>)}
+            <li className="ft-email"><a href={MAILTO}>{profile.email}</a><CopyEmail label="Copy" className="ft-copy" /></li>
+          </ul>
+        </div>
+        <div className="ft-col">
+          <p className="ft-label">Built with</p>
+          <p className="ft-built">React · Three.js · GLSL · Vite</p>
+          <p className="ft-meta">Last updated {BUILT}</p>
+        </div>
+      </div>
+      <FooterSignature />
+      <div className="ft-bar">
+        <span>© {new Date().getFullYear()} {profile.name}</span>
+        <span>Designed &amp; engineered by Fahis</span>
+        <button type="button" className="ft-top" onClick={toTop}>Back to top ↑</button>
+      </div>
+    </footer>
   );
 }
 
 function BottomNav() {
   const [show, setShow] = useState(false);
+  // shown after the hero, hidden whenever the footer is on screen, so it never covers it
   useEffect(() => {
-    const onScroll = () => {
-      const nearEnd = window.innerHeight + window.scrollY > document.documentElement.scrollHeight - 260;
-      setShow(window.scrollY > window.innerHeight * 0.7 && !nearEnd);
-    };
+    let footerInView = false;
+    const onScroll = () => setShow(window.scrollY > window.innerHeight * 0.7 && !footerInView);
+    const ft = document.querySelector('footer.ft');
+    const io = new IntersectionObserver(([e]) => { footerInView = e.isIntersecting; onScroll(); });
+    if (ft) io.observe(ft);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    return () => { io.disconnect(); window.removeEventListener('scroll', onScroll); };
   }, []);
   return (
     <div className={`bottom-nav ${show ? 'show' : ''}`} aria-hidden={!show}>

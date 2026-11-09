@@ -518,6 +518,20 @@ function About() {
   );
 }
 
+// Line icons for the credential cards (inline SVG, currentColor).
+const CRED_ICONS = {
+  cap: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 9.5 12 4.5 2 9.5l10 5 10-5Z" /><path d="M6 11.5v5c3.5 2.4 8.5 2.4 12 0v-5" /><path d="M22 9.5v5" />
+    </svg>
+  ),
+  spark: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
+      <path d="M12 3c.7 4.6 3.4 7.3 8 8-4.6.7-7.3 3.4-8 8-.7-4.6-3.4-7.3-8-8 4.6-.7 7.3-3.4 8-8Z" />
+    </svg>
+  ),
+};
+
 // Experience: sticky intro on the left, role cards on the right along a spine whose orange fill
 // follows the scroll (passive, rAF-throttled). Reduced motion: the spine is simply full.
 function Experience() {
@@ -563,10 +577,20 @@ function Experience() {
               </li>
             ))}
           </ol>
+          <ul className="xp-creds">
+            {credentials.map((c, i) => (
+              <li key={c.key} className={`xp-card xp-cred rise${c.accent ? ' xp-cred--accent' : ''}`} style={{ '--d': `${(experience.length + i) * 0.08}s` }}>
+                <div className="xp-top">
+                  <span className="xp-icon" aria-hidden="true">{CRED_ICONS[c.icon]}</span>
+                  <span className="xp-date">{c.date}</span>
+                </div>
+                <p className="xp-cred-label">{c.label}</p>
+                <h3 className="xp-cred-title">{c.title}</h3>
+                <p className="xp-cred-sub">{c.sub}</p>
+              </li>
+            ))}
+          </ul>
         </div>
-      </div>
-      <div className="metrics xp-strip rise" style={{ '--n': credentials.length }}>
-        {credentials.map((c) => <div key={c.label}><span className="kicker">{c.label}</span><span className="xp-cred">{c.text}</span></div>)}
       </div>
     </section>
   );

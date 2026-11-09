@@ -457,8 +457,8 @@ export const experience = [
   },
 ];
 
-// Full-bleed strip under the experience cards.
+// Credential cards under the experience role cards (icon: 'cap' | 'spark'; accent = crimson icon tile).
 export const credentials = [
-  { label: 'Education', text: 'Bachelor’s in Computer Application · Calicut University · 2022–2025' },
-  { label: 'Programme', text: 'One Million Prompters · Dubai Future Foundation · 2025' },
+  { key: 'education', icon: 'cap', label: 'Education', date: '2022–2025', title: 'Bachelor’s in Computer Application', sub: 'Calicut University' },
+  { key: 'programme', icon: 'spark', label: 'Programme', date: '2025', title: 'One Million Prompters', sub: 'Dubai Future Foundation · Selected participant', accent: true },
 ];

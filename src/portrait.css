@@ -1,7 +1,7 @@
 /* Decode portrait. --p (0 to 1) is set by Portrait.jsx */
 .me {
   --p: 0;
-  position: relative; margin: 0; flex: none; height: clamp(180px, 30svh, 300px); aspect-ratio: 4 / 5;
+  position: relative; margin: 0; flex: none; height: clamp(200px, 34svh, 340px); aspect-ratio: 4 / 5;
   border-radius: 18px; overflow: hidden; isolation: isolate; cursor: crosshair; outline-offset: 4px;
   background: #0f1115; -webkit-tap-highlight-color: transparent;
   box-shadow: var(--shadow-portrait), 0 0 calc(var(--p) * 34px) calc(var(--p) * 2px) rgba(255, 90, 31, calc(var(--p) * 0.35));
@@ -36,7 +36,7 @@
 .hero-left { display: flex; gap: 26px; align-items: center; }
 
 @media (max-width: 767px) {
-  .me { height: auto; width: 112px; border-radius: 14px; }
+  .me { height: auto; width: 124px; border-radius: 14px; }
   .me-tag { left: 6px; bottom: 6px; padding: 3px 6px 3px 5px; gap: 4px; font-size: 9px; }
   .me-dot { width: 5px; height: 5px; }
   .hero-left { gap: 16px; }

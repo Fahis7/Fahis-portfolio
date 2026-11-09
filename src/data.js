@@ -3,6 +3,11 @@
 //  text, projects, skills or links - no need to touch the components.
 // ─────────────────────────────────────────────────────────────
 
+// WhatsApp: the number in one place; every WhatsApp link opens a chat with this message already typed.
+const WHATSAPP_NUMBER = '971542894979';
+const WHATSAPP_MESSAGE = 'Hi Fahis, I found your portfolio and I’d like to talk about an opportunity. Are you available for a quick chat?';
+export const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+
 export const profile = {
   name: 'Mohammed Fahis',
   short: 'Fahis',
@@ -15,7 +20,7 @@ export const profile = {
   socials: [
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/mohammed-fahis-mt' },
     { label: 'GitHub', href: 'https://github.com/Fahis7' },
-    { label: 'WhatsApp', href: 'https://wa.me/971542894979' },
+    { label: 'WhatsApp', href: whatsappHref },
   ],
 };
 

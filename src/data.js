@@ -362,14 +362,14 @@ export const stackCards = [
     title: ['AI / LLM', 'Applied in Production'],
     dots: '4', unit: 'AI products',
     caption: ['AxisKYC, RefurbOps,', 'PropAI OS & Seek and Sync'],
-    groups: [{ label: 'AI / LLM', items: ['Claude (Anthropic)', 'Groq Llama 4 Scout Vision', 'OpenAI GPT-4', 'RAG & pgvector', 'Hugging Face', 'LangChain & prompt engineering'] }],
+    groups: [{ label: 'AI / LLM', items: ['Claude API (Haiku, Vision)', 'Groq Llama 4 Vision', 'OpenAI GPT-4', 'RAG pipelines', 'pgvector embeddings', 'Document OCR (Tesseract, MRZ)', 'Prompt engineering'] }],
   },
   {
     key: 'backend', variant: 'context',
     title: ['Backend & Data', 'Multi-tenant by Design'],
     dots: '3', unit: 'DB roles',
     caption: ['Postgres roles behind', 'Row-Level Security'],
-    groups: [{ label: 'Backend & data', items: ['Python', 'Django 5 / DRF', 'FastAPI', 'PostgreSQL + RLS', 'Celery + Redis', 'JWT / OAuth2', 'MongoDB / Supabase'] }],
+    groups: [{ label: 'Backend & data', items: ['Python', 'Django 5', 'Django REST Framework', 'FastAPI', 'PostgreSQL (RLS, multi-tenant)', 'Celery', 'Redis queues'] }],
   },
   {
     key: 'ship', variant: 'connections',
@@ -377,10 +377,26 @@ export const stackCards = [
     dots: '5', unit: 'live',
     caption: ['Products live', 'in production'],
     groups: [
-      { label: 'Frontend', items: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind v4', 'Framer Motion', 'i18n / RTL'] },
-      { label: 'Cloud / DevOps', items: ['Docker + Compose', 'GitHub Actions', 'Nginx + Gunicorn', 'AWS EC2 / RDS', 'CentOS / Linux', 'Vercel / Railway'] },
+      { label: 'Frontend', items: ['React 19', 'Next.js 16 (App Router)', 'Tailwind CSS', 'SWR', 'Framer Motion', 'Arabic RTL / i18n'] },
+      { label: 'Cloud / DevOps', items: ['Docker', 'GitHub Actions CI/CD', 'AWS EC2 / RDS', 'Vercel', 'Nginx', 'Cloudflare R2'] },
     ],
   },
+];
+
+/*
+  Full toolkit (Stack section, under the glass cards). Every skill from the CV, by group.
+  `wide` spans the full grid width with crimson-outlined chips.
+*/
+export const toolkit = [
+  { label: 'Languages', items: ['Python', 'TypeScript', 'JavaScript', 'SQL'] },
+  { label: 'AI / LLM', items: ['Claude API (Haiku, Vision)', 'Groq Llama 4 Vision', 'Llama 3.3 70B', 'OpenAI GPT-4', 'Hugging Face Transformers', 'RAG pipelines', 'pgvector embeddings', 'Vector search', 'Document OCR (Tesseract, MRZ)', 'CV parsing / NLP', 'Prompt engineering', 'AI evaluation'] },
+  { label: 'Backend', items: ['Django 5', 'Django REST Framework', 'FastAPI', 'REST API design', 'Webhooks', 'Celery', 'Redis queues', 'ReportLab PDF', 'openpyxl Excel'] },
+  { label: 'Frontend', items: ['React 19', 'Next.js 16 (App Router)', 'Tailwind CSS', 'SWR', 'Context API', 'Framer Motion', 'Arabic RTL / i18n'] },
+  { label: 'Data', items: ['PostgreSQL (RLS, multi-tenant)', 'Supabase', 'Redis'] },
+  { label: 'Auth & Security', items: ['JWT', 'OAuth2', 'Firebase Auth / MFA', 'RBAC', 'Row-Level Security'] },
+  { label: 'Cloud & DevOps', items: ['Docker', 'Docker Compose', 'GitHub Actions CI/CD', 'AWS EC2 / RDS', 'DigitalOcean', 'Railway', 'Vercel', 'Netlify', 'Nginx', 'Gunicorn', 'Certbot SSL', 'systemd', 'Cloudinary', 'Cloudflare R2', 'Sentry'] },
+  { label: 'Testing', items: ['Vitest', 'Integration tests on real PostgreSQL', 'Regression suites'] },
+  { label: 'Domains', wide: true, items: ['AML / KYC compliance', 'Sanctions & PEP screening', 'Multi-tenant SaaS', 'E-commerce', 'Recommerce operations'] },
 ];
 
 /*

@@ -20,7 +20,7 @@ import Showreel from './Showreel.jsx';
 import Quotes from './Quotes.jsx';
 import { DotText, DotWord, DotTitle } from './DotText.jsx';
 import { GlassCard, useGlassEntrance } from './GlassCard.jsx';
-import { profile, projects, stackCards, marquee, experience, credentials, quotes, offers, realShot } from './data.js';
+import { profile, projects, stackCards, toolkit, marquee, experience, credentials, quotes, offers, realShot } from './data.js';
 
 const BASE = import.meta.env.BASE_URL;
 const MAILTO = `mailto:${profile.email}`;
@@ -673,7 +673,7 @@ function Partner() {
 
 /* Cursor light: a soft orange spotlight that follows the pointer, plus a local highlight on the card under it.
    Fine pointers only, off with reduced motion. One passive, rAF-throttled pointermove listener writes CSS variables. */
-const LIGHT_CARDS = '.preview, .sp-card, .panel, .xp-card';
+const LIGHT_CARDS = '.preview, .sp-card, .panel, .xp-card, .tk-group';
 const LIGHT_STRONG = '.reel, .panel-dark';
 function CursorLight() {
   const ref = useRef(null);
@@ -756,7 +756,7 @@ function App() {
         <Work />
         <Showreel projects={projects} />
         <About />
-        <StackPerf cards={stackCards} />
+        <StackPerf cards={stackCards} toolkit={toolkit} />
         <Experience />
         <WorkTogether />
         <Partner />

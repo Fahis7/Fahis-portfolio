@@ -20,7 +20,7 @@
   --cards-offset: clamp(14px, 6vh, 64px);
 
   position: relative; isolation: isolate; display: flex; flex-direction: column;
-  height: 100vh; height: 100svh; min-height: 760px; max-height: 1100px; overflow: hidden;
+  overflow: hidden;
   padding: var(--pad-top) var(--gutter) var(--pad-bottom);
   background: var(--bg); color: var(--sp-ink); margin-top: 100px;
   font-optical-sizing: auto; text-rendering: geometricPrecision;
@@ -49,6 +49,10 @@ html[data-theme="dark"] .sp-stage {
 .sp-bg::after { width: 50vw; height: 38vw; right: -8vw; bottom: -10vw; background: radial-gradient(circle, #f2b08a, transparent 70%); animation-delay: -9s; }
 @keyframes spDrift { to { transform: translate3d(4vw, -3vw, 0) scale(1.08); } }
 .sp-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+/* the masthead + glass cards keep the old full-screen height (the cards size from it via 100cqh);
+   the toolkit grid follows below, so the section itself scrolls normally */
+.sp-screen { display: flex; flex-direction: column; height: calc(clamp(760px, 100svh, 1100px) - 2 * var(--section-pad)); }
 
 /* masthead */
 .sp-masthead, .sp-cards { width: min(100%, var(--content-max)); margin-inline: auto; }
@@ -307,7 +311,8 @@ html[data-theme="dark"] .sp-stage {
 
 /* ── responsive: only how many cards share a row changes ── */
 @media (min-width: 768px) and (max-width: 1180px) and (max-aspect-ratio: 6/7) {
-  .sp-stage { height: auto; max-height: none; min-height: 100svh; }
+  .sp-stage { min-height: 100svh; }
+  .sp-screen { height: auto; }
   .sp-cards {
     display: grid; grid-template-columns: repeat(2, max-content); justify-content: center; align-content: center; flex: 0 0 auto; height: 78svh;
     --card-w: min((100cqw - var(--gap)) / 2, (100cqh - var(--gap)) / 2 * 429 / 554, 429px);
@@ -315,7 +320,8 @@ html[data-theme="dark"] .sp-stage {
   .sp-card:last-child { grid-column: 1 / -1; justify-self: center; }
 }
 @media (max-width: 767px) {
-  .sp-stage { height: auto; min-height: 100svh; max-height: none; overflow: visible; }
+  .sp-stage { min-height: 100svh; overflow: visible; }
+  .sp-screen { height: auto; }
   .sp-masthead { grid-template-columns: minmax(0, 1fr); }
   .sp-headline { font-size: 30px; }
   .sp-intro { font-size: 15px; }

@@ -664,6 +664,7 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
 /* ═════════════ RESPONSIVE ═════════════ */
 @media (max-width: 1000px) {
   .project, .project.flip, .about-grid { grid-template-columns: 1fr; gap: 32px; }
+  .toolkit-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .project.flip .project-text { order: 0; }
   .project .preview-wrap { order: -1; }
   .features { grid-template-columns: 1fr; }
@@ -701,6 +702,8 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
   .xp-card { padding: 22px; }
   .xp-card::before { left: -16.5px; top: 28px; }
   .xp-creds { grid-template-columns: 1fr; }
+  .toolkit-grid { grid-template-columns: 1fr; }
+  .tk-group { padding: 20px; }
   .xp-creds::before { left: -16.5px; top: 26px; }
   .xp-card.xp-cred { padding: 22px; }
   .codes { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 30vw); mask-image: linear-gradient(90deg, transparent 0, #000 30vw); }
@@ -759,9 +762,9 @@ html[data-theme="dark"] { --spot-card: 0.2; }
 
 /* cards: one orange radial at the cursor, shown at --spot-edge on a 1px ring (so the edge nearest the cursor glows)
    and at --spot-card inside, via a two-layer mask */
-.has-light :where(.preview, .sp-card, .panel, .xp-card) { position: relative; }
+.has-light :where(.preview, .sp-card, .panel, .xp-card, .tk-group) { position: relative; }
 .has-light :where(.panel-dark, .sp-card) { --spot-card: 0.2; }
-.has-light :is(.preview, .sp-card, .panel, .xp-card)::after {
+.has-light :is(.preview, .sp-card, .panel, .xp-card, .tk-group)::after {
   --fill: rgba(0, 0, 0, calc(var(--spot-card) / var(--spot-edge)));
   content: ''; position: absolute; inset: 0; z-index: 3; padding: 1px; border-radius: inherit; pointer-events: none;
   opacity: 0; transition: opacity 0.3s ease;
@@ -771,7 +774,7 @@ html[data-theme="dark"] { --spot-card: 0.2; }
   mask: linear-gradient(var(--fill) 0 0), linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: add, exclude;
 }
-.has-light :is(.preview, .sp-card, .panel, .xp-card):hover::after { opacity: 1; }
+.has-light :is(.preview, .sp-card, .panel, .xp-card, .tk-group):hover::after { opacity: 1; }
 
 /* ═════════════ TYPOGRAPHY (Stack section style) ═════════════
    Headings: Inter 400, +0.015em, line-height 1.223, one LED dot accent word (DotWord).
@@ -826,3 +829,17 @@ html.cv-lock { overflow: hidden; }
 
 /* comfortable reading: long text never runs the full width (headings can) */
 .t-copy, .project-text > p:not(.kicker):not(.lede), .about-copy p { max-width: 68ch; }
+
+/* ═════════════ FULL TOOLKIT (Stack section, under the glass cards) ═════════════ */
+.toolkit { margin-top: clamp(56px, 7vw, 96px); }
+.toolkit-head {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 20px;
+  font: 500 11.5px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+}
+.toolkit-label { color: var(--body); }
+.toolkit-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.tk-group { padding: 22px 24px 24px; border-radius: 22px; background: var(--paper); box-shadow: var(--shadow-card); }
+.tk-group--wide { grid-column: 1 / -1; }
+.tk-name { font: 500 11px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.tk-group .chips.small { margin-top: 12px; }
+.tk-group--wide .chips li { background: transparent; box-shadow: none; border: 1px solid color-mix(in srgb, var(--dot) 60%, transparent); }

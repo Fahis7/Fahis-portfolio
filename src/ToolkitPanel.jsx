@@ -61,35 +61,60 @@ const trailColor = (hex) => {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b < 0.05 ? '#fff' : `#${hex}`;
 };
 
+const shuffle = (arr) => {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+};
+// trail tiles: brand logos in their brand colour (very dark ones in white); line icons in the site's orange
+const brandSvg = (icon) => `<svg viewBox="0 0 24 24" fill="${trailColor(icon.hex)}" aria-hidden="true"><path d="${icon.path}"/></svg>`;
+const lineSvg = (paths) => `<svg viewBox="0 0 24 24" fill="none" stroke="#ff7a3c" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths.map((d) => `<path d="${d}"/>`).join('')}</svg>`;
+
 export default function ToolkitPanel({ toolkit }) {
   const [active, setActive] = useState(0);
   const tabs = useRef([]), term = useRef(null), trail = useRef(null);
 
-  // Cursor logo trail (like the contact trail): the active tab's brand logos, cycled in order, one tile per 80ms
-  // at most, 14 alive at most. Desktop only; off with reduced motion and on touch.
+  // Cursor logo trail (like the contact trail), desktop only, off with reduced motion and on touch.
+  // A varied mix of every tool: two shuffled decks (the active tab's tools, and all the others), each
+  // reshuffled after a full pass; about half the spawns come from each. One tile per 80ms, 14 alive at most.
   useEffect(() => {
     const box = term.current, layer = trail.current;
     if (!box || !layer) return;
     if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const logos = toolkit.filter((g) => !g.wide)[active].items.map((n) => BRANDS[n]).filter(Boolean);
-    if (!logos.length) return;
-    let lastSpawn = 0, n = 0;
+    const groups = toolkit.filter((g) => !g.wide);
+    const entry = (name) => (BRANDS[name] ? { svg: brandSvg(BRANDS[name]) } : GENERIC[name] ? { svg: lineSvg(GENERIC[name]) } : null);
+    const deck = (names) => {
+      const items = names.map((n) => ({ n, e: entry(n) })).filter((x) => x.e);
+      let order = [], k = 0;
+      return { size: items.length, next() { if (k >= order.length) { order = shuffle(items); k = 0; } return order[k++]; } };
+    };
+    const mine = deck(groups[active].items);
+    const rest = deck(groups.filter((_, i) => i !== active).flatMap((g) => g.items));
+    let lastSpawn = 0, lastSvg = '';
+    const pick = () => {
+      const d = mine.size && (!rest.size || Math.random() < 0.5) ? mine : rest;
+      let x = d.next();
+      if (x.e.svg === lastSvg && d.size > 1) x = d.next(); // avoid the same logo twice in a row (Docker, Docker Compose)
+      lastSvg = x.e.svg;
+      return x.e.svg;
+    };
     const onMove = (e) => {
       const now = performance.now();
       if (now - lastSpawn < 80) return;
       lastSpawn = now;
-      const icon = logos[n++ % logos.length], r = box.getBoundingClientRect();
+      const r = box.getBoundingClientRect();
       const tile = document.createElement('div');
       tile.className = 'tk-trail-tile';
       tile.style.left = `${e.clientX - r.left}px`;
       tile.style.top = `${e.clientY - r.top}px`;
       tile.style.setProperty('--rot', `${Math.random() * 20 - 10}deg`);
-      tile.innerHTML = `<svg viewBox="0 0 24 24" fill="${trailColor(icon.hex)}" aria-hidden="true"><path d="${icon.path}"/></svg>`;
+      tile.innerHTML = pick();
       layer.appendChild(tile);
       while (layer.childElementCount > 14) layer.firstElementChild.remove();
       setTimeout(() => tile.remove(), 1000);
     };
+    if (!mine.size && !rest.size) return;
     box.addEventListener('pointermove', onMove, { passive: true });
     return () => box.removeEventListener('pointermove', onMove);
   }, [active, toolkit]);

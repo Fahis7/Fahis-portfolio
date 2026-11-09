@@ -20,7 +20,7 @@ import MiniSite from './MiniSites.jsx';
 import Portrait from './Portrait.jsx';
 import Showreel from './Showreel.jsx';
 import Quotes from './Quotes.jsx';
-import { DotWord } from './DotText.jsx';
+import { DotWord, DotTitle } from './DotText.jsx';
 import { profile, projects, stackCards, marquee, experience, quotes, realShot } from './data.js';
 
 const BASE = import.meta.env.BASE_URL;
@@ -306,7 +306,7 @@ function Project({ p, i, after }) {
           {!p.demo && <span className="kicker-status"> · DEMO OFFLINE</span>}
           {p.badge && <span className="kicker-tag">{p.badge}</span>}
         </p>
-        <h3 className="serif-title">{p.title}</h3>
+        <DotTitle text={p.title} />
         <p className="lede">{p.tagline}</p>
         <p>{p.desc}</p>
         <ul className="ticks">{p.highlights.map((h) => <li key={h}>{h}</li>)}</ul>

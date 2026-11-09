@@ -120,3 +120,16 @@ export function DotWord({ text, lead = false }) {
     </span>
   );
 }
+
+// A heading drawn in LED dots, one DotText per word so long names wrap between words.
+// The real text is visually hidden for screen readers and search engines; the dots are aria-hidden.
+export function DotTitle({ text, as: Tag = 'h3', className = '' }) {
+  return (
+    <Tag className={`dot-title ${className}`}>
+      <span className="sr-only">{text}</span>
+      {text.split(' ').map((w, i) => (
+        <span key={i} className="dot-title-word" aria-hidden="true"><DotText text={w} pitchX={4} radius={1.8} /></span>
+      ))}
+    </Tag>
+  );
+}

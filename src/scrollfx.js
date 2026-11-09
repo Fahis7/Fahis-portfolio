@@ -43,6 +43,48 @@ export function onEnter(el, fn) {
   once.set(el, fn); io.observe(el);
 }
 
+/* ── .rise reveals (enter-once) ──
+   Reliable for every element: one observer (threshold 0, so even a thin or masked element counts), new .rise
+   elements that mount later are picked up (MutationObserver), and a failsafe shows anything still hidden 1.5s
+   after it entered the viewport, checked from real geometry. With reduced motion everything is revealed at once.
+   The hidden "before" states must not change an element's geometry (opacity / transform only, never clip-path:
+   Chrome's IntersectionObserver measures the element after its own clip-path, so a fully clipped element never
+   intersects). */
+export function watchReveals() {
+  const reveal = (el) => el.classList.add('in');
+  if (!motionOK()) {
+    document.querySelectorAll('.rise').forEach(reveal);
+    const mo = new MutationObserver(() => document.querySelectorAll('.rise:not(.in)').forEach(reveal));
+    mo.observe(document.body, { childList: true, subtree: true });
+    return () => mo.disconnect();
+  }
+  const seen = new WeakSet();
+  const rio = new IntersectionObserver((entries) => entries.forEach((e) => {
+    if (e.isIntersecting) { reveal(e.target); rio.unobserve(e.target); }
+  }), { threshold: 0, rootMargin: '0px 0px -40px 0px' });
+  const watch = (root = document) => root.querySelectorAll?.('.rise:not(.in)').forEach((el) => { if (!seen.has(el)) { seen.add(el); rio.observe(el); } });
+  watch();
+  const mo = new MutationObserver((muts) => muts.forEach((m) => m.addedNodes.forEach((n) => {
+    if (n.nodeType !== 1) return;
+    if (n.matches?.('.rise:not(.in)') && !seen.has(n)) { seen.add(n); rio.observe(n); }
+    watch(n);
+  })));
+  mo.observe(document.body, { childList: true, subtree: true });
+  // failsafe: still hidden 1.5s after entering the viewport → show it (also covers the project reveals)
+  const since = new Map();
+  const timer = setInterval(() => {
+    const now = performance.now(), vh = window.innerHeight;
+    document.querySelectorAll('.rise:not(.in), .fx-proj:not(.fx-in)').forEach((el) => {
+      const r = el.getBoundingClientRect();
+      const inView = r.bottom > 0 && r.top < vh && r.width > 0;
+      if (!inView) { since.delete(el); return; }
+      if (!since.has(el)) since.set(el, now);
+      else if (now - since.get(el) >= 1500) { el.classList.add(el.classList.contains('fx-proj') ? 'fx-in' : 'in'); since.delete(el); }
+    });
+  }, 500);
+  return () => { rio.disconnect(); mo.disconnect(); clearInterval(timer); };
+}
+
 /* ── the homepage effects ── */
 export function initScrollFx() {
   if (!motionOK()) return () => {};

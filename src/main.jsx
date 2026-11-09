@@ -20,7 +20,7 @@ import Showreel from './Showreel.jsx';
 import Quotes from './Quotes.jsx';
 import { DotText, DotWord, DotTitle, GLYPHS } from './DotText.jsx';
 import { GlassCard, Grain, useGlassEntrance, useTilt } from './GlassCard.jsx';
-import { initScrollFx, onScrollFrame, motionOK } from './scrollfx.js';
+import { initScrollFx, watchReveals, onScrollFrame, motionOK } from './scrollfx.js';
 import { profile, projects, heroStats, stackCards, toolkit, marquee, experience, credentials, quotes, offers, realShot } from './data.js';
 
 const BASE = import.meta.env.BASE_URL;
@@ -32,14 +32,9 @@ const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)'
 /* ───────────── hooks ───────────── */
 
 // Viktor-style fade-in-up: every .rise element animates once when it scrolls into view (staggered by --d).
+// Every .rise element (headings, cards, rows) is revealed by watchReveals() in scrollfx.js.
 function useRiseOnScroll() {
-  useEffect(() => {
-    const io = new IntersectionObserver((entries) => entries.forEach((e) => {
-      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-    }), { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-    document.querySelectorAll('.rise').forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, []);
+  useEffect(() => watchReveals(), []);
 }
 
 /* ───────────── small parts ───────────── */

@@ -1139,7 +1139,8 @@ html.fx-ready .xp-item.rise:not(.in) .xp-icon { filter: grayscale(1) blur(4px); 
 
 /* section headings: the label fades in, the h2 reveals from a clip mask; LED words light up dot by dot */
 html.fx-ready .section-label.rise.in { animation-name: fxFade; }
-html.fx-ready :is(h2.big, h2.partner-title).rise { opacity: 1; transform: none; clip-path: inset(0 0 100% 0); }
+/* before: hidden with opacity only (a clip-path here would stop the observer from ever seeing the heading) */
+html.fx-ready :is(h2.big, h2.partner-title).rise { opacity: 0; transform: none; }
 html.fx-ready :is(h2.big, h2.partner-title).rise.in { animation: fxMask 0.8s cubic-bezier(.2, .8, .2, 1) both; animation-delay: var(--d, 0s); }
 html.fx-ready .rise:not(.in) .dot-word circle { opacity: 0; }
 html.fx-ready .rise.in .dot-word circle { animation: fxDot 0.25s ease-out both; animation-delay: calc(var(--d, 0s) + 0.35s + var(--dl, 0s)); }

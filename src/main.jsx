@@ -224,50 +224,83 @@ const Shot = ({ p }) => (realShot(p)
   ? <img className="shot" src={realShot(p)} alt={`Screenshot of ${p.title}`} width={1600} height={Math.round(1600 / p.reel.aspect)} loading="lazy" decoding="async" />
   : <MiniSite site={p.site} />);
 
-/* ── CV: one shared <dialog> viewer. Every "View CV" is a real link to the PDF (new tab), upgraded to the
-   in-page viewer on mouse/trackpad devices whose browser can show PDFs inline. ── */
+/* ── CV: a full-screen in-page viewer showing the CV rendered as an image (public/cv, npm run cv:render).
+   Every "View CV" is a real link to the PDF (works without JS); with JS it opens the viewer.
+   Opening sets #cv (Back closes it); loading the page with #cv opens it. ── */
+const CV_IMG_1X = `${BASE}cv/cv-page-1@1x.webp`, CV_IMG_2X = `${BASE}cv/cv-page-1.webp`;
 let openCvViewer = null;
-const cvInline = () => window.matchMedia('(hover: hover) and (pointer: fine)').matches && navigator.pdfViewerEnabled !== false;
 
 function CvLink({ className, children = 'View CV' }) {
   const onClick = (e) => {
-    if (!openCvViewer || !cvInline()) return; // phones / touch / no inline PDF: let the link open a new tab
+    if (!openCvViewer) return;
     e.preventDefault();
     openCvViewer(e.currentTarget);
   };
   return <a href={CV_URL} target="_blank" rel="noreferrer" className={className} onClick={onClick}>{children}</a>;
 }
-const CvDownload = ({ className, children = 'Download CV ↓' }) => <a href={CV_URL} download={CV_FILE} className={className}>{children}</a>;
+const CvDownload = ({ className, children = 'Download CV ↓', ...rest }) => <a href={CV_URL} download={CV_FILE} className={className} {...rest}>{children}</a>;
 
-function CvDialog() {
+const DownloadIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" /></svg>
+);
+
+function CvViewer() {
   const dialog = useRef(null), closeBtn = useRef(null), opener = useRef(null);
-  const [src, setSrc] = useState(null); // load the PDF only on first open
+  const pushed = useRef(false), fromHistory = useRef(false);
+  const [shown, setShown] = useState(false); // fetch the image only on first open
   useEffect(() => {
-    const d = dialog.current;
-    openCvViewer = (from) => {
-      opener.current = from || document.activeElement;
-      setSrc(`${CV_URL}#view=FitH`);
+    const d = dialog.current, root = document.documentElement;
+    const open = (from, viaHash = false) => {
+      if (d.open) return;
+      opener.current = from || null;
+      setShown(true);
       d.showModal();
+      root.classList.add('cv-lock'); // lock page scroll behind the viewer
       closeBtn.current?.focus();
+      if (!viaHash && location.hash !== '#cv') { history.pushState(null, '', '#cv'); pushed.current = true; }
     };
-    const onClose = () => opener.current?.focus?.();
+    openCvViewer = open;
+    const onClose = () => {
+      root.classList.remove('cv-lock');
+      if (!fromHistory.current) {
+        if (pushed.current) history.back(); // undo our #cv entry
+        else if (location.hash === '#cv') history.replaceState(null, '', location.pathname + location.search);
+      }
+      pushed.current = false; fromHistory.current = false;
+      opener.current?.focus?.();
+    };
+    // Back button (or any hash change away from #cv) closes it; arriving at #cv opens it
+    const onHash = () => {
+      if (location.hash === '#cv') open(null, true);
+      else if (d.open) { fromHistory.current = true; d.close(); }
+    };
     d.addEventListener('close', onClose);
-    return () => { openCvViewer = null; d.removeEventListener('close', onClose); };
+    window.addEventListener('popstate', onHash);
+    window.addEventListener('hashchange', onHash);
+    if (location.hash === '#cv') open(null, true);
+    return () => {
+      openCvViewer = null;
+      d.removeEventListener('close', onClose);
+      window.removeEventListener('popstate', onHash);
+      window.removeEventListener('hashchange', onHash);
+    };
   }, []);
   const close = () => dialog.current.close();
+  // backdrop click: anywhere that isn't the bar or the sheet
+  const onClick = (e) => { if (e.target === e.currentTarget || e.target.classList.contains('cv-stage')) close(); };
   return (
-    // a click on the dimmed backdrop lands on the <dialog> itself (the panel fills it)
-    <dialog ref={dialog} className="cv-dialog" aria-labelledby="cv-title" onClick={(e) => { if (e.target === e.currentTarget) close(); }}>
-      <div className="cv-panel">
-        <div className="cv-head">
-          <p id="cv-title">Mohammed Fahis · CV</p>
-          <div className="cv-actions">
-            <CvDownload className="cv-btn">Download</CvDownload>
-            <a className="cv-btn" href={CV_URL} target="_blank" rel="noreferrer">Open in new tab ↗</a>
-            <button type="button" className="cv-close" ref={closeBtn} onClick={close} aria-label="Close CV">×</button>
-          </div>
+    <dialog ref={dialog} className="cv-viewer" aria-labelledby="cv-title" onClick={onClick}>
+      <div className="cv-bar">
+        <p id="cv-title">Mohammed Fahis · CV</p>
+        <div className="cv-actions">
+          <CvDownload className="pill pill-ghost cv-btn" aria-label="Download PDF"><DownloadIcon /><span className="cv-label">Download PDF</span></CvDownload>
+          <a className="pill pill-ghost cv-btn" href={CV_URL} target="_blank" rel="noreferrer" aria-label="Open PDF in a new tab"><Arrow size={13} /><span className="cv-label">Open PDF</span></a>
+          <button type="button" className="cv-close" ref={closeBtn} onClick={close} aria-label="Close CV">×</button>
         </div>
-        {src && <iframe className="cv-frame" src={src} title="Mohammed Fahis CV (PDF)" />}
+      </div>
+      <div className="cv-stage">
+        {shown && <img className="cv-sheet" src={CV_IMG_1X} srcSet={`${CV_IMG_1X} 1x, ${CV_IMG_2X} 2x`} width="827" height="1170" alt="CV of Mohammed Fahis, one page" decoding="async" />}
+        <a className="sr-only" href={CV_URL}>Read the CV as a PDF</a>
       </div>
     </dialog>
   );
@@ -304,7 +337,7 @@ function Stage() {
           </div>
         </div>
         <div className="hero-side">
-          <p className="t-copy">Hi, I’m Fahis. I’m at my best owning the whole thing, from the first sketch to the last pixel. I learn fast, ask the awkward questions early, and stay calm when things break.</p>
+          <p className="t-copy">I'm Fahis, an AI and full-stack engineer in Dubai. I was the sole engineer behind AxisKYC, a live compliance platform that has screened 1,000+ profiles for UAE firms, and I like owning products like that from start to finish.</p>
           <div className="hero-ctas">
             <a href="#work" className="pill pill-hot pill-lg">Explore the work</a>
             <CvLink className="pill pill-ghost pill-lg hero-cv">View CV</CvLink>
@@ -706,7 +739,7 @@ function App() {
       </main>
       <Footer />
       <BottomNav />
-      <CvDialog />
+      <CvViewer />
       <CursorLight />
     </>
   );

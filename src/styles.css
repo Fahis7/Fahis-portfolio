@@ -62,7 +62,7 @@
   --quote-foot: #273c46;
   --btn-light-ink: #051a24;
   --btn-light-inset: rgba(5, 26, 36, 0.12);
-  /* dark panels (.panel-dark, .offer-dark) stay dark in both themes */
+  /* dark panels (.panel-dark) stay dark in both themes */
   --panel-dark: #051a24;
   --panel-dark-ring: 0 0 0 0 transparent;
   --on-dark: #e0ebf0;
@@ -549,14 +549,12 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
 
 /* ═════════════ WORK TOGETHER ═════════════ */
 .together { display: grid; grid-template-columns: 0.75fr 1.25fr; gap: 48px; align-items: start; }
-.together-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-.offer { background: var(--paper); border-radius: 40px; padding: 34px 40px 40px; box-shadow: var(--shadow-card); color: var(--navy-2); }
-.offer h3 { font: 500 22px var(--sans); letter-spacing: -0.01em; }
-.offer > p { margin-top: 12px; font-size: var(--section-text); line-height: 1.55; opacity: 0.8; }
-.offer-big { margin-top: 34px; font: 400 26px var(--serif); letter-spacing: -0.01em; }
-.offer-big span { display: block; font: 400 13px var(--sans); opacity: 0.6; margin-top: 4px; }
-.offer-dark { background: var(--panel-dark); color: var(--on-dark-strong); box-shadow: var(--panel-dark-ring), inset 0 2px 20px var(--dark-inset), var(--shadow-card); }
-.offer-dark > p { color: var(--on-dark); }
+.together-grid {
+  /* glass cards (GlassCard): rigid 429×554 artwork, scaled from the container like the Stack cards */
+  --gap: clamp(12px, 1.5vw, 23px);
+  container-type: inline-size; display: flex; gap: var(--gap);
+  --card-w: min((100cqw - var(--gap)) / 2, 429px);
+}
 
 /* ═════════════ PARTNER / CONTACT ═════════════ */
 /* the section is the surface: full-bleed paper, top hairline; content stays in the .section container.
@@ -615,7 +613,7 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
   .project.flip .project-text { order: 0; }
   .project .preview-wrap { order: -1; }
   .features { grid-template-columns: 1fr; }
-  .two-col, .together-grid, .together { grid-template-columns: 1fr; }
+  .two-col, .together { grid-template-columns: 1fr; }
   .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .metrics div:nth-child(odd) { border-left: 0; padding-left: 0; }
   .metrics div:nth-child(even) { padding-right: 0; }
@@ -644,7 +642,8 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
   .preview-url { right: 10px; bottom: 10px; padding: 6px 10px; font-size: 10.5px; }
   .metrics div { padding: 16px; }
   .timeline li { grid-template-columns: 1fr; gap: 8px; }
-  .panel, .offer { padding: 28px 24px 30px; border-radius: 28px; }
+  .panel { padding: 28px 24px 30px; border-radius: 28px; }
+  .together-grid { flex-direction: column; align-items: center; --card-w: min(100cqw, 429px); }
   .footer { flex-direction: column; }
   .footer-cols { gap: 36px; }
   .copyright { flex-direction: column; gap: 6px; }
@@ -692,9 +691,9 @@ html[data-theme="dark"] { --spot-card: 0.2; }
 
 /* cards: one orange radial at the cursor, shown at --spot-edge on a 1px ring (so the edge nearest the cursor glows)
    and at --spot-card inside, via a two-layer mask */
-.has-light :where(.preview, .sp-card, .panel, .offer, .timeline li) { position: relative; }
-.has-light :where(.panel-dark, .offer-dark, .sp-card) { --spot-card: 0.2; }
-.has-light :is(.preview, .sp-card, .panel, .offer, .timeline li)::after {
+.has-light :where(.preview, .sp-card, .panel, .timeline li) { position: relative; }
+.has-light :where(.panel-dark, .sp-card) { --spot-card: 0.2; }
+.has-light :is(.preview, .sp-card, .panel, .timeline li)::after {
   --fill: rgba(0, 0, 0, calc(var(--spot-card) / var(--spot-edge)));
   content: ''; position: absolute; inset: 0; z-index: 3; padding: 1px; border-radius: inherit; pointer-events: none;
   opacity: 0; transition: opacity 0.3s ease;
@@ -704,7 +703,7 @@ html[data-theme="dark"] { --spot-card: 0.2; }
   mask: linear-gradient(var(--fill) 0 0), linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: add, exclude;
 }
-.has-light :is(.preview, .sp-card, .panel, .offer, .timeline li):hover::after { opacity: 1; }
+.has-light :is(.preview, .sp-card, .panel, .timeline li):hover::after { opacity: 1; }
 
 /* ═════════════ TYPOGRAPHY (Stack section style) ═════════════
    Headings: Inter 400, +0.015em, line-height 1.223, one LED dot accent word (DotWord) instead of italic serif.

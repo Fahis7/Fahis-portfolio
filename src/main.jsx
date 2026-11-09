@@ -21,7 +21,8 @@ import Portrait from './Portrait.jsx';
 import Showreel from './Showreel.jsx';
 import Quotes from './Quotes.jsx';
 import { DotWord, DotTitle } from './DotText.jsx';
-import { profile, projects, stackCards, marquee, experience, quotes, realShot } from './data.js';
+import { GlassCard, useGlassEntrance } from './GlassCard.jsx';
+import { profile, projects, stackCards, marquee, experience, quotes, offers, realShot } from './data.js';
 
 const BASE = import.meta.env.BASE_URL;
 const MAILTO = `mailto:${profile.email}`;
@@ -397,28 +398,26 @@ function Experience() {
 }
 
 function WorkTogether() {
+  const grid = useRef(null);
+  useGlassEntrance(grid);
   return (
     <section className="section section--fill together">
       <div className="together-head">
         <div className="section-label rise"><span>05</span>Work together</div>
-        <h2 className="big rise" style={{ '--d': '.1s' }}>Two ways to <em>work together.</em></h2>
+        <h2 className="big t-head rise" style={{ '--d': '.1s' }}>Two ways to work <DotWord text="together." /></h2>
       </div>
-      <div className="together-grid">
-        <div className="offer offer-dark rise" style={{ '--d': '.1s' }}>
-          <h3>Full-time role</h3>
-          <p>Join your team as an AI / full-stack engineer.<br />Dubai on-site, hybrid or remote.</p>
-          <div className="offer-big">Available now<span>Dubai · Hybrid · Remote</span></div>
-          <div className="btn-row">
-            <Button href={MAILTO} variant="light">Start a chat</Button>
-            <Button href={profile.socials[0].href} variant="ghost-dark" external>LinkedIn</Button>
-          </div>
-        </div>
-        <div className="offer rise" style={{ '--d': '.2s' }}>
-          <h3>Project build</h3>
-          <p>Fixed scope, end to end.<br />Architecture, build, deploy, hand-over.</p>
-          <div className="offer-big">Idea → production<span>SaaS · AI · compliance</span></div>
-          <div className="btn-row"><Button href={MAILTO} variant="tertiary">Start a chat</Button></div>
-        </div>
+      <div className="together-grid sp-pending" ref={grid}>
+        {offers.map((o, i) => (
+          <GlassCard
+            key={o.key} id={`offer-${o.key}`} variant={o.variant} title={o.title} dots={o.dots} unit={o.unit} caption={o.caption} index={i}
+            actions={<a className="sp-learn-more" href={MAILTO}>Start a chat</a>}
+            reveal={{
+              openLabel: 'Details',
+              groups: [{ label: o.reveal.label, items: o.reveal.items }],
+              footer: o.reveal.linkedin && <a className="sp-stack-link" href={profile.socials[0].href} target="_blank" rel="noreferrer">LinkedIn ↗</a>,
+            }}
+          />
+        ))}
       </div>
     </section>
   );
@@ -469,8 +468,8 @@ function Partner() {
 
 /* Cursor light: a soft orange spotlight that follows the pointer, plus a local highlight on the card under it.
    Fine pointers only, off with reduced motion. One passive, rAF-throttled pointermove listener writes CSS variables. */
-const LIGHT_CARDS = '.preview, .sp-card, .panel, .offer, .timeline li';
-const LIGHT_STRONG = '.reel, .panel-dark, .offer-dark';
+const LIGHT_CARDS = '.preview, .sp-card, .panel, .timeline li';
+const LIGHT_STRONG = '.reel, .panel-dark';
 function CursorLight() {
   const ref = useRef(null);
   useEffect(() => {

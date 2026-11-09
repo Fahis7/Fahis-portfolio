@@ -81,7 +81,7 @@ html[data-theme="dark"] .sp-stage {
 
 .sp-card {
   container-type: inline-size; position: relative; flex: 0 0 auto; overflow: hidden;
-  width: var(--card-w); aspect-ratio: 429 / 554; border: 1px solid var(--glass-line);
+  width: var(--card-w); aspect-ratio: 429 / 554; border: 1px solid var(--glass-line, rgba(255, 255, 255, 0.36));
   border-radius: calc(var(--card-w) * 17 / 429); color: #fff; font-family: var(--sans);
   --u: calc(100cqw / 429);
   box-shadow: 0 2px 4px rgba(50, 28, 39, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.24);
@@ -243,6 +243,21 @@ html[data-theme="dark"] .sp-stage {
 }
 .sp-learn-more:hover { transform: translateX(-50%) translateY(calc(-2 * var(--u))); box-shadow: 0 8px 20px rgba(58,25,39,.16); }
 .sp-learn-more:focus-visible { outline: 3px solid rgba(255,255,255,.78); outline-offset: 3px; }
+/* two pills side by side (Work together cards): same pill, sized in card units so both fit at any card size */
+.sp-actions {
+  position: absolute; z-index: 8; top: 83.75%; left: 50%; transform: translateX(-50%);
+  display: flex; gap: calc(10 * var(--u));
+}
+.sp-actions .sp-learn-more {
+  position: static; transform: none; width: calc(128 * var(--u));
+  display: inline-flex; align-items: center; justify-content: center; text-decoration: none;
+}
+.sp-actions .sp-learn-more:hover { transform: translateY(calc(-2 * var(--u))); }
+.sp-stack-link {
+  display: inline-block; margin-top: calc(12 * var(--u)); color: #fff; text-decoration: none;
+  font: 500 calc(13 * var(--u)) var(--sans); border-bottom: 1px solid rgba(255,255,255,.5);
+}
+.sp-stack-link:focus-visible { outline: 2px solid rgba(255,255,255,.78); outline-offset: 3px; }
 
 /* ── stack reveal (inside the card; layout never changes) ── */
 .sp-stack {

@@ -384,6 +384,38 @@ export const stackCards = [
 ];
 
 /*
+  Work together: two glass cards (same component as the Stack cards).
+*/
+export const offers = [
+  {
+    key: 'role', variant: 'speed',
+    title: ['Full-time role', 'AI & Full-stack Engineer'],
+    dots: 'NOW', unit: 'available',
+    caption: ['Dubai on-site,', 'hybrid or remote'],
+    reveal: { label: 'What I bring', linkedin: true, items: [
+      'AI features in production (LLMs, vision, RAG)',
+      'Multi-tenant SaaS and Row-Level Security',
+      'Django / DRF + Next.js / React',
+      'CI/CD, Docker and testing',
+      'English and Arabic (RTL) interfaces',
+    ] },
+  },
+  {
+    key: 'build', variant: 'connections',
+    title: ['Project build', 'Fixed Scope, End to End'],
+    dots: '6', unit: 'builds shipped',
+    caption: ['Architecture, build,', 'deploy and hand-over'],
+    reveal: { label: 'What you get', items: [
+      'Discovery and system design',
+      'Full-stack build with tests',
+      'AI features where they add value',
+      'Deployment and CI/CD',
+      'Hand-over and documentation',
+    ] },
+  },
+];
+
+/*
   About quotes (sliding carousel). Wrap words in *asterisks* for the italic orange accent.
 */
 export const quotes = [

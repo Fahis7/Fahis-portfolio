@@ -4,7 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      // Same theme system as the homepage (key "fahis-theme"): set it before any CSS loads, so nothing flashes.
+      (function () {
+        var t = null;
+        try { t = localStorage.getItem('fahis-theme'); } catch (e) {}
+        if (t !== 'light' && t !== 'dark') {
+          t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', t);
+        var m = document.querySelector('meta[name="theme-color"]');
+        if (m) m.setAttribute('content', t === 'dark' ? '#000000' : '#ececeb');
+      })();
+    </script>
     <title>Mohammed Fahis | Work</title>
     <meta name="description" content="Showreel of live products by Mohammed Fahis, AI Engineer and Full Stack Developer in Dubai." />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -14,7 +27,10 @@
 
     <nav class="ui" aria-label="Site">
       <a class="tl" href="./">Mohammed Fahis</a>
-      <a class="tr" href="./#about">Profile</a>
+      <div class="tr">
+        <button type="button" class="theme" id="theme" aria-pressed="false" aria-label="Switch to dark theme"></button>
+        <a href="./#about">Profile</a>
+      </div>
       <p class="bl"><span aria-current="page">Featured</span> <span class="dim" aria-hidden="true">/</span> <a class="dim" href="./#work">Full</a></p>
       <a class="br" href="mailto:muhdfahis.aidev@gmail.com">Contact</a>
     </nav>

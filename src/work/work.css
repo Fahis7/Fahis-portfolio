@@ -1,11 +1,19 @@
-/* Showreel page: always black, whatever the main site's theme. */
+/* Showreel page. Dark (the default) is pure black; light uses the homepage's light --bg and --ink.
+   The theme is set on <html data-theme> by the inline script in work.html (shared key "fahis-theme"). */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-:root { --u: calc(100vw / 1500); color-scheme: dark; }
+:root {
+  --u: calc(100vw / 1500);
+  --bg: #ececeb;   /* homepage light background; the ribbon reads it in light mode */
+  --ink: #0f1115;  /* homepage light ink */
+  --page-bg: #000; --page-ink: #fff; --veil: 0, 0, 0;
+  color-scheme: dark;
+}
+html[data-theme="light"] { --page-bg: var(--bg); --page-ink: var(--ink); --veil: 236, 236, 235; color-scheme: light; }
 @media (max-width: 649px) { :root { --u: calc(100vw / 390); } }
 
 html, body {
-  background: #000; color: #fff; height: 100%; overflow: hidden;
+  background: var(--page-bg); color: var(--page-ink); height: 100%; overflow: hidden;
   overscroll-behavior: none; touch-action: none; -webkit-tap-highlight-color: transparent;
 }
 body { font-family: 'Inter Tight Variable', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
@@ -13,14 +21,21 @@ body { font-family: 'Inter Tight Variable', system-ui, sans-serif; -webkit-font-
 
 /* corner navigation */
 .ui > * {
-  position: fixed; z-index: 5; color: #fff; text-decoration: none; background: none; border: 0;
+  position: fixed; z-index: 5; color: var(--page-ink); text-decoration: none; background: none; border: 0;
   font: 500 max(9px, calc(10 * var(--u))) / 1.4 'Inter Tight Variable', system-ui, sans-serif;
   text-transform: uppercase; letter-spacing: 0;
   opacity: 0; transition: opacity 0.6s ease 0.2s;
 }
 .ui a { color: inherit; text-decoration: none; }
 .ui .dim { opacity: 0.5; }
-.ui a:focus-visible, .sr a:focus-visible { outline: 1px solid #fff; outline-offset: 4px; }
+.ui a:focus-visible, .ui button:focus-visible, .sr a:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
+/* top-right: theme toggle, 24px left of "Profile", styled as a corner label */
+.tr { display: flex; align-items: center; gap: 24px; }
+.theme {
+  display: inline-flex; align-items: center; gap: 6px; padding: 0; border: 0; background: none; cursor: pointer;
+  color: inherit; font: inherit; text-transform: uppercase; letter-spacing: inherit;
+}
+.theme svg { width: 1.2em; height: 1.2em; flex: none; }
 body.ready .ui > * { opacity: 1; }
 .tl { left: calc(80 * var(--u)); top: calc(40 * var(--u)); }
 .tr { right: calc(80 * var(--u)); top: calc(40 * var(--u)); }
@@ -38,7 +53,7 @@ body.ready .ui > * { opacity: 1; }
   position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; gap: 6px; z-index: 4;
   transition: opacity 0.4s ease;
 }
-.loader i { display: block; height: 2px; width: 44px; background: #fff; animation: dash 1s ease-in-out infinite; }
+.loader i { display: block; height: 2px; width: 44px; background: var(--page-ink); animation: dash 1s ease-in-out infinite; }
 .loader i:nth-child(2) { animation-delay: 0.12s; }
 .loader i:nth-child(3) { width: 38px; animation-delay: 0.24s; }
 @keyframes dash { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
@@ -48,8 +63,8 @@ body.ready .loader { opacity: 0; pointer-events: none; }
 .veil {
   position: fixed; inset: 0; z-index: 3; pointer-events: none; display: none;
   background:
-    linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.77) 5%, rgba(0, 0, 0, 0.42) 10%, rgba(0, 0, 0, 0.14) 15%, rgba(0, 0, 0, 0.02) 20%, transparent 26%),
-    linear-gradient(to top, #000 0%, rgba(0, 0, 0, 0.77) 5%, rgba(0, 0, 0, 0.42) 10%, rgba(0, 0, 0, 0.14) 15%, rgba(0, 0, 0, 0.02) 20%, transparent 26%);
+    linear-gradient(to bottom, rgb(var(--veil)) 0%, rgba(var(--veil), 0.77) 5%, rgba(var(--veil), 0.42) 10%, rgba(var(--veil), 0.14) 15%, rgba(var(--veil), 0.02) 20%, transparent 26%),
+    linear-gradient(to top, rgb(var(--veil)) 0%, rgba(var(--veil), 0.77) 5%, rgba(var(--veil), 0.42) 10%, rgba(var(--veil), 0.14) 15%, rgba(var(--veil), 0.02) 20%, transparent 26%);
 }
 @media (max-width: 649px) { .veil { display: block; } }
 

@@ -111,13 +111,14 @@ export default function Quotes({ quotes }) {
 
   return (
     <section ref={root} className="quote quotes rise" aria-roledescription="carousel" aria-label="Quotes from Mohammed Fahis" tabIndex={0} onKeyDown={onKey}>
+      <p className="quotes-label">How I work</p>
       <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M10 7H6a3 3 0 0 0-3 3v4h4v4l3-4v-7Zm11 0h-4a3 3 0 0 0-3 3v4h4v4l3-4v-7Z" /></svg>
       <div className="quotes-viewport" aria-live={live} onPointerDown={onDown} onPointerUp={onUp} onPointerCancel={() => (start.current = null)}>
         {quotes.map((q, i) => (
           <figure key={i} ref={(el) => (slides.current[i] = el)} className={`quote-slide${i === cur ? ' is-current' : ''}`}
             role="group" aria-roledescription="slide" aria-label={`Quote ${i + 1} of ${n}`} aria-hidden={i !== cur}>
             <blockquote><p><Accent text={q.text} /></p></blockquote>
-            <figcaption>{q.author}</figcaption>
+            <figcaption className="sr-only">{q.author}</figcaption>
           </figure>
         ))}
       </div>
@@ -129,6 +130,7 @@ export default function Quotes({ quotes }) {
           <button type="button" className="quotes-btn" aria-label="Next quote" onClick={() => go(1, true)}><ArrowIcon dir={1} /></button>
         </div>
       </div>
+      <p className="quotes-sign" aria-hidden="true">Mohammed Fahis</p>
     </section>
   );
 }

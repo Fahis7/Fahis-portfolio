@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { DotText } from './DotText.jsx';
 
 /*
   Stack section: "Built for Production / Across the Stack".
@@ -7,51 +8,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
   so the internal layout never changes - only how many cards share a row.
 */
 
-/* ── LED dot-matrix type ── */
-const GLYPHS = {
-  0: ['01110', '10001', '10011', '10101', '11001', '10001', '01110'],
-  1: ['010', '110', '010', '010', '010', '010', '111'],
-  2: ['01110', '10001', '00001', '00010', '00100', '01000', '11111'],
-  3: ['11110', '00001', '00001', '01110', '00001', '00001', '11110'],
-  4: ['00010', '00110', '01010', '10010', '11111', '00010', '00010'],
-  5: ['11111', '10000', '10000', '11110', '00001', '00001', '11110'],
-  6: ['01110', '10000', '10000', '11110', '10001', '10001', '01110'],
-  7: ['11111', '00001', '00010', '00100', '01000', '01000', '01000'],
-  8: ['01110', '10001', '10001', '01110', '10001', '10001', '01110'],
-  9: ['01110', '10001', '10001', '01111', '00001', '00001', '01110'],
-  '.': ['0', '0', '0', '0', '0', '0', '1'],
-  P: ['11110', '10001', '10001', '11110', '10000', '10000', '10000'],
-  r: ['00000', '00000', '10110', '11001', '10000', '10000', '10000'],
-  o: ['00000', '00000', '01110', '10001', '10001', '10001', '01110'],
-  d: ['00001', '00001', '01111', '10001', '10001', '10001', '01111'],
-  u: ['00000', '00000', '10001', '10001', '10001', '10011', '01101'],
-  c: ['00000', '00000', '01110', '10000', '10000', '10001', '01110'],
-  t: ['010', '010', '111', '010', '010', '010', '001'],
-  i: ['1', '0', '1', '1', '1', '1', '1'],
-  n: ['00000', '00000', '11110', '10001', '10001', '10001', '10001'],
-};
-
-function DotText({ text, pitchX = 5, radius = 1.55, className = 'dot-svg' }) {
-  const { circles, width } = useMemo(() => {
-    const out = [];
-    let x = 0;
-    for (const ch of String(text)) {
-      const g = GLYPHS[ch];
-      if (!g) { x += 3 * pitchX; continue; }
-      const cols = g[0].length;
-      g.forEach((row, y) => [...row].forEach((bit, col) => {
-        if (bit === '1') out.push([x + col * pitchX + 1.55, y * 4 + 1.55]);
-      }));
-      x += (cols + 1) * pitchX;
-    }
-    return { circles: out, width: x };
-  }, [text, pitchX]);
-  return (
-    <svg className={className} viewBox={`0 0 ${width} 28`} fill="currentColor" aria-hidden="true" style={{ '--vbw': width }}>
-      {circles.map(([cx, cy], i) => <circle key={i} cx={cx} cy={cy} r={radius} />)}
-    </svg>
-  );
-}
+/* LED dot-matrix type: shared with the rest of the page (DotText.jsx) */
 
 /* ── shared filters (defined once) ── */
 const FilterDefs = () => (

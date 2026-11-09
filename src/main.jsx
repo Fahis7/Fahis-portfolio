@@ -20,6 +20,7 @@ import MiniSite from './MiniSites.jsx';
 import Portrait from './Portrait.jsx';
 import Showreel from './Showreel.jsx';
 import Quotes from './Quotes.jsx';
+import { DotWord } from './DotText.jsx';
 import { profile, projects, stackCards, marquee, experience, quotes, realShot } from './data.js';
 
 const BASE = import.meta.env.BASE_URL;
@@ -64,7 +65,7 @@ function Button({ href, children, variant = 'primary', external, className = '',
 
 /* ── theme (the initial value is set by the inline script in index.html) ── */
 const THEME_KEY = 'fahis-theme';
-const THEME_COLOR = { light: '#eef0f2', dark: '#0b0d10' };
+const THEME_COLOR = { light: '#ececeb', dark: '#0b0d10' };
 const darkQuery = () => window.matchMedia('(prefers-color-scheme: dark)');
 const readSaved = () => {
   try { const t = localStorage.getItem(THEME_KEY); return t === 'light' || t === 'dark' ? t : null; } catch { return null; }
@@ -191,11 +192,11 @@ function Stage() {
             alt="Mohammed Fahis" />
           <div>
             <p className="eyebrow"><span className="eyebrow-name">Mohammed Fahis · </span>AI Engineer · Dubai</p>
-            <h1 className="hero-title">Built for people.<br /><em>Engineered underneath.</em></h1>
+            <h1 className="hero-title t-head">Built for people.<br />Engineered <DotWord text="underneath." /></h1>
           </div>
         </div>
         <div className="hero-side">
-          <p>Hi, I’m Fahis. I’m at my best owning the whole thing, from the first sketch to the last pixel. I learn fast, ask the awkward questions early, and stay calm when things break.</p>
+          <p className="t-copy">Hi, I’m Fahis. I’m at my best owning the whole thing, from the first sketch to the last pixel. I learn fast, ask the awkward questions early, and stay calm when things break.</p>
           <div className="hero-ctas">
             <a href="#work" className="pill pill-hot pill-lg">Explore the work</a>
             {featured.demo && <a href={featured.demo} target="_blank" rel="noreferrer" className="hero-link">Live: {shortUrl(featured.demo)} <Arrow size={12} /></a>}
@@ -231,10 +232,10 @@ function Featured() {
       <div className="featured-head" id={`work-${p.id}`}>
         <div className="rise" style={{ '--d': '.1s' }}>
           <p className="kicker">{p.kicker} · NEW</p>
-          <h2 className="big">{p.title}<br /><em>{p.tagline}.</em></h2>
+          <h2 className="big t-head"><DotWord text={p.title} lead /><br />{p.tagline}.</h2>
         </div>
         <div className="featured-intro rise" style={{ '--d': '.2s' }}>
-          <p>{p.desc}</p>
+          <p className="t-copy">{p.desc}</p>
           <div className="btn-row">
             {p.demo && <Button href={p.demo} external>Visit {shortUrl(p.demo)} <Arrow /></Button>}
             <Button href={p.github} variant="secondary" external>GitHub</Button>
@@ -249,12 +250,12 @@ function Featured() {
         <div><strong>Real PG</strong><span>integration tests in CI</span></div>
       </div>
 
-      <h3 className="sub rise">What it does</h3>
+      <h3 className="sub t-sub rise">What it does</h3>
       <ol className="features">
         {p.features.map((f, i) => (
           <li key={f.t} className="rise" style={{ '--d': `${(i % 2) * 0.08}s` }}>
             <span className="mono">{String(i + 1).padStart(2, '0')}</span>
-            <div><h4>{f.t}</h4><p>{f.d}</p></div>
+            <div><h4 className="t-sub">{f.t}</h4><p className="t-copy">{f.d}</p></div>
           </li>
         ))}
       </ol>
@@ -262,12 +263,12 @@ function Featured() {
       <div className="two-col">
         <div className="panel panel-dark rise">
           <p className="kicker">SECURITY</p>
-          <h3>Locked down by <em>default.</em></h3>
+          <h3 className="t-sub">Locked down by default.</h3>
           <ul className="ticks">{p.security.map((s) => <li key={s}>{s}</li>)}</ul>
         </div>
         <div className="panel rise" style={{ '--d': '.1s' }}>
           <p className="kicker">TESTING</p>
-          <h3>Tested like it <em>matters.</em></h3>
+          <h3 className="t-sub">Tested like it matters.</h3>
           <ul className="ticks">{p.testing.map((s) => <li key={s}>{s}</li>)}</ul>
         </div>
       </div>
@@ -316,9 +317,9 @@ function About() {
     <section className="section about" id="about">
       <div className="section-label rise"><span>03</span>About</div>
       <div className="about-grid">
-        <h2 className="big rise" style={{ '--d': '.1s' }}>Build the system <em>underneath,</em><br />ship the <em>interface</em> on top.</h2>
+        <h2 className="big t-head rise" style={{ '--d': '.1s' }}>Build the system <DotWord text="underneath," /><br />ship the interface on top.</h2>
         <div className="about-body">
-          <div className="about-copy rise" style={{ '--d': '.2s' }}>
+          <div className="about-copy t-copy rise" style={{ '--d': '.2s' }}>
             <p>My work lives where product engineering meets applied AI: authentication, data architecture, model orchestration, deployment, and the last 10% that makes a product feel finished.</p>
             <p>My newest build is <strong>AxisKYC</strong>, a multi-tenant KYC/AML platform with database-level tenant isolation, sanctions screening and a fully bilingual Arabic/English interface. Before it, I shipped property, recruiting, commerce and business-services products end-to-end.</p>
             <p>Open to full-time roles and freelance builds: Dubai on-site, hybrid or remote.</p>

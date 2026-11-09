@@ -6,7 +6,6 @@
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
 .sp-stage {
-  --paper: #ececeb;
   --sp-ink: #202020;
   --sp-copy: #4a4a4a;
   --sp-dot: #ad314d;
@@ -24,7 +23,7 @@
   position: relative; isolation: isolate; display: flex; flex-direction: column;
   height: 100vh; height: 100svh; min-height: 760px; max-height: 1100px; overflow: hidden;
   padding: var(--pad-top) var(--gutter) var(--pad-bottom);
-  background: var(--paper); color: var(--sp-ink); margin-top: 100px;
+  background: var(--bg); color: var(--sp-ink); margin-top: 100px;
   font-optical-sizing: auto; text-rendering: geometricPrecision;
 }
 
@@ -35,7 +34,6 @@
 }
 
 html[data-theme="dark"] .sp-stage {
-  --paper: #0f1114;
   --sp-ink: #f2f3f5;
   --sp-copy: #a9aeb6;
   --sp-dot: #e0567a;

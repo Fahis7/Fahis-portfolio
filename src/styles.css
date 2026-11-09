@@ -468,15 +468,12 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
 .project .btn-row { margin-top: 22px; }
 
 /* ═════════════ ABOUT ═════════════ */
-.about { text-align: center; background: var(--paper); border-block: 1px solid var(--line); }
-.narrow { max-width: 600px; margin-inline: auto; }
-.about-name { font: 400 40px var(--serif); color: var(--navy); letter-spacing: -0.02em; margin-bottom: 10px; }
-.mono-tag { font: 400 13px var(--mono); color: var(--navy); margin-bottom: 26px; }
-.about .big { white-space: normal; }
-.about-copy { display: flex; flex-direction: column; gap: 22px; margin-top: 30px; font-size: var(--section-text); line-height: 1.7; color: var(--navy); text-align: left; }
-.about-copy strong { font-weight: 600; }
-.quote { margin: 120px auto 0; padding: 0; text-align: left; max-width: 640px; color: var(--ink); }
-.quote p { font: 400 clamp(30px, 3.4vw, 44px) / 1.1 var(--serif); letter-spacing: -0.02em; color: var(--navy-2); margin: 18px 0; }
+.about-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 6vw; align-items: start; }
+.about-copy { display: flex; flex-direction: column; gap: 18px; font-size: var(--section-text); line-height: 1.65; color: var(--body); }
+.about-copy strong { font-weight: 600; color: var(--ink); }
+/* full-width pull quote, left-aligned in the section container */
+.quote { margin: clamp(64px, 9svh, 110px) 0 0; padding: 0; text-align: left; color: var(--ink); }
+.quote p { font: italic 400 var(--section-h2) / 1.1 var(--serif); letter-spacing: -0.02em; color: var(--navy-2); margin: 18px 0; }
 .quote p em { color: var(--hot-btn); }
 .quote footer { font: italic 400 14px var(--sans); color: var(--quote-foot); }
 
@@ -550,7 +547,7 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
 
 /* ═════════════ RESPONSIVE ═════════════ */
 @media (max-width: 1000px) {
-  .featured-head, .project, .project.flip { grid-template-columns: 1fr; gap: 32px; }
+  .featured-head, .project, .project.flip, .about-grid { grid-template-columns: 1fr; gap: 32px; }
   .project.flip .project-text { order: 0; }
   .project .preview-wrap { order: -1; }
   .features { grid-template-columns: 1fr; }
@@ -601,23 +598,41 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
   html.theme-switching *, html.theme-switching *::before, html.theme-switching *::after { transition: none !important; }
 }
 
-/* ═════════════ CURSOR LIGHT (fine pointers, motion allowed; see CursorLight in main.jsx) ═════════════ */
-@property --light-a { syntax: '<number>'; inherits: false; initial-value: 0.07; }
+/* ═════════════ CURSOR LIGHT (fine pointers, motion allowed; see CursorLight in main.jsx) ═════════════
+   Tune the strengths here: alpha at the centre of each light. */
+:root {
+  --spot-light: 0.16; /* page light, light theme (normal blending) */
+  --spot-dark: 0.22;  /* page light, dark theme, showreel band and dark panels (screen blending) */
+  --spot-card: 0.14;  /* card highlight at the cursor, light theme */
+  --spot-edge: 0.35;  /* card border glow, nearest the cursor */
+}
+html[data-theme="dark"] { --spot-card: 0.2; }
+
+/* one fixed overlay above every section background, below the nav (z 6) and the chat bar (z 50) */
 .cursor-light {
-  --light-a: 0.07;
-  position: fixed; left: 0; top: 0; z-index: 40; width: 600px; height: 600px; margin: -300px 0 0 -300px;
-  pointer-events: none; opacity: 0; transform: translate3d(var(--mx, -100vw), var(--my, -100vh), 0); will-change: transform;
-  background: radial-gradient(closest-side, rgba(255, 90, 31, var(--light-a)), rgba(255, 90, 31, calc(var(--light-a) * 0.45)) 45%, rgba(255, 90, 31, 0) 100%);
-  transition: opacity 0.5s ease, --light-a 0.4s ease;
+  position: fixed; inset: 0; z-index: 5; pointer-events: none; opacity: 0; transition: opacity 0.3s ease;
+  background: radial-gradient(circle 380px at var(--mx, -999px) var(--my, -999px),
+    rgba(255, 90, 31, var(--spot-light)), rgba(255, 90, 31, calc(var(--spot-light) * 0.375)) 45%, transparent 72%);
 }
 .cursor-light.is-on { opacity: 1; }
-.cursor-light.is-strong { --light-a: 0.12; }
-.has-light :where(.preview, .sp-card, .panel, .offer, .timeline li) { position: relative; --hl: rgba(255, 90, 31, 0.06); --hl-edge: rgba(255, 90, 31, 0.2); }
-html[data-theme="dark"].has-light :where(.preview, .sp-card, .panel, .offer, .timeline li),
-.has-light .panel-dark, .has-light .offer-dark, .has-light .sp-card { --hl: rgba(255, 170, 130, 0.08); --hl-edge: rgba(255, 120, 70, 0.26); }
+.cursor-light.is-strong {
+  mix-blend-mode: screen;
+  background: radial-gradient(circle 380px at var(--mx, -999px) var(--my, -999px),
+    rgba(255, 110, 50, var(--spot-dark)), rgba(255, 110, 50, calc(var(--spot-dark) * 0.375)) 45%, transparent 72%);
+}
+
+/* cards: one orange radial at the cursor, shown at --spot-edge on a 1px ring (so the edge nearest the cursor glows)
+   and at --spot-card inside, via a two-layer mask */
+.has-light :where(.preview, .sp-card, .panel, .offer, .timeline li) { position: relative; }
+.has-light :where(.panel-dark, .offer-dark, .sp-card) { --spot-card: 0.2; }
 .has-light :is(.preview, .sp-card, .panel, .offer, .timeline li)::after {
-  content: ''; position: absolute; inset: 0; z-index: 3; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity 0.35s ease;
-  background: radial-gradient(320px circle at var(--lx, 50%) var(--ly, 50%), var(--hl), transparent 70%);
-  box-shadow: inset 0 0 0 1px var(--hl-edge);
+  --fill: rgba(0, 0, 0, calc(var(--spot-card) / var(--spot-edge)));
+  content: ''; position: absolute; inset: 0; z-index: 3; padding: 1px; border-radius: inherit; pointer-events: none;
+  opacity: 0; transition: opacity 0.3s ease;
+  background: radial-gradient(circle 260px at var(--lx, 50%) var(--ly, 50%), rgba(255, 90, 31, var(--spot-edge)), transparent 72%);
+  -webkit-mask: linear-gradient(var(--fill) 0 0), linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: source-over, xor;
+  mask: linear-gradient(var(--fill) 0 0), linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: add, exclude;
 }
 .has-light :is(.preview, .sp-card, .panel, .offer, .timeline li):hover::after { opacity: 1; }

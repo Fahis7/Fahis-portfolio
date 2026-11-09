@@ -309,22 +309,22 @@ function MoreWork() {
 function About() {
   return (
     <section className="section about" id="about">
-      <div className="narrow">
-        <div className="section-label center rise"><span>03</span>About</div>
-        <p className="about-name rise" style={{ '--d': '.1s' }}>Mohammed Fahis</p>
-        <p className="mono-tag rise" style={{ '--d': '.15s' }}>AI engineer & full-stack developer, Dubai</p>
-        <h2 className="big rise" style={{ '--d': '.2s' }}>Build the system <em>underneath,</em><br />ship the <em>interface</em> on top.</h2>
-        <div className="about-copy rise" style={{ '--d': '.3s' }}>
-          <p>My work lives where product engineering meets applied AI: authentication, data architecture, model orchestration, deployment, and the last 10% that makes a product feel finished.</p>
-          <p>My newest build is <strong>AxisKYC</strong>, a multi-tenant KYC/AML platform with database-level tenant isolation, sanctions screening and a fully bilingual Arabic/English interface. Before it, I shipped property, recruiting, commerce and business-services products end-to-end.</p>
-          <p>Open to full-time roles and freelance builds: Dubai on-site, hybrid or remote.</p>
-        </div>
-        <div className="btn-row center rise" style={{ '--d': '.4s' }}>
-          <Button href={MAILTO}>Start a chat</Button>
-          <Button href="#work" variant="secondary">View projects</Button>
+      <div className="section-label rise"><span>03</span>About</div>
+      <div className="about-grid">
+        <h2 className="big rise" style={{ '--d': '.1s' }}>Build the system <em>underneath,</em><br />ship the <em>interface</em> on top.</h2>
+        <div className="about-body">
+          <div className="about-copy rise" style={{ '--d': '.2s' }}>
+            <p>My work lives where product engineering meets applied AI: authentication, data architecture, model orchestration, deployment, and the last 10% that makes a product feel finished.</p>
+            <p>My newest build is <strong>AxisKYC</strong>, a multi-tenant KYC/AML platform with database-level tenant isolation, sanctions screening and a fully bilingual Arabic/English interface. Before it, I shipped property, recruiting, commerce and business-services products end-to-end.</p>
+            <p>Open to full-time roles and freelance builds: Dubai on-site, hybrid or remote.</p>
+          </div>
+          <div className="btn-row rise" style={{ '--d': '.3s' }}>
+            <Button href={MAILTO}>Start a chat</Button>
+            <Button href="#work" variant="secondary">View projects</Button>
+          </div>
         </div>
       </div>
-      <blockquote className="quote narrow">
+      <blockquote className="quote">
         <svg className="rise" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M10 7H6a3 3 0 0 0-3 3v4h4v4l3-4v-7Zm11 0h-4a3 3 0 0 0-3 3v4h4v4l3-4v-7Z" /></svg>
         <p className="rise" style={{ '--d': '.1s' }}>I like being close to the whole product, from the <em>database role</em> to the last pixel.</p>
         <footer className="rise" style={{ '--d': '.2s' }}>Mohammed Fahis</footer>
@@ -454,12 +454,13 @@ function CursorLight() {
       }
     };
     const move = (e) => { x = e.clientX; y = e.clientY; target = e.target; if (!raf) raf = requestAnimationFrame(frame); };
-    const out = (e) => { if (!e.relatedTarget) light.classList.remove('is-on'); };
+    const out = () => light.classList.remove('is-on');
     window.addEventListener('pointermove', move, { passive: true });
-    document.addEventListener('pointerout', out, { passive: true });
+    root.addEventListener('pointerleave', out, { passive: true });
+    window.addEventListener('blur', out);
     return () => {
       cancelAnimationFrame(raf); root.classList.remove('has-light');
-      window.removeEventListener('pointermove', move); document.removeEventListener('pointerout', out);
+      window.removeEventListener('pointermove', move); root.removeEventListener('pointerleave', out); window.removeEventListener('blur', out);
     };
   }, []);
   return <div className="cursor-light" ref={ref} aria-hidden="true" />;

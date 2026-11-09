@@ -19,7 +19,7 @@ import StackPerf from './StackPerf.jsx';
 import MiniSite from './MiniSites.jsx';
 import Portrait from './Portrait.jsx';
 import Showreel from './Showreel.jsx';
-import { profile, projects, stackCards, marquee, experience } from './data.js';
+import { profile, projects, stackCards, marquee, experience, realShot } from './data.js';
 
 const BASE = import.meta.env.BASE_URL;
 const MAILTO = `mailto:${profile.email}`;
@@ -159,9 +159,9 @@ function CopyEmail() {
   return <button type="button" className="copy" onClick={copy} aria-live="polite">{copied ? 'Copied ✓' : 'Copy email'}</button>;
 }
 
-// Shows a real screenshot when `image` is set in data.js, otherwise the drawn mini-site.
-const Shot = ({ p }) => (p.image
-  ? <img className="shot" src={BASE + p.image} alt={`Screenshot of ${p.title}`} loading="lazy" decoding="async" />
+// Real screenshot for live projects (realShot in data.js), otherwise the drawn mini-site.
+const Shot = ({ p }) => (realShot(p)
+  ? <img className="shot" src={realShot(p)} alt={`Screenshot of ${p.title}`} width={1600} height={Math.round(1600 / p.reel.aspect)} loading="lazy" decoding="async" />
   : <MiniSite site={p.site} />);
 
 /* ───────────── sections ───────────── */
@@ -194,7 +194,7 @@ function Stage() {
           </div>
         </div>
         <div className="hero-side">
-          <p>I design and ship AI-powered products end-to-end (compliance platforms, property SaaS, recruiting tools) and the secure, multi-tenant systems running underneath them.</p>
+          <p>Hi, I’m Fahis. I’m at my best owning the whole thing, from the first sketch to the last pixel. I learn fast, ask the awkward questions early, and stay calm when things break.</p>
           <div className="hero-ctas">
             <a href="#work" className="pill pill-hot pill-lg">Explore the work</a>
             {featured.demo && <a href={featured.demo} target="_blank" rel="noreferrer" className="hero-link">Live: {shortUrl(featured.demo)} <Arrow size={12} /></a>}
@@ -395,8 +395,12 @@ function Partner() {
       const r = box.getBoundingClientRect();
       const p = projects[n++ % projects.length];
       const tile = document.createElement('div');
-      tile.className = `trail trail-${p.site}`;
-      tile.innerHTML = `<span>${p.num}</span><b>${p.title}</b>`;
+      const shot = realShot(p);
+      tile.className = shot ? 'trail trail-shot' : `trail trail-${p.site}`;
+      if (shot) tile.style.backgroundImage = `url("${shot}")`;
+      const cap = shot ? tile.appendChild(document.createElement('div')) : tile;
+      if (shot) cap.className = 'trail-cap';
+      cap.append(Object.assign(document.createElement('span'), { textContent: p.num }), Object.assign(document.createElement('b'), { textContent: p.title }));
       tile.style.left = `${e.clientX - r.left}px`;
       tile.style.top = `${e.clientY - r.top}px`;
       tile.style.setProperty('--rot', `${Math.random() * 20 - 10}deg`);

@@ -1,11 +1,14 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import MiniSite from './MiniSites.jsx';
+import { realShot } from './data.js';
 
 /*
   Scanner belt: project cards drift left; at the orange scanner line
   each card dissolves into pixel particles and the code underneath is
   revealed on the left. One requestAnimationFrame loop drives the DOM
   transforms, the counter and the canvas, so everything stays in sync.
+  Card size follows the viewport height (see --ch / --cw in styles.css). When one pass of the
+  list is too short to keep the wrap seam off-screen (wide, short windows), the list is repeated.
 */
 
 const PALETTE = ['#FF4A12', '#FF5A1F', '#FF6B2C', '#FF8A3D', '#FFB06A', '#FFD9B5', '#FFF3E6'];
@@ -27,12 +30,14 @@ export default function Belt({ projects }) {
   const nameRef = useRef(null);
   const pctRef = useRef(null);
   const scanRef = useRef(null);
+  const [reps, setReps] = useState(1);
+  const items = Array.from({ length: reps }, (_, r) => projects.map((p) => ({ p, r }))).flat();
 
   useEffect(() => {
     const belt = beltRef.current, canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     const cards = cardRefs.current, codes = codeRefs.current;
-    const N = projects.length;
+    const N = cards.length, P = projects.length;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     let W = 0, BH = 0, cw = 0, ch = 0, gap = 0, Lx = 0, radius = 0, dpr = 1, span = 0, period = 0;
@@ -48,6 +53,9 @@ export default function Belt({ projects }) {
       gap = window.innerWidth * (mobile ? 0.07 : 0.0475);
       radius = window.innerWidth * (mobile ? 0.035 : 0.016);
       Lx = W / 2; span = cw + gap; period = span * N;
+      // a card wraps from x = -span to x = period - span; that must be off-screen on the right
+      const need = Math.max(1, Math.ceil((W + span) / (span * P)));
+      if (need > reps) setReps(need);
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = Math.round(W * dpr); canvas.height = Math.round(BH * dpr);
       canvas.style.width = W + 'px'; canvas.style.height = BH + 'px';
@@ -84,7 +92,7 @@ export default function Belt({ projects }) {
       belt.classList.remove('is-dragging');
       try { belt.releasePointerCapture(e.pointerId); } catch { /* already released */ }
       if (dragDist < 6 && downCard >= 0) {
-        document.getElementById(`work-${projects[downCard].id}`)?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
+        document.getElementById(`work-${projects[downCard % P].id}`)?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
       }
     };
     const onWheel = (e) => {
@@ -214,8 +222,8 @@ export default function Belt({ projects }) {
         const target = progress * 100;
         if (cross !== crossing) {
           crossing = cross; shown = target;
-          nameRef.current.textContent = projects[cross].title;
-          scanRef.current?.setAttribute('aria-label', `Scanning ${projects[cross].title}`);
+          nameRef.current.textContent = projects[cross % P].title;
+          scanRef.current?.setAttribute('aria-label', `Scanning ${projects[cross % P].title}`);
         }
         shown += (target - shown) * Math.min(1, dt * 14);
         pctRef.current.textContent = fmtPct(shown);
@@ -233,7 +241,7 @@ export default function Belt({ projects }) {
       belt.removeEventListener('pointerup', onUp); belt.removeEventListener('pointercancel', onUp);
       belt.removeEventListener('wheel', onWheel); belt.removeEventListener('keydown', onKey);
     };
-  }, [projects]);
+  }, [projects, reps]);
 
   return (
     <>
@@ -246,17 +254,21 @@ export default function Belt({ projects }) {
         aria-label="Project belt. Drag, or use the left and right arrow keys, to scrub. Select a card to jump to its case study."
       >
         <div className="codes" aria-hidden="true">
-          {projects.map((p, i) => (
-            <div className="code" key={p.id} ref={(el) => (codeRefs.current[i] = el)}>
+          {items.map(({ p, r }, i) => (
+            <div className="code" key={`${p.id}-${r}`} ref={(el) => (codeRefs.current[i] = el)}>
               <pre className="code-src">{p.code}</pre>
               <pre className="code-meta">{p.meta.join('\n')}</pre>
             </div>
           ))}
         </div>
         <div className="cards">
-          {projects.map((p, i) => (
-            <div className="card" key={p.id} data-card={i} ref={(el) => (cardRefs.current[i] = el)} aria-label={`${p.title}: ${p.tagline}`}>
-              <MiniSite site={p.site} />
+          {items.map(({ p, r }, i) => (
+            <div className="card" key={`${p.id}-${r}`} data-card={i} ref={(el) => (cardRefs.current[i] = el)}
+              aria-label={r ? undefined : `${p.title}: ${p.tagline}`} aria-hidden={r ? true : undefined}>
+              {realShot(p)
+                ? <img className="card-shot" src={realShot(p)} alt="" width={1600} height={Math.round(1600 / p.reel.aspect)}
+                    draggable={false} decoding="async" fetchPriority={i === 0 ? 'high' : undefined} />
+                : <MiniSite site={p.site} />}
             </div>
           ))}
         </div>

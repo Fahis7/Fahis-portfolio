@@ -21,14 +21,18 @@ export const profile = {
 
 /*
   Projects: order here = order on the scanner belt and on the page.
-  site:   which mini-website design the belt card uses (see MiniSites.jsx)
+  site:   drawn mini-website (MiniSites.jsx), used only when there is no live capture (see realShot)
   code:   what the scanner "prints" when the card dissolves (keep lines ≤ 50 chars)
   meta:   three short comment lines shown top-right of the code
   demo:   live URL, or null when offline (the site then links to `github` instead)
-  reel:   showreel media (public/showreel/): poster, video (or null), aspect = media width / height
-  image:  optional real screenshot for the case-study preview, e.g. 'projects/axiskyc.webp'
-          (put the file in public/projects/, ~1600×1020). The belt always uses the drawn card.
+  reel:   showreel media (public/showreel/): poster, video (or null), aspect = media width / height.
+          The poster doubles as the real screenshot on the belt, the case-study preview and the contact trail.
 */
+
+// The real screenshot for a project, or null. A project only shows its poster as a screenshot when it was
+// captured live (reel.video is set); otherwise the drawn MiniSite stands in.
+export const realShot = (p) => (p.reel?.video ? import.meta.env.BASE_URL + p.reel.poster : null);
+
 export const projects = [
   {
     id: 'axiskyc',

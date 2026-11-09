@@ -333,7 +333,7 @@ function Stage() {
             alt="Mohammed Fahis" />
           <div>
             <p className="eyebrow"><span className="eyebrow-name">Mohammed Fahis · </span>AI Engineer · Dubai</p>
-            <h1 className="hero-title t-head">Built for people.<br />Engineered <DotWord text="underneath." /></h1>
+            <h1 className="hero-title t-head" aria-label="One engineer. Everything underneath.">One engineer.<br />Everything <DotWord text="underneath." /></h1>
           </div>
         </div>
         <div className="hero-side">
@@ -500,7 +500,7 @@ function About() {
     <section className="section about" id="about">
       <div className="section-label rise"><span>02</span>About</div>
       <div className="about-grid">
-        <h2 className="big t-head rise" style={{ '--d': '.1s' }}>Build the system <DotWord text="underneath," /><br />ship the interface on top.</h2>
+        <h2 className="big t-head rise" style={{ '--d': '.1s' }}>Build the system underneath,<br />ship the <DotWord text="interface" /> on top.</h2>
         <div className="about-body">
           <div className="about-copy t-copy rise" style={{ '--d': '.2s' }}>
             <p>My work lives where product engineering meets applied AI: authentication, data architecture, model orchestration, deployment, and the last 10% that makes a product feel finished.</p>

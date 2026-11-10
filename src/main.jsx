@@ -776,7 +776,7 @@ function About() {
         <h2 className="big t-head rise" style={{ '--d': '.1s' }}>Build the system underneath,<br />ship the <DotWord text="interface" /> on top.</h2>
         <div className="about-body">
           <div className="about-copy t-copy rise" style={{ '--d': '.2s' }}>
-            <p>My work lives where product engineering meets applied AI: authentication, data architecture, model orchestration, deployment, and the last 10% that makes a product feel finished.</p>
+            <p>My work lives where product engineering meets applied AI: authentication, data architecture, model orchestration, deployment, and the last 10% that makes a product feel finished. I build with an AI-assisted workflow in Claude Code (plan, review, verify) and evaluate AI features on real-world runs, not demos.</p>
             <p>My newest build is <strong>AxisKYC</strong>, a multi-tenant KYC/AML platform with database-level tenant isolation, sanctions screening and a fully bilingual Arabic/English interface. Before it, I shipped property, recruiting, commerce and business-services products end-to-end.</p>
             <p>Open to full-time roles and freelance builds: Dubai on-site, hybrid or remote.</p>
           </div>
@@ -796,6 +796,11 @@ const CRED_ICONS = {
   cap: (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
       <path d="M22 9.5 12 4.5 2 9.5l10 5 10-5Z" /><path d="M6 11.5v5c3.5 2.4 8.5 2.4 12 0v-5" /><path d="M22 9.5v5" />
+    </svg>
+  ),
+  code: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8 8l-4 4 4 4" /><path d="M16 8l4 4-4 4" /><path d="M13.5 5l-3 14" />
     </svg>
   ),
   spark: (
@@ -871,7 +876,7 @@ function Experience() {
           <div className="rise">
             <div className="section-label"><span>04</span>Experience</div>
             <h2 className="big t-head">From first commit to full <DotWord text="ownership." /></h2>
-            <p className="xp-intro t-copy">Four roles, from backend internship to sole engineer of a live compliance SaaS.</p>
+            <p className="xp-intro t-copy">Six roles, from e-commerce builds to sole engineer of a live compliance SaaS.</p>
           </div>
           <div className="xp-viewing" aria-hidden="true">
             <div className="xp-year">
@@ -914,7 +919,7 @@ function Experience() {
                 <XpCard key={c.key} idx={i} active={i === active} cardRef={ref(i)} delay={`${i * 0.08}s`} year={c.year} className={`xp-cred${c.accent ? ' xp-cred--accent' : ''}`}>
                   <div className="xp-top">
                     <span className="xp-icon" aria-hidden="true">{CRED_ICONS[c.icon]}</span>
-                    <span className="xp-date">{c.date}</span>
+                    {c.date && <span className="xp-date">{c.date}</span>}
                   </div>
                   <p className="xp-cred-label">{c.label}</p>
                   <h3 className="xp-cred-title">{c.title}</h3>
@@ -923,6 +928,7 @@ function Experience() {
               );
             })}
           </ul>
+          <p className="kicker xp-langs">Languages · {profile.languages}</p>
         </div>
       </div>
     </section>

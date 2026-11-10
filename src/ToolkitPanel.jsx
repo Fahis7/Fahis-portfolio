@@ -2,13 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   siPython, siTypescript, siJavascript, siPostgresql, siAnthropic, siHuggingface, siDjango, siFastapi, siCelery, siRedis,
   siReact, siNextdotjs, siTailwindcss, siSwr, siFramer, siSupabase, siFirebase, siJsonwebtokens, siDocker, siGithubactions,
-  siDigitalocean, siRailway, siVercel, siNetlify, siNginx, siGunicorn, siLetsencrypt, siCloudinary, siCloudflare, siSentry, siVitest,
+  siDigitalocean, siRailway, siClaude, siVite, siVercel, siNetlify, siNginx, siGunicorn, siLetsencrypt, siCloudinary, siCloudflare, siSentry, siVitest,
 } from 'simple-icons'; // CC0; only these icons end up in this chunk
 import { ToolkitView, defaultTabIndex } from './Toolkit.jsx';
 
 // Lazy chunk: tab behaviour, logos and the cursor logo trail. Keys are the exact item names in data.js `toolkit`.
 const BRANDS = {
   'Python': siPython, 'TypeScript': siTypescript, 'JavaScript': siJavascript,
+  'Claude Code (AI-assisted development)': siClaude, 'Vite': siVite, // Lenis and Microservices: no simple-icons logo (monogram)
   'Claude API (Haiku, Vision)': siAnthropic, 'Hugging Face Transformers': siHuggingface,
   'Django 5': siDjango, 'Django REST Framework': siDjango, 'FastAPI': siFastapi, 'Celery': siCelery, 'Redis queues': siRedis,
   'React 19': siReact, 'Next.js 16 (App Router)': siNextdotjs, 'Tailwind CSS': siTailwindcss, 'SWR': siSwr, 'Framer Motion': siFramer,

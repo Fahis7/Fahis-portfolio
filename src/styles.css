@@ -699,6 +699,7 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
 .xp-cred--accent .xp-icon { border-color: var(--dot); color: var(--dot); }
 .xp-cred-label { font: 500 11px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
 .xp-cred-title { margin-top: 6px; font: 500 19px / 1.3 var(--sans); letter-spacing: -0.01em; color: var(--ink); }
+.xp-langs { margin-top: 16px; }
 .xp-cred-sub { margin-top: 4px; font: 400 14.5px / 1.5 var(--sans); color: var(--copy); }
 @media (prefers-reduced-motion: reduce) {
   .xp-card, .xp-card::before, .xp-index button, .xp-index button::before { transition: none; }

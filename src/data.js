@@ -11,7 +11,8 @@ export const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURICo
 export const profile = {
   name: 'Mohammed Fahis',
   short: 'Fahis',
-  role: 'AI Engineer / Full Stack Developer',
+  role: 'AI Full Stack Developer / Lead Engineer',
+  languages: 'English · Malayalam (fluent)',
   location: 'Dubai, UAE',
   timezone: 'Asia/Dubai',
   email: 'muhdfahis.aidev@gmail.com',
@@ -134,7 +135,7 @@ LOCALES = ("en", "ar")  # full RTL
     kicker: 'RECOMMERCE / AI OPS',
     tagline: 'AI-powered operations for refurbished electronics',
     role: 'Live platform',
-    desc: 'An operations platform for a business that buys, repairs and resells used phones and laptops. It follows each device through intake, grading, repair, quality control and listing, and sells it on several marketplaces at once without ever selling the same unit twice. AI helps with grading, listings and management questions, while a human always makes the final call.',
+    desc: 'An operations platform for a business that buys, repairs and resells used phones and laptops. It follows each device through intake, grading, repair, quality control and listing, and sells it on several marketplaces at once without ever selling the same unit twice. AI vision photo grading, AI-written listings and a management assistant help, while a human always makes the final call.',
     highlights: [
       'Oversell-safe sync across 3 marketplaces: idempotent webhooks, first order wins, automatic delisting',
       'AI photo grading and a plain-English ops assistant, with a human making the final decision',
@@ -202,35 +203,41 @@ export const grade = (photos: Photo[]) =>
     num: '03',
     title: 'Zero Accounting',
     kicker: 'ACCOUNTING / AUDIT · UAE',
-    tagline: 'Auditing & accounting firm in Dubai and Abu Dhabi',
+    tagline: 'Bilingual corporate website for an Abu Dhabi tax agency',
     role: 'Live business website',
-    desc: 'The live website for a Dubai and Abu Dhabi auditing and accounting firm, built to make six services (bookkeeping, VAT consulting, auditing, ICV certification, payroll and business consultancy) clear, credible and easy to enquire about.',
-    highlights: ['Service-led structure across six services, guiding visitors to an enquiry', 'Typed Next.js + Tailwind CSS codebase', 'Mobile-first, responsive layouts across every page'],
+    desc: 'The live bilingual English/Arabic website for an FTA-approved tax agency and accounting firm in Abu Dhabi, built with React and Vite to make its services clear, credible and easy to enquire about.',
+    highlights: ['English and Arabic with full RTL through react-i18next', 'Branded SVG preloader, 3D tilt cards, magnetic buttons and split-text reveals', 'Optimised for mobile, with Lenis smooth scrolling, deployed on Vercel'],
     metrics: [
       { value: 'Live', label: 'business website' },
-      { value: 'Next.js', label: '+ TypeScript' },
+      { value: 'EN · AR', label: 'bilingual, RTL' },
       { value: 'Mobile', label: 'first, responsive' },
     ],
-    stack: ['Next.js', 'TypeScript', 'Tailwind CSS'],
+    stack: ['React', 'Vite', 'Tailwind CSS', 'Framer Motion', 'Lenis', 'react-i18next', 'Vercel'],
     demo: 'https://zeroaccounting.ae/',
     github: 'https://github.com/Fahis7',
     reel: { poster: 'showreel/zero.webp', video: 'showreel/zero.mp4', aspect: 1600 / 900 },
-    meta: ['# live: zeroaccounting.ae', '# domain: audit / accounting', '# build: next.js'],
-    code: `// Zero Accounting: business services site
+    meta: ['# live: zeroaccounting.ae', '# domain: audit / accounting', '# build: react + vite'],
+    code: `// Zero Accounting: bilingual corporate site
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+
 export const stack = {
-  framework: "Next.js",
-  language:  "TypeScript",
-  styling:   "Tailwind CSS",
-  layout:    "mobile-first",
+  build:  "React + Vite",
+  i18n:   "react-i18next (EN / AR)",
+  motion: "Framer Motion + Lenis",
+  deploy: "Vercel",
 };
 
-export default function Page() {
+i18n.use(initReactI18next).init({ lng: "en" });
+i18n.on("languageChanged", (lng) => {
+  document.dir = lng === "ar" ? "rtl" : "ltr";
+});
+
+export default function App() {
   return (
-    <main>
-      <Hero />
-      <Services />
-      <Enquiry />
-    </main>
+    <Preloader>
+      <Hero /><Services /><Enquiry />
+    </Preloader>
   );
 }`,
   },
@@ -243,35 +250,37 @@ export default function Page() {
     tagline: 'AI recruiting for an Abu Dhabi consultancy',
     role: 'Live platform',
     desc: 'A live recruitment platform where CV intelligence, semantic matching and recruiter automation turn applicant uploads into actionable workflows.',
-    highlights: ['CV parsing with Claude Haiku turns uploads into structured candidate profiles', 'Semantic candidate ↔ job matching with pgvector embeddings', 'Automated recruiter alerts via Resend'],
+    highlights: ['CV parsing with Claude Haiku turns uploads into structured candidate profiles', 'Semantic candidate ↔ job matching with Supabase pgvector embeddings', 'AI-written recruiter alerts for new matches'],
     metrics: [
       { value: 'AI', label: 'CV parser' },
       { value: 'Vector', label: 'semantic matching' },
       { value: 'Auto', label: 'recruiter alerts' },
     ],
-    stack: ['React', 'Django', 'Claude Haiku', 'pgvector', 'Resend'],
+    stack: ['Next.js 14', 'TypeScript', 'Tailwind', 'Claude Haiku', 'Supabase', 'pgvector', 'Netlify'],
     demo: 'https://seek-and-sync.netlify.app/',
     github: 'https://github.com/Fahis7',
     reel: { poster: 'showreel/seek.webp', video: 'showreel/seek.mp4', aspect: 1600 / 900 },
     meta: ['# live: seek-and-sync.netlify.app', '# domain: hr / recruiting', '# ai: claude haiku'],
-    code: `# Seek & Sync: AI recruiting platform
-class Stack:
-    backend  = "Django"
-    frontend = "React"
-    llm      = "Claude Haiku"
-    search   = "pgvector"
-    email    = "Resend"
+    code: `// Seek & Sync: AI recruiting platform
+export const stack = {
+  app:    "Next.js 14 + TypeScript",
+  ui:     "Tailwind",
+  llm:    "Claude Haiku",
+  data:   "Supabase + pgvector",
+  deploy: "Netlify",
+};
 
-def ingest(cv_file):
-    profile = claude.parse(cv_file)
-    profile.vector = embed(profile)
-    return profile.save()
+export async function ingest(cv: File) {
+  const profile = await claude.parse(cv);
+  const embedding = await embed(profile);
+  return supabase.from("candidates")
+    .insert({ ...profile, embedding });
+}
 
-def match(job, k=20):
-    return pgvector.nearest(job.vector, k)
-
-def on_new_match(match):
-    resend.notify(match.recruiter)`,
+export const match = (job: Job) =>
+  supabase.rpc("match_candidates", {
+    query: job.embedding, k: 20,
+  });`,
   },
   {
     id: 'horologie',
@@ -327,7 +336,7 @@ analytics.live(dashboard="ops")`,
       { value: '8', label: 'JWT roles' },
       { value: '5', label: 'Docker services' },
     ],
-    stack: ['Django 5', 'React 19', 'PostgreSQL', 'Groq Vision', 'pgvector', 'Docker'],
+    stack: ['Django 5', 'React 19', 'PostgreSQL', 'Groq Vision', 'pgvector', 'Docker', 'Railway'],
     demo: null,
     github: 'https://github.com/Fahis7',
     reel: { poster: 'showreel/propai.webp', video: null, aspect: 1600 / 1019 },
@@ -411,12 +420,12 @@ export const toolkitDefaultTab = 'ai_llm';
 
 export const toolkit = [
   { label: 'Languages', items: ['Python', 'TypeScript', 'JavaScript', 'SQL'] },
-  { label: 'AI / LLM', items: ['Claude API (Haiku, Vision)', 'Groq Llama 4 Vision', 'Llama 3.3 70B', 'OpenAI GPT-4', 'Hugging Face Transformers', 'RAG pipelines', 'pgvector embeddings', 'Vector search', 'Document OCR (Tesseract, MRZ)', 'CV parsing / NLP', 'Prompt engineering', 'AI evaluation'] },
+  { label: 'AI / LLM', items: ['Claude API (Haiku, Vision)', 'Groq Llama 4 Vision', 'Llama 3.3 70B', 'OpenAI GPT-4', 'Hugging Face Transformers', 'RAG pipelines', 'pgvector embeddings', 'Vector search', 'Document OCR (Tesseract, MRZ)', 'CV parsing / NLP', 'Prompt engineering', 'AI evaluation', 'Claude Code (AI-assisted development)'] },
   { label: 'Backend', items: ['Django 5', 'Django REST Framework', 'FastAPI', 'REST API design', 'Webhooks', 'Celery', 'Redis queues', 'ReportLab PDF', 'openpyxl Excel'] },
-  { label: 'Frontend', items: ['React 19', 'Next.js 16 (App Router)', 'Tailwind CSS', 'SWR', 'Context API', 'Framer Motion', 'Arabic RTL / i18n'] },
+  { label: 'Frontend', items: ['React 19', 'Next.js 16 (App Router)', 'Vite', 'Tailwind CSS', 'SWR', 'Context API', 'Framer Motion', 'Lenis', 'Arabic RTL / i18n'] },
   { label: 'Data', items: ['PostgreSQL (RLS, multi-tenant)', 'Supabase', 'Redis'] },
   { label: 'Auth & Security', items: ['JWT', 'OAuth2', 'Firebase Auth / MFA', 'RBAC', 'Row-Level Security'] },
-  { label: 'Cloud & DevOps', items: ['Docker', 'Docker Compose', 'GitHub Actions CI/CD', 'AWS EC2 / RDS', 'DigitalOcean', 'Railway', 'Vercel', 'Netlify', 'Nginx', 'Gunicorn', 'Certbot SSL', 'systemd', 'Cloudinary', 'Cloudflare R2', 'Sentry'] },
+  { label: 'Cloud & DevOps', items: ['Docker', 'Docker Compose', 'Microservices', 'GitHub Actions CI/CD', 'AWS EC2 / RDS', 'DigitalOcean', 'Railway', 'Vercel', 'Netlify', 'Nginx', 'Gunicorn', 'Certbot SSL', 'systemd', 'Cloudinary', 'Cloudflare R2', 'Sentry'] },
   { label: 'Testing', items: ['Vitest', 'Integration tests on real PostgreSQL', 'Regression suites'] },
   { label: 'Domains', wide: true, items: ['AML / KYC compliance', 'Sanctions & PEP screening', 'Multi-tenant SaaS', 'E-commerce', 'Recommerce operations'] },
 ];
@@ -471,33 +480,47 @@ export const marquee = ['Row-Level Security', 'RAG pipelines', 'Vision AI', 'KYC
 export const experience = [
   {
     time: '2026 to present', current: true, link: '#work-axiskyc', year: 'NOW', name: 'AM Audit', short: 'Lead Engineer · AM Audit',
-    tech: ['Django', 'PostgreSQL RLS', 'Next.js 16', 'React 19', 'TypeScript', 'Celery', 'Redis', 'Claude AI'],
+    tech: ['Django', 'PostgreSQL RLS', 'Next.js 16', 'React 19', 'TypeScript', 'Tailwind', 'Celery', 'Redis', 'Claude AI', 'Tesseract', 'Docker', 'GitHub Actions'],
     title: 'AI Full Stack Developer / Lead Engineer', company: 'AM Audit, Abdulla Al Mulla Auditing & Accounting',
     desc: 'Sole engineer behind AxisKYC, a live multi-tenant AML/KYC compliance SaaS for UAE compliance firms: PostgreSQL RLS, three database roles, sanctions / PEP / adverse-media screening, Claude Vision document OCR and four role-based portals.',
   },
   {
+    time: 'Nov 2026', link: '#work-refurbops', year: '2026', name: 'RefurbOps', short: 'AI Full Stack Developer · RefurbOps',
+    tech: ['Next.js 16', 'React 19', 'TypeScript', 'Claude API (vision)', 'Vitest', 'GitHub Actions', 'Vercel'],
+    title: 'AI Full Stack Developer', company: 'RefurbOps, Independent product, Dubai',
+    desc: 'AI photo grading with a vision model (human-in-the-loop, confidence-gated), an AI Ops Assistant answering plain-English questions from pre-computed data, and oversell-safe multi-marketplace sync, built with Claude Code and 150+ automated tests.',
+  },
+  {
+    time: 'Jun 2026', link: '#work-zero', year: '2026', name: 'Zero Accounting', short: 'Frontend Developer · Zero Accounting',
+    tech: ['React', 'Vite', 'Tailwind CSS', 'Framer Motion', 'Lenis', 'react-i18next', 'Vercel'],
+    title: 'Frontend Developer', company: 'Zero Accounting, Abu Dhabi',
+    desc: 'Bilingual English/Arabic corporate website for an FTA-approved tax agency: RTL via react-i18next, a branded SVG preloader, 3D tilt cards, magnetic buttons and split-text reveals, optimised for mobile and deployed on Vercel.',
+  },
+  {
     time: 'May to Jun 2026', link: '#work-propai', year: '2026', name: 'PropAI OS', short: 'Full Stack AI Developer · PropAI OS',
-    tech: ['Django 5', 'React 19', 'Groq Llama 4', 'pgvector', 'Celery', 'Docker'],
-    title: 'Full Stack AI Developer', company: 'PropAI OS, Zero Accounting, Dubai',
+    tech: ['Django 5', 'React 19', 'Groq Llama 4', 'pgvector', 'Celery', 'Docker', 'Railway'],
+    title: 'Full Stack AI Developer', company: 'PropAI OS, Zero Accounting, Abu Dhabi',
     desc: 'Vision-AI maintenance triage, a smart rent pricing engine on live Dubai market data, and a pgvector RAG concierge in a multi-tenant SaaS with four portals and eight JWT roles.',
   },
   {
     time: 'Feb to Apr 2026', link: '#work-seek', year: '2026', name: 'Seek & Sync', short: 'Frontend & AI Integration · Seek & Sync',
-    tech: ['Next.js 14', 'TypeScript', 'Claude Haiku', 'Supabase', 'pgvector'],
+    tech: ['Next.js 14', 'TypeScript', 'Tailwind', 'Claude Haiku', 'Supabase', 'pgvector', 'Netlify'],
     title: 'Frontend Developer & AI Integration', company: 'Seek & Sync HR Consultancy, Abu Dhabi',
     desc: 'Shipped a live HR consultancy platform with Claude Haiku CV parsing, vector matching on Supabase and automated recruiter alerts.',
   },
   {
-    time: 'Apr 2025 to Jan 2026', year: '2025', name: 'Bridgeon', short: 'Full Stack Intern · Bridgeon',
-    tech: ['Django', 'DRF', 'React', 'AWS EC2', 'Nginx', 'GitHub Actions'],
-    title: 'Full Stack Developer Intern', company: 'Bridgeon Solutions LLP, Kerala, India',
-    desc: 'Production e-commerce backend in Django REST Framework with JWT, Google OAuth and Firebase auth, deployed on AWS EC2 with Nginx, Gunicorn, SSL and GitHub Actions CI/CD.',
+    time: '2025', link: '#work-horologie', year: '2025', name: 'Horologie', short: 'Full Stack Developer · Horologie',
+    tech: ['Django REST Framework', 'React', 'JWT', 'Google OAuth', 'Firebase MFA', 'Cloudinary', 'PostgreSQL'],
+    title: 'Full Stack Developer', company: 'Horologie, Enterprise e-commerce',
+    desc: 'A full-stack e-commerce platform built from scratch with JWT, Google OAuth and Firebase MFA plus Cloudinary media, with React Context state and Django ORM aggregations powering a real-time analytics dashboard.',
   },
-];
+]
 
-// Credential cards under the experience role cards (icon: 'cap' | 'spark'; accent = crimson icon tile).
+// Credential cards under the experience role cards (icon: 'cap' | 'spark' | 'code'; accent = crimson icon tile; date optional).
 export const credentials = [
   { key: 'education', icon: 'cap', label: 'Education', date: '2022–2025', title: 'Bachelor’s in Computer Application', sub: 'Calicut University', year: '2022', name: 'Education', short: 'Education · Calicut University' },
+  { key: 'bridgeon', icon: 'code', label: 'Internship', date: 'Apr 2025 – Jan 2026', title: 'Full Stack Developer Intern', sub: 'Bridgeon Solutions LLP · Kerala, India', year: '2025', name: 'Bridgeon', short: 'Full Stack Intern · Bridgeon' },
   { key: 'programme', icon: 'spark', label: 'Programme', date: '2025', title: 'One Million Prompters', sub: 'Dubai Future Foundation · Selected participant', accent: true, year: '2025', name: 'Programme', short: 'Programme · Dubai Future Foundation' },
-];
+  { key: 'python', icon: 'code', label: 'Certification', title: 'Python Fullstack Developer', sub: 'Django · DRF · React', year: 'CERT', name: 'Certification', short: 'Certification · Python Fullstack Developer' },
+]
 

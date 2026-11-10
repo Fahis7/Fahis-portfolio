@@ -29,6 +29,9 @@ export default defineConfig({
   // the footer's "Last updated" date, fixed at build time
   define: { __BUILD_DATE__: JSON.stringify(new Date().toISOString()) },
   build: {
+    // older iPhones (Safari / iOS 15+): without this the CSS minifier rewrites (max-width: 899px) as (width<=899px),
+    // which Safari before 16.4 can't read, so it drops every phone media block
+    cssTarget: ['safari15', 'ios15'],
     rollupOptions: {
       input: { main: root('./index.html'), work: root('./work.html'), cv: root('./cv.html') },
     },

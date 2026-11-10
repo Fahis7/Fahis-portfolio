@@ -18,6 +18,15 @@
         if (m) m.setAttribute('content', t === 'dark' ? '#0b0d10' : '#ececeb');
         // the preloader shows once per browser session; later visits skip it before anything paints
         try { if (sessionStorage.getItem('fahis-loaded')) document.documentElement.classList.add('pl-skip'); } catch (e) {}
+        // reveal animations may hide content only from here on (html.js-rv). Failsafe at 1.2s: if the app hasn't
+        // started its reveals (src/scrollfx.js sets rv-live), drop the hidden states so everything shows; on phones
+        // the hero entrance is also released even if the preloader is still holding it (html.rv-safe)
+        var root = document.documentElement;
+        root.classList.add('js-rv');
+        setTimeout(function () {
+          if (!root.classList.contains('rv-live')) root.classList.remove('js-rv');
+          if (window.matchMedia && window.matchMedia('(max-width: 899px), (hover: none)').matches) root.classList.add('rv-safe');
+        }, 1200);
         // ?debug=1: collect errors and resize events from the very start for the debug panel (src/debug.js)
         if (/[?&]debug=1(&|$)/.test(location.search)) {
           var D = window.__dbg = { errors: [], resizes: 0 };

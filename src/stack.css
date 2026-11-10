@@ -322,7 +322,7 @@ html[data-theme="dark"] .sp-stage {
 .sp-stack li { padding: calc(7 * var(--u)) 0; border-top: 1px solid rgba(255,255,255,.2); font-size: calc(15 * var(--u)); line-height: 1.3; }
 
 /* ── entrance (plays once when the section scrolls into view) ── */
-.sp-pending .sp-line, .sp-pending .sp-intro, .sp-pending .sp-card { opacity: 0; }
+html.js-rv .sp-pending .sp-line, html.js-rv .sp-pending .sp-intro, html.js-rv .sp-pending .sp-card { opacity: 0; } /* hidden only once JS runs */
 .sp-entrance .sp-line, .sp-entrance .sp-intro, .sp-entrance .sp-card, .sp-entrance .sp-title, .sp-entrance .sp-gauge,
 .sp-entrance .sp-window, .sp-entrance .sp-map, .sp-entrance .sp-metric, .sp-entrance .sp-caption, .sp-entrance .sp-learn-more {
   will-change: opacity, translate, scale, clip-path, filter;
@@ -382,7 +382,7 @@ html[data-theme="dark"] .sp-stage {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sp-pending .sp-line, .sp-pending .sp-intro, .sp-pending .sp-card { opacity: 1; }
+  html.js-rv .sp-pending .sp-line, html.js-rv .sp-pending .sp-intro, html.js-rv .sp-pending .sp-card { opacity: 1; }
   .sp-entrance *, .sp-entrance .sp-card { animation: none !important; }
   .sp-bg::before, .sp-bg::after, .sp-sweep, .sp-flow, .sp-node { animation: none; }
   .sp-card, .sp-learn-more { transition-duration: .01ms; }

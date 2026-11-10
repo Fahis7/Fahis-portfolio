@@ -54,6 +54,7 @@ export function onEnter(el, fn) {
    intersects). */
 export function watchReveals() {
   const reveal = (el) => el.classList.add('in');
+  document.documentElement.classList.add('rv-live'); // tells the 1.2s failsafe in index.html that reveals are running
   if (!motionOK()) {
     document.querySelectorAll('.rise').forEach(reveal);
     const mo = new MutationObserver(() => document.querySelectorAll('.rise:not(.in)').forEach(reveal));
@@ -72,18 +73,22 @@ export function watchReveals() {
     watch(n);
   })));
   mo.observe(document.body, { childList: true, subtree: true });
-  // failsafe: still hidden 1.5s after entering the viewport → show it (also covers the project reveals)
+  // failsafe: still hidden ~1.2s after entering the viewport → show it (also covers the project and Stack reveals)
   const since = new Map();
+  const show = (el) => {
+    if (el.classList.contains('sp-pending')) el.classList.remove('sp-pending');
+    else el.classList.add(el.classList.contains('fx-proj') ? 'fx-in' : 'in');
+  };
   const timer = setInterval(() => {
     const now = performance.now(), vh = window.innerHeight;
-    document.querySelectorAll('.rise:not(.in), .fx-proj:not(.fx-in)').forEach((el) => {
+    document.querySelectorAll('.rise:not(.in), .fx-proj:not(.fx-in), .sp-pending').forEach((el) => {
       const r = el.getBoundingClientRect();
       const inView = r.bottom > 0 && r.top < vh && r.width > 0;
       if (!inView) { since.delete(el); return; }
       if (!since.has(el)) since.set(el, now);
-      else if (now - since.get(el) >= 1500) { el.classList.add(el.classList.contains('fx-proj') ? 'fx-in' : 'in'); since.delete(el); }
+      else if (now - since.get(el) >= 800) { show(el); since.delete(el); }
     });
-  }, 500);
+  }, 400);
   return () => { rio.disconnect(); mo.disconnect(); clearInterval(timer); };
 }
 

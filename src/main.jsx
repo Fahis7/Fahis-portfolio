@@ -477,7 +477,10 @@ function HeroTagline() {
       // space for line 2: the h1's own width (a block in a fixed-fraction column, so independent of our min-width)
       const avail = el.closest('h1')?.clientWidth || Infinity;
       const line = w('.hl2-m-line');
-      const wrap = line > avail + 1;
+      // the real extent of each full line (first word's left edge to the LED word's right edge, period included),
+      // so a measuring box that comes out narrower than its content can't hide an overflow; + room for the caret
+      const span = Math.max(...[...m.querySelectorAll('.hl2-m-line')].map((n) => n.lastElementChild.getBoundingClientRect().right - n.firstElementChild.getBoundingClientRect().left));
+      const wrap = Math.max(line, span) + 6 > avail;
       setBox((b) => ({ ...b, wrap, minW: Math.ceil(wrap ? Math.max(w('.hl2-m-plain'), w('.hl2-m-led')) : line), n: b.n + 1 }));
     };
     fit();

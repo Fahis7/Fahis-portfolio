@@ -62,8 +62,12 @@ export function startDebug() {
     const vv = window.visualViewport;
     const ios = navigator.userAgent.match(/OS (\d+[_\d]*) like Mac/)?.[1]?.replace(/_/g, '.') || 'n/a';
     const state = me ? [...me.classList].filter((c) => c !== 'me').join(' ') || '(none)' : 'missing';
+    const mq = (q) => (window.matchMedia(q).matches ? 'yes' : 'no');
+    const html = document.documentElement;
     const lines = [
       `UA: ${navigator.userAgent}`,
+      `iOS version: ${ios} · media: max-width 899px ${mq('(max-width: 899px)')} · max-width 599px ${mq('(max-width: 599px)')} · hover:none ${mq('(hover: none)')} · pointer:coarse ${mq('(pointer: coarse)')}`,
+      `phone CSS applied: ${document.querySelector('.hero') ? getComputedStyle(document.querySelector('.hero')).display + ' / ' + getComputedStyle(document.querySelector('.hero')).flexDirection : 'no hero'} (flex / column = yes) · html: ${[...html.classList].join(' ') || '(none)'}`,
       `iOS: ${ios} · viewport ${innerWidth}x${innerHeight}${vv ? ` (visual ${Math.round(vv.width)}x${Math.round(vv.height)})` : ''} · dpr ${devicePixelRatio}`,
       `fonts: ${document.fonts?.status || 'n/a'} · resize events: ${D.resizes} · hero height changes (10s): ${changes.length}` +
         (changes.length ? ` · last ${changes[changes.length - 1].from}->${changes[changes.length - 1].to}` : '') + ` · hero h: ${lastH}`,

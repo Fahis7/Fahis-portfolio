@@ -569,10 +569,11 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
 /* ═════════════ MORE WORK ═════════════ */
 .more-head { margin-bottom: 76px; }
 .showreel-link { margin-top: 22px; }
-.projects { display: grid; gap: 132px; }
-/* preview column 0.96fr (20% smaller than the old 1.2fr); the freed space goes to the text column */
-.project { display: grid; grid-template-columns: 1.04fr 0.96fr; gap: 56px; align-items: center; }
-.project.flip { grid-template-columns: 0.96fr 1.04fr; }
+.projects { display: grid; gap: 120px; }
+/* preview column 0.62fr of the row (another ~20% smaller than 0.96fr / 1.04fr); the freed width goes to the text,
+   so descriptions take fewer lines and each row is shorter */
+.project { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.62fr); gap: 56px; align-items: center; }
+.project.flip { grid-template-columns: minmax(0, 0.62fr) minmax(0, 1fr); }
 .project.flip .project-text { order: 2; }
 .project-text .kicker .mono { color: var(--hot-btn); margin-right: 6px; }
 .kicker-status { color: var(--muted); }
@@ -605,6 +606,17 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
 .project-text > p:not(.kicker):not(.lede) { font-size: var(--section-text); line-height: 1.65; color: var(--body); margin-bottom: 14px; }
 .project .ticks li { font-size: 14px; color: var(--body); }
 .project .btn-row { margin-top: 22px; }
+/* desktop and tablet: a more compact text side (the LED name keeps its size; only the gaps around it tighten) */
+@media (min-width: 600px) {
+  .project .dot-title { margin: 8px 0 6px; }
+  .project .lede { margin-bottom: 10px; }
+  .project-text > p:not(.kicker):not(.lede) { margin-bottom: 10px; }
+  .project .ticks li { padding-block: 6px; }
+  .project .ticks li::before { top: 13px; }
+  .project .chips.small { margin-top: 14px; }
+  .project .btn-row { margin-top: 16px; }
+  .project .case-toggle { margin-top: 16px; }
+}
 
 /* ═════════════ ABOUT ═════════════ */
 .about-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 6vw; align-items: start; }
@@ -824,8 +836,8 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
   .project, .project.flip, .about-grid { grid-template-columns: 1fr; gap: 32px; }
   .project.flip .project-text { order: 0; }
   .project .preview-wrap { order: -1; }
-  /* tablets (one column): the preview at 80% width, centred */
-  .project .preview-wrap { width: 80%; justify-self: center; }
+  /* tablets (one column): the preview at 64% width, centred */
+  .project .preview-wrap { width: 64%; justify-self: center; }
   .features { grid-template-columns: 1fr; }
   .two-col, .together { grid-template-columns: 1fr; }
   .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1350,7 +1362,7 @@ a, button, [role="button"], summary, label { touch-action: manipulation; }
 
 /* phones: the project preview is full width again, but never taller than ~45% of the screen (aspect ratio kept) */
 @media (max-width: 599px) {
-  .project .preview-wrap { width: min(100%, calc(45vh * 1.57)); width: min(100%, calc(45svh * 1.57)); }
+  .project .preview-wrap { width: min(100%, calc(40vh * 1.57)); width: min(100%, calc(40svh * 1.57)); }
 }
 
 /* browsers without svh (iOS before 15.4): the same sizes in vh (custom properties can't fall back on their own) */

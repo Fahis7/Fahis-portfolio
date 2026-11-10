@@ -144,7 +144,9 @@ export default function Portrait({ photo, cutout, alt }) {
   useEffect(() => {
     const el = wrap.current;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let p = 0, target = 0, raf = 0, last = 0, touched = false, alive = true;
+    // touch screens rest on the photo (one decode preview when the card first scrolls into view); desktop rests decoded
+    const touch = !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    let p = 0, target = 0, raf = 0, last = 0, touched = false, alive = true, kbd = false, io = null, back = 0;
     const ease = (x) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
     const tick = (t) => {
       const dt = last ? Math.min(0.05, (t - last) / 1000) : 0.016; last = t;
@@ -167,12 +169,32 @@ export default function Portrait({ photo, cutout, alt }) {
     const leave = (e) => e.pointerType !== 'touch' && go(1);
     const up = (e) => e.pointerType === 'touch' && go(target ? 0 : 1);
     const key = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(target ? 0 : 1); } };
-    const focus = () => go(0), blur = () => go(1);
+    // keyboard focus reveals the photo; on touch only a real keyboard focus counts (a tap also focuses the card)
+    const focus = () => { if (touch && !el.matches(':focus-visible')) return; kbd = true; go(0); };
+    const blur = () => { if (touch && !kbd) return; kbd = false; go(touch ? 0 : 1); };
 
-    // Intro: start as the photo, then sweep once to decoded when the code layer is drawn
-    // and ~0.6 s after the hero entrance ends. Reduced motion: decoded straight away.
+    // Intro. Desktop: start as the photo, then sweep once to decoded when the code layer is drawn and ~0.6 s after
+    // the hero entrance ends (reduced motion: decoded straight away).
+    // Touch: the photo, and when the card first scrolls into view one preview: photo -> code -> photo (~2 s:
+    // 0.9 s decode, 0.4 s hold, 0.7 s back), then it rests on the photo. Reduced motion: just the photo.
     el.classList.add('is-photo');
-    if (reduced) drawn.current.then(() => { if (alive && !touched) go(1, false); }); // decoded once the code layer exists
+    if (touch) {
+      el.classList.add('is-touch');
+      if (!reduced) {
+        const entrance = Promise.all((el.getAnimations?.() || []).map((a) => a.finished.catch(() => {})));
+        const inView = new Promise((res) => {
+          io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io.disconnect(); res(); } }, { threshold: 0.6 });
+          io.observe(el);
+        });
+        Promise.all([drawn.current, entrance, inView])
+          .then(() => new Promise((r) => setTimeout(r, 300)))
+          .then(() => {
+            if (!alive || touched) return;
+            go(1, false);
+            back = setTimeout(() => { if (alive && !touched) go(0, false); }, 1300);
+          });
+      }
+    } else if (reduced) drawn.current.then(() => { if (alive && !touched) go(1, false); }); // decoded once the code layer exists
     else {
       const entrance = Promise.all((el.getAnimations?.() || []).map((a) => a.finished.catch(() => {})));
       Promise.all([drawn.current, entrance])
@@ -186,7 +208,7 @@ export default function Portrait({ photo, cutout, alt }) {
     el.addEventListener('me:nocode', noCode);
     return () => {
       alive = false;
-      cancelAnimationFrame(raf);
+      cancelAnimationFrame(raf); clearTimeout(back); io?.disconnect();
       el.removeEventListener('me:nocode', noCode);
       el.removeEventListener('pointerenter', enter); el.removeEventListener('pointerleave', leave);
       el.removeEventListener('pointerup', up); el.removeEventListener('keydown', key);

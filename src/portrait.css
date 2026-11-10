@@ -31,6 +31,7 @@
 .me:not(.has-code) .me-code, .me:not(.has-code) .me-scan, .me:not(.has-code) .me-tag { visibility: hidden; }
 /* hint: visible while decoded, fades out while the photo is revealed */
 .me.is-photo .me-tag { opacity: 0; }
+.me.is-touch.is-photo .me-tag { opacity: 1; } /* touch rests on the photo: "Tap me" stays */
 .me-dot { width: 6px; height: 6px; flex: none; border-radius: 50%; background: #ff5a1f; box-shadow: 0 0 6px rgba(255, 90, 31, 0.8); animation: meDot 1.6s ease-in-out infinite; }
 @keyframes meDot { 50% { opacity: 0.45; transform: scale(0.75); } }
 @media (prefers-reduced-motion: reduce) { .me-dot { animation: none; } }

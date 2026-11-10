@@ -208,7 +208,7 @@ export const grade = (photos: Photo[]) =>
     kicker: 'ACCOUNTING / AUDIT · UAE',
     tagline: 'Bilingual corporate website for an Abu Dhabi tax agency',
     role: 'Live business website',
-    desc: 'Built with React and Vite to make an FTA-approved firm’s services clear and easy to enquire about.',
+    desc: 'Live bilingual English/Arabic site for an FTA-approved tax firm in Abu Dhabi, built with React and Vite.',
     highlights: ['English and Arabic, full RTL (react-i18next)', 'SVG preloader, 3D tilt cards, split-text reveals', 'Mobile-first, Lenis smooth scroll, on Vercel'],
     metrics: [
       { value: 'Live', label: 'business website' },
@@ -332,7 +332,7 @@ analytics.live(dashboard="ops")`,
     kicker: 'REAL ESTATE / VISION AI',
     tagline: 'Operating system for Dubai property teams',
     role: 'Architecture → production · demo offline',
-    desc: 'Multi-tenant SaaS with four role-based portals, async jobs and five Docker services.',
+    desc: 'Multi-tenant property SaaS: four role-based portals, async jobs and five Docker services.',
     highlights: ['Vision-AI maintenance triage with Groq Llama 4 Vision', 'RAG concierge on pgvector and Llama 3.3 70B', 'Smart market pricing and 8 JWT roles'],
     metrics: [
       { value: '4', label: 'role-based portals' },
@@ -442,7 +442,7 @@ export const offers = [
       'Multi-tenant SaaS with RLS',
       'Django / DRF + Next.js / React',
       'CI/CD, Docker and testing',
-      'Arabic RTL interfaces',
+      'English and Arabic (RTL) interfaces',
     ] },
   },
   {
@@ -467,7 +467,7 @@ export const quotes = [
   { text: 'Security is a *design decision*, not a final check.', author: 'Mohammed Fahis' },
   { text: 'The model suggests. *A human decides.*', author: 'Mohammed Fahis' },
   { text: 'If it isn’t tested against a *real database*, it isn’t tested.', author: 'Mohammed Fahis' },
-  { text: 'Done isn’t when it works. It’s when it *survives production*.', author: 'Mohammed Fahis' },
+  { text: 'A feature isn’t done when it works. It’s done when it *survives production*.', author: 'Mohammed Fahis' },
   { text: 'Owning the whole product means *owning the bugs* too.', author: 'Mohammed Fahis' },
   { text: 'The *last 10%* is where software feels finished. That’s where I stay.', author: 'Mohammed Fahis' },
 ]

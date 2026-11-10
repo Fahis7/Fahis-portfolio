@@ -574,7 +574,7 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
 .project {
   --pv-w: calc((100% - 56px) * 0.3827); /* the preview's width, unchanged from the last version */
   display: grid; grid-template-columns: minmax(0, 520px) var(--pv-w); justify-content: center;
-  column-gap: clamp(40px, 5vw, 72px); align-items: center;
+  column-gap: clamp(56px, 7vw, 112px); align-items: center;
 }
 .project.flip { grid-template-columns: var(--pv-w) minmax(0, 520px); }
 .project.flip .project-text { order: 2; }
@@ -864,6 +864,7 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
 @media (max-width: 899px) {
   .project, .project.flip, .about-grid { grid-template-columns: 1fr; gap: 32px; }
   .project.flip .project-text { order: 0; }
+  .project, .project.flip { row-gap: 40px; } /* stacked: preview, then a little more space before the text */
   .project .preview-wrap { order: -1; }
   /* tablets (one column): the preview at 64% width, centred */
   .project .preview-wrap { width: 64%; justify-self: center; }

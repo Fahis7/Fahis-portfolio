@@ -5,7 +5,8 @@ import React, { useEffect, useRef, useState } from 'react';
   Shown decoded by default: the photo rebuilt from characters of code with a
   soft x-ray glow. Hover (or keyboard focus, a tap, Enter / Space) sweeps the
   orange scanner back to reveal the real black-and-white photo.
-  On load it starts as the photo and sweeps once to decoded, so the effect is seen.
+  On load it starts as the photo and sweeps once to decoded, so the effect is seen (desktop and touch alike;
+  on touch a tap toggles between the code view and the photo).
   One CSS variable, --p (0 = photo, 1 = decoded), drives the photo clip, the code
   clip and the scanner position. Styles live in portrait.css.
 */
@@ -106,7 +107,12 @@ export default function Portrait({ photo, cutout, alt }) {
     const img = new Image();
     img.decoding = 'async';
     img.src = cutout;
-    const setOK = (ok) => { el.classList.toggle('has-code', ok); if (!ok) el.dispatchEvent(new Event('me:nocode')); };
+    const setOK = (ok) => {
+      const had = el.classList.contains('has-code');
+      el.classList.toggle('has-code', ok);
+      if (!ok) el.dispatchEvent(new Event('me:nocode'));
+      else if (!had) el.dispatchEvent(new Event('me:code')); // drawn (again): the view may return to the code layer
+    };
     const draw = () => {
       if (!alive || !ready || !img.naturalWidth) return;
       let ok = false;
@@ -144,9 +150,10 @@ export default function Portrait({ photo, cutout, alt }) {
   useEffect(() => {
     const el = wrap.current;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    // touch screens rest on the photo (one decode preview when the card first scrolls into view); desktop rests decoded
+    // every device rests decoded (the code view). Desktop: hover reveals the photo; touch: a tap toggles it.
     const touch = !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-    let p = 0, target = 0, raf = 0, last = 0, touched = false, alive = true, kbd = false, io = null, back = 0;
+    // wantCode: where the card should rest (false once someone taps to the photo); intro: the first decode has run
+    let p = 0, target = 0, raf = 0, last = 0, touched = false, alive = true, kbd = false, wantCode = true, intro = false;
     const ease = (x) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
     const toPhoto = () => { // anything goes wrong: rest on the photo
       cancelAnimationFrame(raf); raf = 0; last = 0; p = target = 0;
@@ -163,12 +170,12 @@ export default function Portrait({ photo, cutout, alt }) {
       } catch { toPhoto(); }
     };
     const go = (v, user = true) => {
+      if (user) { touched = true; wantCode = !!v; }
       if (v && !el.classList.contains('has-code')) v = 0; // no code layer: stay on the photo
-      if (user) touched = true;
       target = v;
       el.setAttribute('aria-pressed', v ? 'false' : 'true'); // pressed = photo revealed
       el.classList.toggle('is-photo', !v);
-      if (reduced) { p = v; el.style.setProperty('--p', String(v)); return; }
+      if (reduced) { p = v; el.style.setProperty('--p', String(v)); return; } // reduced motion: instant switch
       el.classList.add('is-moving');
       if (!raf) raf = requestAnimationFrame(tick);
     };
@@ -178,45 +185,33 @@ export default function Portrait({ photo, cutout, alt }) {
     const key = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(target ? 0 : 1); } };
     // keyboard focus reveals the photo; on touch only a real keyboard focus counts (a tap also focuses the card)
     const focus = () => { if (touch && !el.matches(':focus-visible')) return; kbd = true; go(0); };
-    const blur = () => { if (touch && !kbd) return; kbd = false; go(touch ? 0 : 1); };
+    const blur = () => { if (touch && !kbd) return; kbd = false; go(1); };
 
-    // Intro. Desktop: start as the photo, then sweep once to decoded when the code layer is drawn and ~0.6 s after
-    // the hero entrance ends (reduced motion: decoded straight away).
-    // Touch: the photo, and when the card first scrolls into view one preview: photo -> code -> photo (~2 s:
-    // 0.9 s decode, 0.4 s hold, 0.7 s back), then it rests on the photo. Reduced motion: just the photo.
+    // Intro (desktop and touch): start as the photo, then sweep once to decoded when the code layer is drawn and
+    // ~0.6 s after the hero entrance ends. Reduced motion: decoded straight away once the code layer exists.
     el.classList.add('is-photo');
-    if (touch) {
-      el.classList.add('is-touch');
-      if (!reduced) {
-        const entrance = Promise.all((el.getAnimations?.() || []).map((a) => a.finished.catch(() => {})));
-        const inView = new Promise((res) => {
-          io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io.disconnect(); res(); } }, { threshold: 0.6 });
-          io.observe(el);
-        });
-        Promise.all([drawn.current, entrance, inView])
-          .then(() => new Promise((r) => setTimeout(r, 300)))
-          .then(() => {
-            if (!alive || touched) return;
-            go(1, false);
-            back = setTimeout(() => { if (alive && !touched) go(0, false); }, 1300);
-          });
-      }
-    } else if (reduced) drawn.current.then(() => { if (alive && !touched) go(1, false); }); // decoded once the code layer exists
+    if (touch) el.classList.add('is-touch');
+    const decode = () => { intro = true; if (alive && !touched) go(1, false); };
+    if (reduced) drawn.current.then(decode);
     else {
       const entrance = Promise.all((el.getAnimations?.() || []).map((a) => a.finished.catch(() => {})));
       Promise.all([drawn.current, entrance])
         .then(() => new Promise((r) => setTimeout(r, 600)))
-        .then(() => { if (alive && !touched) go(1, false); });
+        .then(decode);
     }
     el.addEventListener('pointerenter', enter); el.addEventListener('pointerleave', leave);
     el.addEventListener('pointerup', up); el.addEventListener('keydown', key);
     el.addEventListener('focus', focus); el.addEventListener('blur', blur);
+    // safety net: the code layer failed or was wiped -> the photo; on touch, once it is redrawn (e.g. back from the
+    // background) the card returns to the code view, unless the visitor had tapped to the photo
     const noCode = () => go(0, false);
+    const code = () => { if (touch && intro && wantCode) go(1, false); };
     el.addEventListener('me:nocode', noCode);
+    el.addEventListener('me:code', code);
     return () => {
       alive = false;
-      cancelAnimationFrame(raf); clearTimeout(back); io?.disconnect();
-      el.removeEventListener('me:nocode', noCode);
+      cancelAnimationFrame(raf);
+      el.removeEventListener('me:nocode', noCode); el.removeEventListener('me:code', code);
       el.removeEventListener('pointerenter', enter); el.removeEventListener('pointerleave', leave);
       el.removeEventListener('pointerup', up); el.removeEventListener('keydown', key);
       el.removeEventListener('focus', focus); el.removeEventListener('blur', blur);

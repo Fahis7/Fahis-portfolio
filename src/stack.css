@@ -53,7 +53,9 @@ html[data-theme="dark"] .sp-stage {
 
 /* the masthead + glass cards keep the old full-screen height (the cards size from it via 100cqh);
    the toolkit grid follows below, so the section itself scrolls normally */
-.sp-screen { display: flex; flex-direction: column; height: calc(clamp(760px, 100vh, 1100px) - 2 * var(--section-pad)); height: calc(clamp(760px, 100svh, 1100px) - 2 * var(--section-pad)); }
+/* the screen keeps the old section padding in its height (the glass cards are sized from it), so the larger
+   --section-pad adds air around the Stack without shrinking its cards */
+.sp-screen { display: flex; flex-direction: column; height: calc(clamp(760px, 100vh, 1100px) - 2 * clamp(96px, 12vh, 140px)); height: calc(clamp(760px, 100svh, 1100px) - 2 * clamp(96px, 12svh, 140px)); }
 
 /* masthead */
 .sp-masthead, .sp-cards { width: min(100%, var(--content-max)); margin-inline: auto; }

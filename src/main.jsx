@@ -28,6 +28,7 @@ const MAILTO = `mailto:${profile.email}`;
 const CV_VER = `?v=${profile.cvVersion}`; // cache-buster: the file name stays the same, so links don't change
 const CV_URL = BASE + profile.resume + CV_VER;
 const CV_FILE = 'Mohammed_Fahis_CV.pdf'; // the saved file name for every Download link (no ?v in it)
+const CV_PAGE = `${BASE}cv.html`; // "open in a new tab" goes to cv.html (favicon + tab title), not the raw PDF
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ───────────── hooks ───────────── */
@@ -223,7 +224,7 @@ const Shot = ({ p }) => (realShot(p)
   : <MiniSite site={p.site} />);
 
 /* ── CV: a full-screen in-page viewer showing the CV rendered as an image (public/cv, npm run cv:render).
-   Every "View CV" is a real link to the PDF (works without JS); with JS it opens the viewer.
+   Every "View CV" is a real link to cv.html (works without JS); with JS it opens the viewer.
    Opening sets #cv (Back closes it); loading the page with #cv opens it. ── */
 const CV_IMG_1X = `${BASE}cv/cv-page-1@1x.webp${CV_VER}`, CV_IMG_2X = `${BASE}cv/cv-page-1.webp${CV_VER}`;
 let openCvViewer = null;
@@ -234,7 +235,7 @@ function CvLink({ className, children = 'View CV' }) {
     e.preventDefault();
     openCvViewer(e.currentTarget);
   };
-  return <a href={CV_URL} target="_blank" rel="noreferrer" className={className} onClick={onClick}>{children}</a>;
+  return <a href={CV_PAGE} target="_blank" rel="noreferrer" className={className} onClick={onClick}>{children}</a>;
 }
 const CvDownload = ({ className, children = 'Download CV ↓', ...rest }) => <a href={CV_URL} download={CV_FILE} className={className} {...rest}>{children}</a>;
 
@@ -292,7 +293,7 @@ function CvViewer() {
         <p id="cv-title">Mohammed Fahis · CV</p>
         <div className="cv-actions">
           <CvDownload className="pill pill-ghost cv-btn" aria-label="Download PDF"><DownloadIcon /><span className="cv-label">Download PDF</span></CvDownload>
-          <a className="pill pill-ghost cv-btn" href={CV_URL} target="_blank" rel="noreferrer" aria-label="Open PDF in a new tab"><Arrow size={13} /><span className="cv-label">Open PDF</span></a>
+          <a className="pill pill-ghost cv-btn" href={CV_PAGE} target="_blank" rel="noreferrer" aria-label="Open the CV in a new tab"><Arrow size={13} /><span className="cv-label">Open PDF</span></a>
           <button type="button" className="cv-close" ref={closeBtn} onClick={close} aria-label="Close CV">×</button>
         </div>
       </div>

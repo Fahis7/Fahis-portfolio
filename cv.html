@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#ececeb" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      // Same theme system as the homepage (key "fahis-theme"): set it before any CSS loads, so nothing flashes.
+      (function () {
+        var t = null;
+        try { t = localStorage.getItem('fahis-theme'); } catch (e) {}
+        if (t !== 'light' && t !== 'dark') {
+          t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', t);
+        var m = document.querySelector('meta[name="theme-color"]');
+        if (m) m.setAttribute('content', t === 'dark' ? '#0b0d10' : '#ececeb');
+      })();
+    </script>
+
+    <title>Mohammed Fahis · CV</title>
+    <meta name="description" content="CV of Mohammed Fahis, AI Full Stack Developer and Lead Engineer in Dubai. View it online or download the PDF." />
+    <meta name="author" content="Mohammed Fahis" />
+    <link rel="canonical" href="https://fahis7.github.io/Fahis-portfolio/cv.html" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Open Graph / LinkedIn / WhatsApp previews -->
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content="Mohammed Fahis" />
+    <meta property="og:title" content="Mohammed Fahis · CV" />
+    <meta property="og:description" content="CV of Mohammed Fahis, AI Full Stack Developer and Lead Engineer in Dubai." />
+    <meta property="og:url" content="https://fahis7.github.io/Fahis-portfolio/cv.html" />
+    <meta property="og:image" content="https://fahis7.github.io/Fahis-portfolio/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Mohammed Fahis | AI Full Stack Developer / Lead Engineer, Dubai" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Mohammed Fahis · CV" />
+    <meta name="twitter:description" content="CV of Mohammed Fahis, AI Full Stack Developer and Lead Engineer in Dubai." />
+    <meta name="twitter:image" content="https://fahis7.github.io/Fahis-portfolio/og-image.png" />
+
+    <style>
+      :root {
+        --bg: #ececeb; --ink: #0f1115; --muted: rgba(15, 17, 21, 0.6); --line: rgba(15, 17, 21, 0.1);
+        --glass: rgba(236, 236, 235, 0.72); --pill-line: #c4c9cf; --pill-fill: rgba(255, 255, 255, 0.35); --hot-btn: #ec4c12;
+        --sans: Inter, system-ui, -apple-system, 'Segoe UI', sans-serif; --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+        --safe-top: env(safe-area-inset-top, 0px); --safe-l: env(safe-area-inset-left, 0px); --safe-r: env(safe-area-inset-right, 0px);
+        --safe-b: env(safe-area-inset-bottom, 0px); --bar-h: 60px;
+      }
+      html[data-theme="dark"] {
+        --bg: #0b0d10; --ink: #f2f3f5; --muted: rgba(242, 243, 245, 0.6); --line: rgba(255, 255, 255, 0.1);
+        --glass: rgba(11, 13, 16, 0.72); --pill-line: rgba(255, 255, 255, 0.18); --pill-fill: rgba(255, 255, 255, 0.04);
+      }
+      *, *::before, *::after { box-sizing: border-box; }
+      html, body { margin: 0; height: 100%; }
+      body { background: var(--bg); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+      a { color: inherit; text-decoration: none; }
+      .cvp-bar {
+        position: fixed; top: 0; left: 0; right: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+        min-height: calc(var(--bar-h) + var(--safe-top));
+        padding: calc(10px + var(--safe-top)) calc(20px + var(--safe-r)) 10px calc(20px + var(--safe-l));
+        background: var(--glass); border-bottom: 1px solid var(--line);
+        -webkit-backdrop-filter: blur(14px) saturate(1.4); backdrop-filter: blur(14px) saturate(1.4);
+      }
+      .cvp-logo { display: flex; align-items: center; gap: 8px; min-height: 40px; font: 600 21px var(--sans); letter-spacing: -0.035em; }
+      .cvp-logo svg { flex: none; }
+      .cvp-label { font: 500 11px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+      .cvp-right { display: flex; align-items: center; gap: 14px; }
+      .cvp-btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 36px; padding: 0 16px; border-radius: 999px;
+        border: 1px solid var(--pill-line); background: var(--pill-fill); color: var(--ink);
+        font: 500 12px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap;
+        transition: color 0.25s, border-color 0.25s;
+      }
+      .cvp-btn:hover { color: var(--hot-btn); border-color: var(--hot-btn); }
+      .cvp-btn:focus-visible, .cvp-logo:focus-visible { outline: 2px solid var(--hot-btn); outline-offset: 3px; border-radius: 999px; }
+      @media (pointer: coarse) {
+        .cvp-btn { height: 44px; padding: 0 18px; }
+        .cvp-logo { min-height: 44px; }
+      }
+      @media (max-width: 599px) { .cvp-label { display: none; } }
+
+      .cvp-main { padding-top: calc(var(--bar-h) + var(--safe-top)); height: 100%; }
+      /* desktop: the PDF fills the rest of the screen */
+      .cvp-frame { display: block; width: 100%; height: 100%; border: 0; background: var(--bg); }
+      /* phones / touch: the CV page images, centered */
+      .cvp-pages {
+        display: flex; flex-direction: column; align-items: center; gap: 16px;
+        padding: 20px calc(16px + var(--safe-r)) calc(28px + var(--safe-b)) calc(16px + var(--safe-l));
+      }
+      .cvp-pages img {
+        display: block; width: 100%; max-width: 900px; height: auto; border-radius: 6px; background: #fff;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25), 0 3px 10px rgba(0, 0, 0, 0.12);
+      }
+      .cvp-fallback { padding: 32px 20px; text-align: center; font-size: 15px; }
+      .cvp-fallback a { text-decoration: underline; }
+      [hidden] { display: none !important; }
+    </style>
+  </head>
+  <body>
+    <header class="cvp-bar">
+      <a class="cvp-logo" href="./" aria-label="Mohammed Fahis, back to the portfolio">
+        <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true">
+          <rect x="1" y="1" width="30" height="30" rx="9" fill="currentColor" />
+          <path d="M8 22V10l5 7 5-7v12M22 22V10h4" fill="none" stroke="var(--bg)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span>Fahis</span>
+      </a>
+      <div class="cvp-right">
+        <span class="cvp-label">Curriculum vitae</span>
+        <a class="cvp-btn" id="cvp-download" href="Mohammed_Fahis_CV.pdf" download="Mohammed_Fahis_CV.pdf">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" /></svg>
+          Download
+        </a>
+      </div>
+    </header>
+
+    <main class="cvp-main" id="cvp-main">
+      <iframe class="cvp-frame" id="cvp-frame" title="CV of Mohammed Fahis (PDF)" hidden></iframe>
+      <div class="cvp-pages" id="cvp-pages" hidden></div>
+      <noscript>
+        <p class="cvp-fallback"><a href="Mohammed_Fahis_CV.pdf">Open the CV as a PDF</a></p>
+      </noscript>
+    </main>
+
+    <script type="module" src="/src/cv/main.js"></script>
+  </body>
+</html>

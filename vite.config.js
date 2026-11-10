@@ -11,7 +11,7 @@ export default defineConfig({
   define: { __BUILD_DATE__: JSON.stringify(new Date().toISOString()) },
   build: {
     rollupOptions: {
-      input: { main: root('./index.html'), work: root('./work.html') },
+      input: { main: root('./index.html'), work: root('./work.html'), cv: root('./cv.html') },
     },
   },
 });

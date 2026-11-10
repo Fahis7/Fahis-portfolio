@@ -888,6 +888,8 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
   .marquee-text { font-size: 11px; }
   .btn { height: 44px; padding: 0 22px; font-size: 14px; }
 }
+/* phones: belt cards about 80vw wide (card width = height × 1.57) */
+@media (max-width: 599px) { :root { --ch: min(51vw, calc(var(--sh) * 0.45 - 120px)); } }
 /* small phones (down to 320px): an 18px gutter; the Stack heading line may wrap instead of overflowing */
 @media (max-width: 400px) {
   :root { --gutter: 18px; }

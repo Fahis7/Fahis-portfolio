@@ -584,7 +584,12 @@ function HeroProof() {
   );
 }
 
+// touch screens get touch wording for the belt hint
+const isTouch = () => window.matchMedia('(hover: none), (pointer: coarse)').matches;
+const beltHintText = () => (isTouch() ? 'Swipe to scrub · tap a card for its case study' : 'Drag to scrub · click a card for its case study');
+
 function Stage() {
+  const [beltHint] = useState(beltHintText);
   return (
     <section className="stage" id="top" aria-label="Introduction">
       <TopNav />
@@ -613,7 +618,7 @@ function Stage() {
       {/* desktop: an invisible full-stage layer (the belt keeps its 45% geometry); phones: the belt follows the hero */}
       <div className="belt-zone">
         <Belt projects={projects} />
-        <p className="belt-hint" aria-hidden="true">Drag to scrub · click a card for its case study</p>
+        <p className="belt-hint" aria-hidden="true">{beltHint}</p>
       </div>
     </section>
   );

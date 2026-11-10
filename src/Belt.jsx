@@ -46,6 +46,7 @@ export default function Belt({ projects }) {
     let shown = 0, crossing = -1, raf = 0, last = performance.now(), visible = true;
     const sparks = [];
 
+    let small = false, cell = 3, sparkN = 3;
     const measure = () => {
       const r = cards[0].getBoundingClientRect();
       W = belt.clientWidth; BH = belt.clientHeight; cw = r.width; ch = r.height;
@@ -57,6 +58,8 @@ export default function Belt({ projects }) {
       const need = Math.max(1, Math.ceil((W + span) / (span * P)));
       if (need > reps) setReps(need);
       dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // small screens (phones, small tablets): coarser particle grid and fewer sparks, so scrolling stays smooth
+      small = window.innerWidth < 900; cell = small ? 4 : 3; sparkN = small ? 1 : 3;
       canvas.width = Math.round(W * dpr); canvas.height = Math.round(BH * dpr);
       canvas.style.width = W + 'px'; canvas.style.height = BH + 'px';
     };
@@ -91,7 +94,8 @@ export default function Belt({ projects }) {
       dragging = false; vel = dragVel;
       belt.classList.remove('is-dragging');
       try { belt.releasePointerCapture(e.pointerId); } catch { /* already released */ }
-      if (dragDist < 6 && downCard >= 0) {
+      // a tap opens the card's case study; a cancelled pointer (the browser took over for a vertical page scroll) never does
+      if (e.type === 'pointerup' && dragDist < 6 && downCard >= 0) {
         document.getElementById(`work-${projects[downCard % P].id}`)?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
       }
     };
@@ -129,7 +133,7 @@ export default function Belt({ projects }) {
         ctx.fillStyle = g; ctx.fillRect(Lx, top, hw, ch);
       }
       // 2. dithered particles fixed to the card surface
-      const R = 0.3 * cw, CELL = 3, rows = Math.ceil(ch / CELL);
+      const R = 0.3 * cw, CELL = cell, rows = Math.ceil(ch / CELL);
       const cut = Lx - x;
       const g0 = Math.max(0, Math.floor(cut / CELL)), g1 = Math.min(Math.ceil(cw / CELL), Math.ceil((cut + R) / CELL));
       const buckets = PALETTE.map(() => []);
@@ -159,7 +163,7 @@ export default function Belt({ projects }) {
       });
       // 3. spawn sparks
       if (!reduced) {
-        for (let s = 0; s < 3; s++) {
+        for (let s = 0; s < sparkN; s++) {
           if (Math.random() > 0.7) continue;
           const life = 0.3 + Math.random() * 0.8;
           sparks.push({

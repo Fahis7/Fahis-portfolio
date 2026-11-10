@@ -51,7 +51,7 @@ export const projects = [
     kicker: 'REGTECH / FINTECH',
     tagline: 'AI-powered KYC / AML compliance platform',
     role: 'Architecture → production',
-    desc: 'Multi-tenant compliance SaaS for UAE firms: sanctions, PEP and adverse-media screening, MLRO review, verifiable certificates and a training LMS.',
+    desc: 'Built for UAE firms: sanctions, PEP and adverse-media screening, MLRO review, verifiable certificates and a training LMS.',
     badge: 'NEW',
     highlights: [
       '5 sanctions lists, PEP and adverse-media screening',
@@ -252,7 +252,7 @@ export default function App() {
     kicker: 'HR / AI RECRUITING',
     tagline: 'AI recruiting for an Abu Dhabi consultancy',
     role: 'Live platform',
-    desc: 'Live recruiting platform that turns uploaded CVs into matched, ready-to-act candidates.',
+    desc: 'Turns uploaded CVs into matched, ready-to-act candidates.',
     highlights: ['Claude Haiku parses CVs into profiles', 'Semantic job matching on Supabase pgvector', 'AI-written alerts for new matches'],
     metrics: [
       { value: 'AI', label: 'CV parser' },
@@ -293,7 +293,7 @@ export const match = (job: Job) =>
     kicker: 'LUXURY COMMERCE / ANALYTICS',
     tagline: 'Premium e-commerce engine for timepieces',
     role: 'API, auth & analytics',
-    desc: 'Luxury watch store with strong authentication, fast media delivery and live analytics.',
+    desc: 'Strong authentication, fast media delivery and live analytics.',
     highlights: ['Three-layer authentication with Firebase MFA', 'Cloudinary CDN for high-res product media', 'Live operational analytics dashboard'],
     metrics: [
       { value: '3-layer', label: 'MFA auth' },

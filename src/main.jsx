@@ -765,12 +765,16 @@ function Project({ p, i, after }) {
         </p>
         <DotTitle text={p.title} />
         <p className="lede">{p.tagline}</p>
-        <p>{p.desc}</p>
-        <ul className="ticks">{p.highlights.map((h) => <li key={h}>{h}</li>)}</ul>
-        <ul className="chips small">{p.stack.slice(0, 6).map((s) => <li key={s}>{s}</li>)}</ul>
-        <div className="btn-row">
-          {p.demo && <Button href={p.demo} external>Open live <Arrow /></Button>}
-          <Button href={p.github} variant="secondary" external>GitHub</Button>
+        <p className="project-desc">{p.desc}</p>
+        <ul className="ticks project-points">{p.highlights.slice(0, 3).map((h) => <li key={h}>{h}</li>)}</ul>
+        {/* five chips on the card, then "+N" (the full stack is in the case study / on GitHub) */}
+        <ul className="chips small project-chips" aria-label={`${p.title} stack`}>
+          {p.stack.slice(0, 5).map((s) => <li key={s}>{s}</li>)}
+          {p.stack.length > 5 && <li className="chip-more" aria-label={`and ${p.stack.length - 5} more`}>+{p.stack.length - 5}</li>}
+        </ul>
+        <div className="project-actions">
+          {p.demo && <Button href={p.demo} external className="project-live">Open live <Arrow /></Button>}
+          <a className="project-link" href={p.github} target="_blank" rel="noreferrer">GitHub <Arrow size={12} /></a>
         </div>
         {after}
       </div>
@@ -1189,20 +1193,24 @@ function WorkProgress() {
 }
 
 function BottomNav() {
-  const [show, setShow] = useState(false);
-  // shown after the hero, hidden whenever the footer is on screen, so it never covers it
+  const [show, setShow] = useState(true);
+  // pinned bottom-right: hidden while scrolling down (so it doesn't sit on what you're reading), back when you
+  // scroll up or stop for ~1s, and always shown at the very top and bottom of the page
   useEffect(() => {
-    let footerInView = false, raf = 0, vh = window.innerHeight;
-    const update = () => { raf = 0; setShow(window.scrollY > vh * 0.7 && !footerInView); };
+    let raf = 0, idle = 0, lastY = window.scrollY;
+    const atEdge = (y) => y < 40 || y > document.documentElement.scrollHeight - window.innerHeight - 40;
+    const update = () => {
+      raf = 0;
+      const y = window.scrollY, dy = y - lastY;
+      lastY = y;
+      if (atEdge(y) || dy < -2) setShow(true);
+      else if (dy > 2) setShow(false);
+      clearTimeout(idle);
+      idle = setTimeout(() => setShow(true), 1000);
+    };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
-    const onResize = () => { vh = window.innerHeight; onScroll(); };
-    const ft = document.querySelector('footer.ft');
-    const io = new IntersectionObserver(([e]) => { footerInView = e.isIntersecting; onScroll(); });
-    if (ft) io.observe(ft);
-    update();
     window.addEventListener('scroll', onScroll, { passive: true });
-    const offResize = onViewportResize(onResize); // the iPhone toolbar (height-only) is ignored
-    return () => { cancelAnimationFrame(raf); io.disconnect(); window.removeEventListener('scroll', onScroll); offResize(); };
+    return () => { cancelAnimationFrame(raf); clearTimeout(idle); window.removeEventListener('scroll', onScroll); };
   }, []);
   return (
     <div className={`bottom-nav ${show ? 'show' : ''}`} aria-hidden={!show}>

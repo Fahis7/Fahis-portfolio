@@ -35,7 +35,7 @@ export default function StackPerf({ cards, toolkit }) {
             </h2>
           </div>
           <p className="sp-intro">
-            Every layer is engineered for production: models and RAG pipelines,<br className="sp-break" /> multi-tenant databases with Row-Level Security, and interfaces<br className="sp-break" /> in English and Arabic, shipped with CI/CD.
+            Models, multi-tenant data and bilingual interfaces,<br className="sp-break" /> all shipped with CI/CD.
           </p>
         </header>
         <div className="sp-cards" aria-label="Stack capabilities">

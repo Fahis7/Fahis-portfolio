@@ -634,7 +634,7 @@ function Stage() {
         <div className="hero-main">
           <p className="eyebrow"><span className="eyebrow-name">Mohammed Fahis · </span>AI Engineer · Dubai</p>
           <h1 className="hero-title t-head" aria-label="One engineer. Everything underneath.">One engineer.<br /><HeroTagline /></h1>
-          <p className="hero-intro t-copy">I'm Fahis, an AI and full-stack engineer in Dubai. I was the sole engineer behind AxisKYC, a live compliance platform that has screened 1,000+ profiles for UAE firms, and I like owning products like that from start to finish.</p>
+          <p className="hero-intro t-copy">AI and full-stack engineer. Sole engineer behind AxisKYC, a live compliance platform that has screened 1,000+ profiles for UAE firms.</p>
           <div className="hero-ctas">
             <a href="#work" className="pill pill-hot pill-lg">Explore the work</a>
             <CvLink className="pill pill-ghost pill-lg hero-cv">View CV</CvLink>
@@ -819,9 +819,8 @@ function About() {
         <h2 className="big t-head rise" style={{ '--d': '.1s' }}>Build the system underneath,<br />ship the <DotWord text="interface" /> on top.</h2>
         <div className="about-body">
           <div className="about-copy t-copy rise" style={{ '--d': '.2s' }}>
-            <p>My work lives where product engineering meets applied AI: authentication, data architecture, model orchestration, deployment, and the last 10% that makes a product feel finished. I build with an AI-assisted workflow in Claude Code (plan, review, verify) and evaluate AI features on real-world runs, not demos.</p>
-            <p>My newest build is <strong>AxisKYC</strong>, a multi-tenant KYC/AML platform with database-level tenant isolation, sanctions screening and a fully bilingual Arabic/English interface. Before it, I shipped property, recruiting, commerce and business-services products end-to-end.</p>
-            <p>Open to full-time roles and freelance builds: Dubai on-site, hybrid or remote.</p>
+            <p>I work where product engineering meets applied AI: auth, data architecture, models and deployment. I build with Claude Code (plan, review, verify) and test AI on real runs, not demos.</p>
+            <p>Before <strong>AxisKYC</strong>, I shipped property, recruiting, commerce and business-services products end to end. Open to full-time roles and freelance builds.</p>
           </div>
           <div className="btn-row rise" style={{ '--d': '.3s' }}>
             <Button href={MAILTO}>Start a chat</Button>
@@ -924,7 +923,7 @@ function Experience() {
           <div className="rise">
             <div className="section-label"><span>04</span>Experience</div>
             <h2 className="big t-head">From first commit to full <DotWord text="ownership." /></h2>
-            <p className="xp-intro t-copy">Six roles, from e-commerce builds to sole engineer of a live compliance SaaS.</p>
+            <p className="xp-intro t-copy">From e-commerce builds to a live compliance SaaS.</p>
           </div>
           <div className="xp-viewing" aria-hidden="true">
             <div className="xp-year">
@@ -955,7 +954,7 @@ function Experience() {
                 <h3 className="xp-title">{x.title}</h3>
                 {x.company && <p className="xp-company">{x.company}</p>}
                 <p className="xp-desc t-copy">{x.desc}</p>
-                {x.tech && <ul className="chips small" aria-label="Tech">{x.tech.map((t) => <li key={t}>{t}</li>)}</ul>}
+                {x.tech && <ul className="chips small" aria-label="Tech">{x.tech.slice(0, 4).map((t) => <li key={t}>{t}</li>)}</ul>}
                 {x.link && <a className="xp-link" href={x.link}>View project ↘</a>}
               </XpCard>
             ))}
@@ -1046,7 +1045,7 @@ function Partner() {
     <section className="section section--fill partner" id="contact" ref={boxRef}>
       <p className="kicker rise">06 · CONTACT</p>
       <h2 className="partner-title rise" style={{ '--d': '.1s' }} aria-label="Let’s build something.">Let’s build <span className="nowrap"><DotWord text="something" />.</span></h2>
-      <p className="partner-sub rise" style={{ '--d': '.2s' }}>Roles, products, AI architecture, compliance tech: send me a message.</p>
+      <p className="partner-sub rise" style={{ '--d': '.2s' }}>Roles, products or AI work: send me a message.</p>
       <a href={MAILTO} className="btn btn-primary btn-avatar rise" style={{ '--d': '.3s' }}>
         <span className="avatar" aria-hidden="true">MF</span>Start a chat with Fahis
       </a>

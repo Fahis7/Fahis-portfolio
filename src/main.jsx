@@ -310,8 +310,32 @@ function CvViewer() {
 const NAV_LINKS = [['work', 'Work'], ['about', 'About'], ['stack', 'Stack'], ['experience', 'Experience'], ['showreel', 'Showreel']];
 
 function TopNav() {
-  const bar = useRef(null), links = useRef({}), ink = useRef(null);
+  const bar = useRef(null), links = useRef({}), ink = useRef(null), menuBtn = useRef(null), menu = useRef(null);
   const [active, setActive] = useState(null);
+  const [open, setOpen] = useState(false);
+
+  // menu (below 1100px, where the full link row no longer fits): closes on a link tap, Escape or an outside tap;
+  // the page doesn't scroll behind it. The scroll lock is lifted synchronously so a tapped #anchor can scroll.
+  const closeMenu = (focusButton = false) => {
+    document.documentElement.classList.remove('menu-lock');
+    setOpen(false);
+    if (focusButton) menuBtn.current?.focus();
+  };
+  useEffect(() => {
+    if (!open) return undefined;
+    document.documentElement.classList.add('menu-lock');
+    menu.current?.querySelector('a, button')?.focus();
+    const onKey = (e) => { if (e.key === 'Escape') closeMenu(true); };
+    const onDown = (e) => { if (!menu.current?.contains(e.target) && !menuBtn.current?.contains(e.target)) closeMenu(); };
+    const onWide = () => { if (window.innerWidth >= 1100) closeMenu(); };
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('pointerdown', onDown);
+    window.addEventListener('resize', onWide, { passive: true });
+    return () => {
+      document.documentElement.classList.remove('menu-lock');
+      document.removeEventListener('keydown', onKey); document.removeEventListener('pointerdown', onDown); window.removeEventListener('resize', onWide);
+    };
+  }, [open]);
 
   useEffect(() => {
     let raf = 0;
@@ -350,7 +374,7 @@ function TopNav() {
   }, [active]);
 
   return (
-    <header className="nav" ref={bar}>
+    <header className="nav" ref={bar} data-menu={open ? 'open' : undefined}>
       <a href="#top" className="logo" aria-label={`${profile.name}, home`}><Mark /><span>Fahis</span></a>
       <nav className="nav-links" aria-label="Primary">
         {NAV_LINKS.map(([id, label]) => (
@@ -364,6 +388,25 @@ function TopNav() {
         <a href={profile.socials[1].href} target="_blank" rel="noreferrer" className="nav-plain">GitHub</a>
         <a href={profile.socials[0].href} target="_blank" rel="noreferrer" className="pill pill-ghost">LinkedIn</a>
         <a href="#contact" className="pill pill-hot">Let’s talk</a>
+        <button type="button" className="nav-burger" ref={menuBtn} aria-expanded={open} aria-controls="nav-menu"
+          aria-label={open ? 'Close menu' : 'Open menu'} onClick={() => (open ? closeMenu() : setOpen(true))}>
+          <span aria-hidden="true" /><span aria-hidden="true" />
+        </button>
+      </div>
+      <div id="nav-menu" className="nav-menu" ref={menu} hidden={!open} onClick={(e) => { if (e.target.closest('a')) closeMenu(); }}>
+        <nav aria-label="Menu">
+          <ul className="nav-menu-links">
+            {NAV_LINKS.map(([id, label]) => (
+              <li key={id}><a href={`#${id}`} aria-current={active === id ? 'true' : undefined}>{label}</a></li>
+            ))}
+          </ul>
+        </nav>
+        <div className="nav-menu-extra">
+          <CvLink className="nav-menu-small">CV</CvLink>
+          <a href={profile.socials[1].href} target="_blank" rel="noreferrer" className="nav-menu-small">GitHub ↗</a>
+          <a href={profile.socials[0].href} target="_blank" rel="noreferrer" className="nav-menu-small">LinkedIn ↗</a>
+          <a href="#contact" className="pill pill-hot pill-lg">Let’s talk</a>
+        </div>
       </div>
     </header>
   );

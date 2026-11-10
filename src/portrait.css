@@ -32,8 +32,8 @@
 @keyframes meDot { 50% { opacity: 0.45; transform: scale(0.75); } }
 @media (prefers-reduced-motion: reduce) { .me-dot { animation: none; } }
 
-@media (max-width: 767px) {
-  .me { height: auto; width: 124px; border-radius: 14px; }
+@media (max-width: 899px) {
+  .me { border-radius: 18px; } /* size: the hero sets it (a card up to 360px wide, centred) */
   .me-tag { left: 8px; padding: 3px 7px 3px 6px; gap: 5px; font-size: 11px; }
   .me-dot { width: 5px; height: 5px; }
 }

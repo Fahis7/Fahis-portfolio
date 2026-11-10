@@ -820,8 +820,6 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
 
 @media (max-width: 899px) {
   :root { --ch: min(54vw, calc(var(--sh) * 0.45 - 120px)); --gap: 7vw; --radius: 3.5vw; --section-pad: 72px; }
-  .nav-links, .nav-plain, .pill-ghost { display: none; }
-  .nav-right .pill-hot { height: 30px; padding: 0 13px; font-size: 12px; }
   /* phones: the hero flows (eyebrow, h1, portrait + status, intro, CTAs, proof 2×2) and the belt follows it */
   .stage { height: auto; }
   .hero {
@@ -829,10 +827,10 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
     row-gap: 14px; padding: calc(var(--nav-h) + var(--safe-top) + 20px) var(--gutter) 28px;
   }
   .hero-main { display: contents; }
-  .eyebrow { order: 1; } .hero-title { order: 2; margin-top: 0; } .hero-aside { order: 3; } .hero-intro { order: 4; } .hero-ctas { order: 5; } .hero-proof { order: 6; }
-  .hero-aside { flex-direction: row; align-items: center; gap: 16px; }
-  .hero-aside .me { width: 124px; }
-  .hero-status { white-space: normal; }
+  .eyebrow { order: 1; } .hero-title { order: 2; margin-top: 0; } .hero-intro { order: 3; } .hero-ctas { order: 4; } .hero-aside { order: 5; } .hero-proof { order: 6; }
+  .hero-aside { flex-direction: column; align-items: center; gap: 12px; margin-top: 10px; }
+  .hero-aside .me { width: min(100%, 360px); }
+  .hero-status { justify-content: center; white-space: normal; text-align: center; }
   .hero-intro { margin-top: 0; max-width: none; }
   .hero-proof { display: grid; grid-template-columns: 1fr 1fr; row-gap: 12px; }
   .hero-proof li { padding: 4px 14px; }
@@ -893,14 +891,15 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
 /* small phones (down to 320px): an 18px gutter; the Stack heading line may wrap instead of overflowing */
 @media (max-width: 400px) {
   :root { --gutter: 18px; }
+  /* hero buttons stack full width; smaller proof numbers */
+  .hero-ctas { flex-direction: column; align-items: stretch; }
+  .hero-ctas .pill { justify-content: center; }
+  .hero-ctas .hero-dl { align-self: center; }
+  .hero-proof-num { height: 18px; }
   .sp-headline { font-size: clamp(24px, 7.6vw, 30px); }
   .sp-line { flex-wrap: wrap; white-space: normal; }
 }
-@media (max-width: 899px) and (max-height: 700px) {
-  .hero-intro { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
-  .hero-proof { display: none; }
-  .hero-dl { display: none; } /* short phones: no room for a second row; View CV opens the PDF, which can be saved there */
-}
+
 
 /* ═════════════ REDUCED MOTION ═════════════ */
 @media (prefers-reduced-motion: reduce) {
@@ -1194,3 +1193,48 @@ html.fx-ready .rise.in .dot-word circle { animation: fxDot 0.25s ease-out both; 
   .preview:hover { transform: none; box-shadow: var(--shadow-preview); }
   .preview:hover .preview-url { background: var(--glass-chip); color: var(--navy); }
 }
+
+/* ═════════════ NAV MENU (below 1100px, where the full link row stops fitting) ═════════════ */
+.nav-burger, .nav-menu { display: none; }
+@media (max-width: 1099px) {
+  .nav-links, .nav-right .nav-plain, .nav-right .pill-ghost, .nav-right .pill-hot { display: none; }
+  .nav-right { gap: 6px; }
+  .nav-burger {
+    display: inline-grid; place-items: center; align-content: center; gap: 6px; width: 44px; height: 44px; margin-right: -10px;
+    padding: 0; border: 0; background: none; color: var(--ink); cursor: pointer;
+  }
+  .nav-burger span { display: block; width: 20px; height: 1.5px; border-radius: 2px; background: currentColor; transition: transform 0.25s ease; }
+  .nav[data-menu] .nav-burger span:first-child { transform: translateY(3.75px) rotate(45deg); }
+  .nav[data-menu] .nav-burger span:last-child { transform: translateY(-3.75px) rotate(-45deg); }
+  .nav[data-menu] { background: rgba(236, 236, 235, 0.92); -webkit-backdrop-filter: blur(14px) saturate(1.2); backdrop-filter: blur(14px) saturate(1.2); }
+  html[data-theme="dark"] .nav[data-menu] { background: rgba(11, 13, 16, 0.92); }
+  .nav-menu:not([hidden]) {
+    display: block; position: fixed; left: 0; right: 0; top: calc(var(--nav-h) + var(--safe-top));
+    max-height: calc(100svh - var(--nav-h) - var(--safe-top)); overflow-y: auto; overscroll-behavior: contain;
+    padding: 8px max(var(--edge), env(safe-area-inset-right, 0px)) calc(28px + env(safe-area-inset-bottom, 0px)) max(var(--edge), env(safe-area-inset-left, 0px));
+    background: rgba(236, 236, 235, 0.92); -webkit-backdrop-filter: blur(14px) saturate(1.2); backdrop-filter: blur(14px) saturate(1.2);
+    border-bottom: 1px solid var(--line); box-shadow: 0 24px 48px rgba(15, 17, 21, 0.12); animation: navMenuIn 0.25s ease-out;
+  }
+  html[data-theme="dark"] .nav-menu:not([hidden]) { background: rgba(11, 13, 16, 0.92); box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4); }
+  .nav-menu-links a {
+    display: flex; align-items: center; justify-content: space-between; min-height: 56px; border-bottom: 1px solid var(--line);
+    font: 400 clamp(22px, 6vw, 28px) var(--sans); letter-spacing: 0.01em; color: var(--ink);
+  }
+  .nav-menu-links a[aria-current="true"]::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--dot); }
+  .nav-menu-extra { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 22px; margin-top: 18px; }
+  .nav-menu-small { display: inline-flex; align-items: center; min-height: 44px; font: 500 12px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--body); }
+  .nav-menu-extra .pill-hot { margin-left: auto; min-height: 44px; }
+  html.menu-lock { overflow: hidden; }
+  html.menu-lock .bottom-nav { opacity: 0; pointer-events: none; }
+}
+@keyframes navMenuIn { from { opacity: 0; transform: translateY(-8px); } }
+@media (prefers-reduced-motion: reduce) { .nav-menu:not([hidden]) { animation: none; } .nav-burger span { transition: none; } }
+
+/* floating "F · Start a chat" pill: smaller, bottom right on phones and tablets */
+@media (max-width: 899px) {
+  .bottom-nav { left: auto; right: calc(16px + env(safe-area-inset-right, 0px)); gap: 10px; padding: 5px 5px 5px 14px; transform: translateY(160%); }
+  .bottom-nav.show { transform: none; }
+  .bottom-nav .bn-mark { font-size: 22px; }
+  .bottom-nav .btn-sm { height: 40px; padding: 0 16px; font-size: 13px; }
+}
+@media (max-width: 899px) and (pointer: coarse) { .bottom-nav .btn-sm { min-height: 44px; } }

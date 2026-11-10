@@ -25,8 +25,9 @@ import { profile, projects, heroStats, stackCards, toolkit, marquee, experience,
 
 const BASE = import.meta.env.BASE_URL;
 const MAILTO = `mailto:${profile.email}`;
-const CV_URL = BASE + profile.resume;
-const CV_FILE = 'Mohammed_Fahis_CV.pdf';
+const CV_VER = `?v=${profile.cvVersion}`; // cache-buster: the file name stays the same, so links don't change
+const CV_URL = BASE + profile.resume + CV_VER;
+const CV_FILE = 'Mohammed_Fahis_CV.pdf'; // the saved file name for every Download link (no ?v in it)
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ───────────── hooks ───────────── */
@@ -224,7 +225,7 @@ const Shot = ({ p }) => (realShot(p)
 /* ── CV: a full-screen in-page viewer showing the CV rendered as an image (public/cv, npm run cv:render).
    Every "View CV" is a real link to the PDF (works without JS); with JS it opens the viewer.
    Opening sets #cv (Back closes it); loading the page with #cv opens it. ── */
-const CV_IMG_1X = `${BASE}cv/cv-page-1@1x.webp`, CV_IMG_2X = `${BASE}cv/cv-page-1.webp`;
+const CV_IMG_1X = `${BASE}cv/cv-page-1@1x.webp${CV_VER}`, CV_IMG_2X = `${BASE}cv/cv-page-1.webp${CV_VER}`;
 let openCvViewer = null;
 
 function CvLink({ className, children = 'View CV' }) {

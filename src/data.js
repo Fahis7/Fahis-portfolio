@@ -17,6 +17,9 @@ export const profile = {
   email: 'muhdfahis.aidev@gmail.com',
   // CV in public/: every View CV / Download CV link is built from this (with BASE_URL).
   resume: 'Mohammed_Fahis_CV.pdf',
+  // bump when the CV changes: added as ?v= to every CV link and page image so browsers and GitHub Pages fetch the new file
+  // (also update the plain <noscript> CV link in index.html, which can't read this file)
+  cvVersion: '2026-11',
   socials: [
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/mohammed-fahis-mt' },
     { label: 'GitHub', href: 'https://github.com/Fahis7' },

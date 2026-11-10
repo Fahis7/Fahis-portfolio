@@ -80,3 +80,25 @@ body.ready .loader { opacity: 0; pointer-events: none; }
   .loader i { animation: none; opacity: 0.6; }
   .ui > *, .loader { transition: none; }
 }
+
+/* iPhone safe areas (viewport-fit=cover): keep the corner labels clear of the notch and home indicator */
+.tl, .tr { margin-top: env(safe-area-inset-top, 0px); }
+.bl, .br { margin-bottom: env(safe-area-inset-bottom, 0px); }
+.tl, .bl { margin-left: env(safe-area-inset-left, 0px); }
+.tr, .br { margin-right: env(safe-area-inset-right, 0px); }
+
+/* touch screens only: how to use the ribbon (desktop shows nothing new) */
+.touch-hint { display: none; }
+@media (hover: none), (pointer: coarse) {
+  .touch-hint {
+    display: block; position: fixed; z-index: 5; left: 50%; transform: translateX(-50%); white-space: nowrap; pointer-events: none;
+    bottom: calc(40 * var(--u) + 26px + env(safe-area-inset-bottom, 0px));
+    font: 500 max(9px, calc(10 * var(--u))) / 1.4 'Inter Tight Variable', system-ui, sans-serif; text-transform: uppercase;
+    color: var(--page-ink); opacity: 0; transition: opacity 0.6s ease 0.4s;
+  }
+  body.ready .touch-hint { opacity: 0.55; }
+}
+@media (max-width: 649px) and (hover: none), (max-width: 649px) and (pointer: coarse) {
+  .touch-hint { bottom: calc(25 * var(--u) + 24px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (prefers-reduced-motion: reduce) { .touch-hint { transition: none; } }

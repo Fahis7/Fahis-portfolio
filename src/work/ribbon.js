@@ -147,6 +147,9 @@ export function mountRibbon(container, opts = {}) {
   floor.frustumCulled = false;
   scene.add(floor);
 
+  // pixel ratio cap: 2, or 1.5 on phones (sharp enough, much lighter to render); re-read on every layout
+  const maxDpr = () => Math.min(devicePixelRatio || 1, window.matchMedia('(max-width: 649px)').matches ? 1.5 : 2);
+
   /* ───────────── theme ───────────── */
 
   let theme = null;
@@ -186,7 +189,7 @@ export function mountRibbon(container, opts = {}) {
     const w = container.clientWidth, h = container.clientHeight;
     if (!w || !h) return false;
     vw = w; vh = h;
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setPixelRatio(maxDpr());
     renderer.setSize(vw, vh, false);
     camera.aspect = vw / vh;
     camera.updateProjectionMatrix();
@@ -245,7 +248,7 @@ export function mountRibbon(container, opts = {}) {
     const card = layout.cards.find((c) => c.project === index);
     if (!card) return;
     const { U, phone } = layout;
-    const s = (2 * Math.min(devicePixelRatio, 2)) / 1.5;
+    const s = (2 * maxDpr()) / 1.5;
     const cw = Math.max(2, Math.round(card.w * s));
     const ch = Math.max(2, Math.round(card.h * s));
     const cv = item.overlayCanvas || (item.overlayCanvas = document.createElement('canvas'));

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { DotWord } from './DotText.jsx';
 import { FilterDefs, GlassCard, useGlassEntrance } from './GlassCard.jsx';
 import Toolkit from './Toolkit.jsx';
@@ -13,6 +13,13 @@ import Toolkit from './Toolkit.jsx';
 export default function StackPerf({ cards, toolkit }) {
   const ref = useRef(null);
   useGlassEntrance(ref);
+  // the background drift and the card loops pause while the section is off screen (CSS: .sp-stage[data-off])
+  useEffect(() => {
+    const el = ref.current;
+    const io = new IntersectionObserver(([e]) => el.toggleAttribute('data-off', !e.isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   return (
     <section className="section sp-stage sp-pending" id="stack" ref={ref} aria-labelledby="sp-headline">

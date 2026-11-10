@@ -135,6 +135,12 @@ let playingPreview = null;
 const videoAllowed = () => !reducedMotion() && !navigator.connection?.saveData;
 if (typeof document !== 'undefined') {
   document.addEventListener('visibilitychange', () => { if (document.hidden && playingPreview) playingPreview.stop(); });
+  // only one on-page video plays at a time: starting one pauses the others
+  const PAGE_VIDEOS = '.shot-video, .reel-row video';
+  document.addEventListener('play', (e) => {
+    if (!e.target.matches?.(PAGE_VIDEOS)) return;
+    document.querySelectorAll(PAGE_VIDEOS).forEach((v) => { if (v !== e.target && !v.paused) v.pause(); });
+  }, true);
 }
 
 function usePreviewVideo(link, video, enabled) {
@@ -631,8 +637,16 @@ function Stage() {
 function Marquee({ items, direction = 'left', speed = 40, className = '' }) {
   const reps = Math.ceil(20 / items.length);
   const half = Array.from({ length: reps }, () => items).flat();
+  const ref = useRef(null);
+  // paused while off screen (CSS: .marquee[data-off]); the browser already stops it in a hidden tab
+  useEffect(() => {
+    const el = ref.current;
+    const io = new IntersectionObserver(([e]) => el.toggleAttribute('data-off', !e.isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   return (
-    <div className={`marquee ${className}`} aria-hidden="true" style={{ '--marquee-speed': `${speed * reps}s` }}>
+    <div ref={ref} className={`marquee ${className}`} aria-hidden="true" style={{ '--marquee-speed': `${speed * reps}s` }}>
       <div className={`marquee-track${direction === 'right' ? ' is-reverse' : ''}`}>
         {[...half, ...half].map((m, i) => <span key={i} className="marquee-item"><span className="marquee-text">{m}</span><i>✦</i></span>)}
       </div>
@@ -840,17 +854,22 @@ function Experience() {
   useEffect(() => {
     const el = list.current;
     if (reducedMotion()) { el.style.setProperty('--xp', '1'); return; }
-    let raf = 0;
+    // the list's page position, height and the viewport height are cached (on resize / size change),
+    // so the scroll update itself never reads layout
+    let raf = 0, top = 0, h = 1, vh = window.innerHeight;
+    const measure = () => { const r = el.getBoundingClientRect(); top = r.top + window.scrollY; h = r.height || 1; vh = window.innerHeight; };
     const update = () => {
       raf = 0;
-      const r = el.getBoundingClientRect();
-      el.style.setProperty('--xp', Math.min(1, Math.max(0, (window.innerHeight * 0.6 - r.top) / r.height)).toFixed(4));
+      el.style.setProperty('--xp', Math.min(1, Math.max(0, (vh * 0.6 - (top - window.scrollY)) / h)).toFixed(4));
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
-    update();
+    const onResize = () => { measure(); onScroll(); };
+    measure(); update();
+    const ro = new ResizeObserver(onResize);
+    ro.observe(el); ro.observe(document.body); // content above moving (fonts, images) shifts the list too
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    return () => { cancelAnimationFrame(raf); window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll); };
+    window.addEventListener('resize', onResize, { passive: true });
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onResize); };
   }, []);
 
   // the card crossing the middle of the screen is the active one
@@ -1146,14 +1165,17 @@ function BottomNav() {
   const [show, setShow] = useState(false);
   // shown after the hero, hidden whenever the footer is on screen, so it never covers it
   useEffect(() => {
-    let footerInView = false;
-    const onScroll = () => setShow(window.scrollY > window.innerHeight * 0.7 && !footerInView);
+    let footerInView = false, raf = 0, vh = window.innerHeight;
+    const update = () => { raf = 0; setShow(window.scrollY > vh * 0.7 && !footerInView); };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    const onResize = () => { vh = window.innerHeight; onScroll(); };
     const ft = document.querySelector('footer.ft');
     const io = new IntersectionObserver(([e]) => { footerInView = e.isIntersecting; onScroll(); });
     if (ft) io.observe(ft);
-    onScroll();
+    update();
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => { io.disconnect(); window.removeEventListener('scroll', onScroll); };
+    window.addEventListener('resize', onResize, { passive: true });
+    return () => { cancelAnimationFrame(raf); io.disconnect(); window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onResize); };
   }, []);
   return (
     <div className={`bottom-nav ${show ? 'show' : ''}`} aria-hidden={!show}>

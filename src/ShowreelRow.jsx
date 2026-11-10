@@ -52,7 +52,7 @@ export default function Row({ projects }) {
             <a href={p.demo || p.github} target="_blank" rel="noreferrer" aria-label={p.demo ? `${p.title}: ${p.tagline}` : `${p.title} (code on GitHub): ${p.tagline}`}>
               {!reduced && p.reel.video && near
                 ? <video muted playsInline loop preload="none" poster={BASE + p.reel.poster} data-src={BASE + p.reel.video} aria-hidden="true" />
-                : <img src={near ? BASE + p.reel.poster : undefined} alt="" loading="lazy" decoding="async" />}
+                : <img src={near ? BASE + p.reel.poster : undefined} alt="" loading="lazy" decoding="async" width={1600} height={Math.round(1600 / p.reel.aspect)} />}
               <span className="reel-cap" aria-hidden="true">{p.title}</span>
             </a>
           </li>

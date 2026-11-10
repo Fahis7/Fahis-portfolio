@@ -116,6 +116,7 @@
     <script>
       // Preloader: progress from real loading (page load, fonts, portrait images, the first belt poster), eased and never
       // backwards. Exits when loaded and 700ms have passed (always by 3.5s): a scanner sweep, then the hero entrance plays.
+      // Phones / touch: exits as soon as the hero is ready (the fonts and the portrait), and always by about 800ms.
       (function () {
         var html = document.documentElement, el = document.getElementById('preloader'), root = document.getElementById('root');
         if (!el) return;
@@ -124,6 +125,8 @@
         root.setAttribute('aria-busy', 'true');
         var BASE = '/Fahis-portfolio/'; // vite base (vite.config.js); inline scripts aren't rewritten
         var fill = el.querySelector('.pl-fill'), tick = el.querySelector('.pl-tick'), pct = el.querySelector('.pl-pct');
+        var phone = window.matchMedia('(max-width: 899px), (hover: none)').matches;
+        var MIN = phone ? 0 : 700, MAX = phone ? 800 : 3500, EASE = phone ? 0.3 : 0.12;
         var total = 5, done = 0, shown = 0, start = performance.now(), finished = false, raf = 0;
         var step = function () { done = Math.min(total, done + 1); };
         ['me/fahis-bw.webp', 'me/fahis-cutout.webp', 'showreel/axiskyc.webp'].forEach(function (src) {
@@ -136,12 +139,12 @@
         if (document.readyState === 'complete') onLoad(); else window.addEventListener('load', onLoad);
         var frame = function () {
           var target = done / total;
-          shown = Math.max(shown, shown + (target - shown) * 0.12);
+          shown = Math.max(shown, shown + (target - shown) * EASE);
           if (target - shown < 0.002) shown = target;
           fill.style.transform = 'scaleX(' + shown.toFixed(4) + ')';
           tick.style.left = (shown * 100).toFixed(2) + '%';
           pct.textContent = String(Math.round(shown * 100)).padStart(2, '0');
-          if (done >= total && shown >= 0.999 && performance.now() - start >= 700) return finish();
+          if (done >= total && shown >= 0.999 && performance.now() - start >= MIN) return finish();
           raf = requestAnimationFrame(frame);
         };
         var finish = function () {
@@ -157,7 +160,7 @@
           }, reduced ? 300 : 600);
         };
         raf = requestAnimationFrame(frame);
-        setTimeout(finish, 3500); // failsafe
+        setTimeout(finish, MAX); // failsafe
       })();
     </script>
     <noscript>

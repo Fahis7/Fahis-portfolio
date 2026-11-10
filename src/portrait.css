@@ -26,6 +26,9 @@
   font: 500 10px 'IBM Plex Mono', ui-monospace, monospace; letter-spacing: 0.02em; color: #ffd9c4; background: rgba(15, 17, 21, 0.7);
   pointer-events: none; transition: opacity 0.2s ease;
 }
+/* safety net: until the code layer has drawn (or if it fails), the card is the full photo with no scanner or hint */
+.me:not(.has-code) .me-photo { clip-path: none; }
+.me:not(.has-code) .me-code, .me:not(.has-code) .me-scan, .me:not(.has-code) .me-tag { visibility: hidden; }
 /* hint: visible while decoded, fades out while the photo is revealed */
 .me.is-photo .me-tag { opacity: 0; }
 .me-dot { width: 6px; height: 6px; flex: none; border-radius: 50%; background: #ff5a1f; box-shadow: 0 0 6px rgba(255, 90, 31, 0.8); animation: meDot 1.6s ease-in-out infinite; }
@@ -33,7 +36,11 @@
 @media (prefers-reduced-motion: reduce) { .me-dot { animation: none; } }
 
 @media (max-width: 899px) {
-  .me { border-radius: 18px; } /* size: the hero sets it (a card up to 360px wide, centred) */
+  /* explicit 4:5 box (the photo's shape) so the card can never collapse to 0 height on phones */
+  .me { border-radius: 18px; aspect-ratio: 4 / 5; max-width: 360px; min-height: 0; } /* width: the hero sets it (up to 360px, centred) */
+  /* phones: no animated glow (box-shadow repaint every frame); the lift stays (transform only) */
+  .me { box-shadow: var(--shadow-portrait); }
+  .me-scan::after { filter: none; opacity: 0.6; }
   .me-tag { left: 8px; padding: 3px 7px 3px 6px; gap: 5px; font-size: 11px; }
   .me-dot { width: 5px; height: 5px; }
 }

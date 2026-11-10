@@ -118,8 +118,14 @@ export default function Belt({ projects }) {
     window.addEventListener('resize', onResize);
     const io = new IntersectionObserver(([en]) => {
       visible = en.isIntersecting;
-      if (visible && !raf) { last = performance.now(); raf = requestAnimationFrame(frame); }
+      belt.toggleAttribute('data-live', visible); // phones: will-change only while the belt is on screen
+      if (visible && !document.hidden && !raf) { last = performance.now(); raf = requestAnimationFrame(frame); }
     });
+    const onVis = () => {
+      if (document.hidden) { cancelAnimationFrame(raf); raf = 0; }
+      else if (visible && !raf) { last = performance.now(); raf = requestAnimationFrame(frame); }
+    };
+    document.addEventListener('visibilitychange', onVis);
     io.observe(belt);
 
     /* ── canvas ── */
@@ -238,7 +244,7 @@ export default function Belt({ projects }) {
     raf = requestAnimationFrame(frame);
 
     return () => {
-      cancelAnimationFrame(raf); io.disconnect();
+      cancelAnimationFrame(raf); io.disconnect(); document.removeEventListener('visibilitychange', onVis);
       window.removeEventListener('resize', onResize);
       belt.removeEventListener('pointerenter', onEnter); belt.removeEventListener('pointerleave', onLeave);
       belt.removeEventListener('pointerdown', onDown); belt.removeEventListener('pointermove', onMove);
@@ -270,7 +276,7 @@ export default function Belt({ projects }) {
             <div className="card" key={`${p.id}-${r}`} data-card={i} ref={(el) => (cardRefs.current[i] = el)}
               aria-label={r ? undefined : `${p.title}: ${p.tagline}`} aria-hidden={r ? true : undefined}>
               {realShot(p)
-                ? <img className="card-shot" src={realShot(p)} alt="" width={1600} height={Math.round(1600 / p.reel.aspect)}
+                ? <img className="card-shot" src={realShot(p)} alt="" decoding="async" width={1600} height={Math.round(1600 / p.reel.aspect)}
                     draggable={false} decoding="async" fetchPriority={i === 0 ? 'high' : undefined} />
                 : <MiniSite site={p.site} />}
             </div>

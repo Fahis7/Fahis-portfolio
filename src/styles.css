@@ -1259,3 +1259,69 @@ html.fx-ready .rise.in .dot-word circle { animation: fxDot 0.25s ease-out both; 
   .bottom-nav .btn-sm { height: 40px; padding: 0 16px; font-size: 13px; }
 }
 @media (max-width: 899px) and (pointer: coarse) { .bottom-nav .btn-sm { min-height: 44px; } }
+
+/* ═════════════ SMOOTH ON PHONES (touch / under 900px only; desktop untouched) ═════════════
+   Only transform and opacity animate here; glass blur is kept for the navbar and menu only; reveals are short and light. */
+
+/* touch feel: no grey tap flash, no double-tap zoom delay */
+a, button, [role="button"], summary, label, select { -webkit-tap-highlight-color: transparent; }
+a, button, [role="button"], summary, label { touch-action: manipulation; }
+@media (hover: none) {
+  .marquee:hover .marquee-track { animation-play-state: running; } /* a tap must not freeze the strip */
+  .ft-links a:hover::after, .ft-top:hover::after { transform: scaleX(0); }
+}
+
+/* offscreen work is paused (data-off is set by an IntersectionObserver in main.jsx / StackPerf.jsx) */
+.marquee[data-off] .marquee-track, .sp-stage[data-off] .sp-bg, .sp-stage[data-off] .sp-bg::before, .sp-stage[data-off] .sp-bg::after,
+.sp-stage[data-off] :is(.sp-sweep, .sp-flow, .sp-node) { animation-play-state: paused; }
+
+@media (max-width: 899px) {
+  /* glass: blur only on the navbar and the menu (lighter, 12px); everything else gets a solid, slightly see-through fill */
+  html .nav.is-scrolled, html .nav[data-menu], html .nav-menu:not([hidden]) { -webkit-backdrop-filter: blur(12px) saturate(1.2); backdrop-filter: blur(12px) saturate(1.2); }
+  html .nav { transition: background-color 0.25s ease, border-color 0.25s ease; } /* no animated height / shadow */
+  html .xp-viewing { background: color-mix(in srgb, var(--bg) 96%, transparent); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  html .sp-card .sp-window, html .tk-trail-tile { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  html .cv-viewer::backdrop { background: rgba(10, 12, 15, 0.88); -webkit-backdrop-filter: none; backdrop-filter: none; }
+
+  /* no permanent will-change: the belt's cards only get it while the belt is on screen and moving */
+  html .card, html .code { will-change: auto; }
+  html .belt[data-live] .card, html .belt[data-live] .code { will-change: transform; }
+  html.fx-ready .project .preview :is(img.shot, .shot-video, .ms) { transform: scale(1.12); will-change: auto; } /* no parallax */
+  html .sp-entrance :is(.sp-line, .sp-intro, .sp-card, .sp-title, .sp-gauge, .sp-window, .sp-map, .sp-metric, .sp-caption, .sp-learn-more) { will-change: auto; }
+
+  /* pulsing dot: an expanding ring (transform + opacity) instead of an animated box-shadow */
+  .ft-pulse { position: relative; animation: none; box-shadow: none; }
+  .ft-pulse::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: rgba(255, 90, 31, 0.55); animation: mPulse 1.8s ease-out infinite; }
+}
+@keyframes mPulse { from { transform: scale(1); opacity: 0.7; } 70%, to { transform: scale(2.2); opacity: 0; } }
+@keyframes mUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes mFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes mMap { from { opacity: 0; } }
+
+/* reveals on phones: ~0.35s, at most 16px of movement, never more than 0.1s of delay; no clip-path or filter animations */
+@media (max-width: 899px) and (prefers-reduced-motion: no-preference) {
+  .stage :is(.eyebrow, .hero-title, .hero-intro, .hero-ctas, .me, .hero-status, .hero-proof) { animation: mUp 0.4s ease-out backwards; animation-delay: 0s; }
+  .stage :is(.hero-intro, .hero-ctas, .me, .hero-status, .hero-proof) { animation-delay: 0.08s; }
+  .rise { transform: translateY(16px); }
+  .rise.in { animation: mUp 0.35s ease-out forwards; animation-delay: min(var(--d, 0s), 0.1s); }
+  html.fx-ready .section-label.rise.in { animation-name: mFade; }
+  html.fx-ready :is(h2.big, h2.partner-title).rise.in { animation: mUp 0.35s ease-out both; animation-delay: min(var(--d, 0s), 0.1s); }
+  /* LED words and titles light up with their block, not dot by dot */
+  html.fx-ready .rise:not(.in) .dot-word circle, html.fx-ready .fx-proj:not(.fx-in) .dot-title circle { opacity: 1; }
+  html.fx-ready .rise.in .dot-word circle, html.fx-ready .fx-proj.fx-in .dot-title circle { animation: none; }
+  /* projects: the preview fades up (no clip-path scan, no blur), the text follows with almost no stagger */
+  html.fx-ready .fx-proj:not(.fx-in) .preview { clip-path: none; opacity: 0; }
+  html.fx-ready .fx-proj.fx-in .preview { animation: mUp 0.35s ease-out both; }
+  html.fx-ready .fx-proj.fx-in .scanfx { display: none; }
+  html.fx-ready .fx-proj .preview :is(img.shot, .ms), html.fx-ready .fx-proj:not(.fx-in) .preview :is(img.shot, .ms) { filter: none; transition: none; }
+  html.fx-ready .fx-proj.fx-in .project-text > *, html.fx-ready .fx-proj.fx-in .project-text > .kicker { animation: mUp 0.35s ease-out both; animation-delay: min(calc(var(--n, 0) * 0.02s), 0.1s); }
+  html.fx-ready .fx-proj.fx-in .project-text > .chips { animation: none; opacity: 1; }
+  html.fx-ready .fx-proj .project-text > .chips li { opacity: 1; }
+  html.fx-ready .fx-proj.fx-in .project-text > .chips li { animation: none; }
+  html.fx-ready .xp-icon, html.fx-ready .xp-item.rise:not(.in) .xp-icon { filter: none; transition: none; }
+  /* stack + work together entrance: one light fade-up per block */
+  html .sp-entrance :is(.sp-line, .sp-intro, .sp-card, .sp-title, .sp-gauge, .sp-window, .sp-metric, .sp-caption, .sp-learn-more) { animation: mUp 0.35s ease-out both; animation-delay: 0s; }
+  html .sp-entrance .sp-map { animation: mMap 0.35s ease-out both; animation-delay: 0s; } /* ends at its own 0.78 */
+  html .sp-entrance .sp-card + .sp-card { animation-delay: 0.05s; }
+  html .sp-entrance .sp-card + .sp-card + .sp-card { animation-delay: 0.1s; }
+}

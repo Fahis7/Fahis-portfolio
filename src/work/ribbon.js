@@ -147,8 +147,8 @@ export function mountRibbon(container, opts = {}) {
   floor.frustumCulled = false;
   scene.add(floor);
 
-  // pixel ratio cap: 2, or 1.5 on phones (sharp enough, much lighter to render); re-read on every layout
-  const maxDpr = () => Math.min(devicePixelRatio || 1, window.matchMedia('(max-width: 649px)').matches ? 1.5 : 2);
+  // pixel ratio cap: 2, or 1.5 on phones (sharp enough, much lighter to render), landscape phones included; re-read on every layout
+  const maxDpr = () => Math.min(devicePixelRatio || 1, window.matchMedia('(max-width: 649px), (pointer: coarse) and (max-width: 950px)').matches ? 1.5 : 2);
 
   /* ───────────── theme ───────────── */
 

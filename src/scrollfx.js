@@ -5,6 +5,8 @@
   html.fx-ready), so all content is simply visible.
 */
 export const motionOK = () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+// phones and touch screens: no scroll-linked effects (they read layout every frame); reveals still run
+const phoneLike = () => window.matchMedia('(max-width: 899px), (hover: none)').matches;
 
 /* ── scroll loop: subscribers get (scrollY, dy, dt); returning true asks for another frame (to ease out) ── */
 const subs = new Set();
@@ -101,6 +103,8 @@ export function initScrollFx() {
 
   // projects: preview scanned in, text staggered in (CSS keyed on .fx-proj / .fx-in)
   document.querySelectorAll('.project').forEach((p) => { p.classList.add('fx-proj'); onEnter(p, () => p.classList.add('fx-in')); });
+
+  if (phoneLike()) return () => off.forEach((f) => f()); // phones: the scroll loop below stays off
 
   // preview parallax: the screenshot moves slower than the page (only previews on screen are updated)
   const visible = new Set();

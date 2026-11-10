@@ -17,7 +17,7 @@ const BRANDS = {
   'JWT': siJsonwebtokens, 'Firebase Auth / MFA': siFirebase,
   'Docker': siDocker, 'Docker Compose': siDocker, 'GitHub Actions CI/CD': siGithubactions, 'DigitalOcean': siDigitalocean,
   'Railway': siRailway, 'Vercel': siVercel, 'Netlify': siNetlify, 'Nginx': siNginx, 'Gunicorn': siGunicorn,
-  'Certbot SSL': siLetsencrypt, 'Cloudinary': siCloudinary, 'Cloudflare R2': siCloudflare, 'Sentry': siSentry,
+  'Certbot SSL': siLetsencrypt, 'Cloudinary': siCloudinary, 'Cloudflare R2': siCloudflare, 'DO Spaces': siDigitalocean, 'Sentry': siSentry,
   'Vitest': siVitest, 'Integration tests on real PostgreSQL': siPostgresql,
 };
 

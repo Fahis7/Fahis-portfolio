@@ -12,7 +12,7 @@ export const profile = {
   name: 'Mohammed Fahis',
   short: 'Fahis',
   role: 'AI Full Stack Developer / Lead Engineer',
-  languages: 'English · Malayalam (fluent)',
+  languages: 'English (fluent) · Malayalam (fluent)',
   location: 'Dubai, UAE',
   timezone: 'Asia/Dubai',
   email: 'muhdfahis.aidev@gmail.com',
@@ -54,12 +54,12 @@ export const projects = [
     desc: 'A multi-tenant compliance platform for compliance officers and audit firms in the UAE: automated PEP, sanctions, UAE Local List and adverse-media screening, an MLRO review workflow, verifiable KYC certificates and a full training LMS, in English and Arabic.',
     badge: 'NEW',
     highlights: [
-      'Automated PEP, sanctions, UAE Local List and adverse-media screening with risk bands',
+      'Screening against OFAC, UN, EU, UK HMT and the UAE Local Terrorist List, plus PEP and adverse media',
       'Row-Level Security isolation across tenants, with 3 Postgres roles',
       'Verifiable PDF certificates, MLRO review queue and full Arabic / English RTL',
     ],
     metrics: [
-      { value: '4', label: 'screening lists' },
+      { value: '5', label: 'sanctions lists' },
       { value: '3', label: 'Postgres roles (RLS)' },
       { value: 'EN · AR', label: 'full RTL support' },
       { value: 'Real PG', label: 'integration tests in CI' },
@@ -85,8 +85,8 @@ DB_ROLES = ("owner", "app", "platform")
 
 def screen(subject):
     hits = sanctions_io.search(subject, [
-      "PEP", "SANCTIONS",
-      "UAE_LOCAL", "ADVERSE_MEDIA",
+      "OFAC", "UN", "EU", "UK_HMT",
+      "UAE_LOCAL", "PEP", "ADVERSE_MEDIA",
     ])
     band = risk_band(hits)  # low/med/high
     return mlro_queue.push(subject, band)
@@ -100,8 +100,10 @@ LOCALES = ("en", "ar")  # full RTL
 # CORS: none - proxied via Next.js`,
     caseStudy: {
       features: [
-        { t: 'Screening engine', d: 'Automated PEP, Sanctions, UAE Local List and Adverse Media screening via the Sanctions.io API, with real-time risk scoring and configurable low / medium / high bands.' },
-        { t: 'Multi-tenant by design', d: 'Row-Level Security isolates every tenant at the database level. Three Postgres roles: owner (migrations), app (tenant runtime), platform (super-admin).' },
+        { t: 'Screening engine', d: 'Automated screening via the Sanctions.io API against five sanctions lists (OFAC, UN, EU, UK HMT and the UAE Local Terrorist List), plus PEP databases and AI-powered adverse media analysis.' },
+        { t: '6-factor risk scoring', d: 'A weighted risk scoring engine with six factors, aligned to UAE Central Bank regulations, sorting every profile into low / medium / high bands.' },
+        { t: 'Document reading in 4 to 7 s', d: 'Passport and Emirates ID OCR with the Claude Vision API, a Tesseract fallback and MRZ validation: 9 fields extracted automatically in 4 to 7 seconds.' },
+        { t: 'Multi-tenant by design', d: 'A 33-table data model with Row-Level Security isolating every tenant at the database level. Three Postgres roles: owner (migrations), app (tenant runtime), platform (super-admin).' },
         { t: 'MLRO review queue', d: 'Compliance officers confirm or dismiss each PEP, sanctions, adverse-media and UAE-list match, with a full audit trail.' },
         { t: 'Verifiable KYC certificates', d: 'PDF certificates with QR verification, officer attestation, dynamic screening results and a public verification endpoint.' },
         { t: 'Training & compliance LMS', d: 'Course authoring, timed auto-graded quizzes, certificates, assignment lifecycle, Excel training register and analytics on completion and scores.' },
@@ -113,6 +115,7 @@ LOCALES = ("en", "ar")  # full RTL
       ],
       panels: [
         { kicker: 'SECURITY', title: 'Locked down by default.', dark: true, items: [
+          'Passed a 16-finding pre-launch security audit, with every finding fixed',
           'No CORS: the frontend proxies every API call through Next.js Route Handlers',
           'Access tokens held in memory only; refresh tokens in httpOnly cookies',
           'Migrations run only as the owner database role',
@@ -330,13 +333,13 @@ analytics.live(dashboard="ops")`,
     tagline: 'Operating system for Dubai property teams',
     role: 'Architecture → production · demo offline',
     desc: 'A multi-tenant SaaS for Dubai property teams. Four role-based portals, async jobs, five-service Docker orchestration and AI features designed for real production workflows.',
-    highlights: ['Vision-AI maintenance triage powered by Groq Vision', 'RAG concierge over property data using pgvector', 'Smart market pricing and four role-based portals with 8 JWT roles'],
+    highlights: ['Vision-AI maintenance triage powered by Groq Llama 4 Vision', 'RAG concierge over property data on pgvector and Llama 3.3 70B', 'Smart market pricing and four role-based portals with 8 JWT roles'],
     metrics: [
       { value: '4', label: 'role-based portals' },
       { value: '8', label: 'JWT roles' },
       { value: '5', label: 'Docker services' },
     ],
-    stack: ['Django 5', 'React 19', 'PostgreSQL', 'Groq Vision', 'pgvector', 'Docker', 'Railway'],
+    stack: ['Django 5', 'React 19', 'PostgreSQL', 'Groq Llama 4 Vision', 'Llama 3.3 70B', 'pgvector', 'Celery', 'Redis', 'Docker', 'Railway'],
     demo: null,
     github: 'https://github.com/Fahis7',
     reel: { poster: 'showreel/propai.webp', video: null, aspect: 1600 / 1019 },
@@ -346,7 +349,9 @@ class Stack:
     backend  = "Django 5 + DRF"
     frontend = "React 19"
     database = "PostgreSQL + pgvector"
-    vision   = "Groq Llama 4 Scout Vision"
+    vision   = "Groq Llama 4 Vision"
+    rag_llm  = "Llama 3.3 70B"
+    workers  = "Celery + Redis"
     infra    = "Docker Compose · 5 services"
 
 PORTALS   = 4   # role-based
@@ -374,13 +379,6 @@ export const heroStats = [
   { value: projects.filter((p) => p.demo).length, label: 'Live' },
   { value: 1000, suffix: '+', label: 'Profiles screened' },
   { value: 1255, label: 'Tests passing' },
-];
-
-export const skills = [
-  { key: 'ai', title: 'AI / LLM', items: ['Claude (Anthropic)', 'Groq Llama 4 Scout Vision', 'OpenAI GPT-4', 'RAG & pgvector', 'Hugging Face', 'LangChain & prompt engineering'] },
-  { key: 'backend', title: 'Backend', items: ['Python', 'Django 5 / DRF', 'FastAPI', 'PostgreSQL + RLS', 'Celery + Redis', 'JWT / OAuth2', 'MongoDB / Supabase'] },
-  { key: 'frontend', title: 'Frontend', items: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS v4', 'Framer Motion', 'i18n / RTL'] },
-  { key: 'cloud', title: 'Cloud / DevOps', items: ['Docker + Compose', 'GitHub Actions CI/CD', 'Nginx + Gunicorn', 'AWS EC2 / RDS', 'CentOS / Linux', 'Railway / Vercel / Netlify'] },
 ];
 
 // Stack section cards: every number here is a real count from the projects above.
@@ -425,7 +423,7 @@ export const toolkit = [
   { label: 'Frontend', items: ['React 19', 'Next.js 16 (App Router)', 'Vite', 'Tailwind CSS', 'SWR', 'Context API', 'Framer Motion', 'Lenis', 'Arabic RTL / i18n'] },
   { label: 'Data', items: ['PostgreSQL (RLS, multi-tenant)', 'Supabase', 'Redis'] },
   { label: 'Auth & Security', items: ['JWT', 'OAuth2', 'Firebase Auth / MFA', 'RBAC', 'Row-Level Security'] },
-  { label: 'Cloud & DevOps', items: ['Docker', 'Docker Compose', 'Microservices', 'GitHub Actions CI/CD', 'AWS EC2 / RDS', 'DigitalOcean', 'Railway', 'Vercel', 'Netlify', 'Nginx', 'Gunicorn', 'Certbot SSL', 'systemd', 'Cloudinary', 'Cloudflare R2', 'Sentry'] },
+  { label: 'Cloud & DevOps', items: ['Docker', 'Docker Compose', 'Microservices', 'GitHub Actions CI/CD', 'AWS EC2 / RDS', 'DigitalOcean', 'Railway', 'Vercel', 'Netlify', 'Nginx', 'Gunicorn', 'Certbot SSL', 'systemd', 'Cloudinary', 'Cloudflare R2', 'DO Spaces', 'Sentry'] },
   { label: 'Testing', items: ['Vitest', 'Integration tests on real PostgreSQL', 'Regression suites'] },
   { label: 'Domains', wide: true, items: ['AML / KYC compliance', 'Sanctions & PEP screening', 'Multi-tenant SaaS', 'E-commerce', 'Recommerce operations'] },
 ];
@@ -498,9 +496,9 @@ export const experience = [
   },
   {
     time: 'May to Jun 2026', link: '#work-propai', year: '2026', name: 'PropAI OS', short: 'Full Stack AI Developer · PropAI OS',
-    tech: ['Django 5', 'React 19', 'Groq Llama 4', 'pgvector', 'Celery', 'Docker', 'Railway'],
+    tech: ['Django 5', 'React 19', 'Groq Llama 4 Vision', 'Llama 3.3 70B', 'pgvector', 'Celery', 'Redis', 'Docker', 'Railway'],
     title: 'Full Stack AI Developer', company: 'PropAI OS, Zero Accounting, Abu Dhabi',
-    desc: 'Vision-AI maintenance triage, a smart rent pricing engine on live Dubai market data, and a pgvector RAG concierge in a multi-tenant SaaS with four portals and eight JWT roles.',
+    desc: 'Vision-AI maintenance triage with Groq Llama 4 Vision, a smart rent pricing engine on live Dubai market data, and a pgvector RAG concierge on Llama 3.3 70B in a multi-tenant SaaS with four portals and eight JWT roles.',
   },
   {
     time: 'Feb to Apr 2026', link: '#work-seek', year: '2026', name: 'Seek & Sync', short: 'Frontend & AI Integration · Seek & Sync',
@@ -520,7 +518,7 @@ export const experience = [
 export const credentials = [
   { key: 'education', icon: 'cap', label: 'Education', date: '2022–2025', title: 'Bachelor’s in Computer Application', sub: 'Calicut University', year: '2022', name: 'Education', short: 'Education · Calicut University' },
   { key: 'bridgeon', icon: 'code', label: 'Internship', date: 'Apr 2025 – Jan 2026', title: 'Full Stack Developer Intern', sub: 'Bridgeon Solutions LLP · Kerala, India', year: '2025', name: 'Bridgeon', short: 'Full Stack Intern · Bridgeon' },
-  { key: 'programme', icon: 'spark', label: 'Programme', date: '2025', title: 'One Million Prompters', sub: 'Dubai Future Foundation · Selected participant', accent: true, year: '2025', name: 'Programme', short: 'Programme · Dubai Future Foundation' },
+  { key: 'programme', icon: 'spark', label: 'Programme', date: '2025', title: 'One Million Prompters · Dubai', sub: 'Dubai Future Foundation · Selected participant', accent: true, year: '2025', name: 'Programme', short: 'Programme · Dubai Future Foundation' },
   { key: 'python', icon: 'code', label: 'Certification', title: 'Python Fullstack Developer', sub: 'Django · DRF · React', year: 'CERT', name: 'Certification', short: 'Certification · Python Fullstack Developer' },
 ]
 

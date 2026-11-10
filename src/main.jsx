@@ -706,7 +706,7 @@ function CaseStudy({ p }) {
         {panels.map((pn, i) => (
           <div key={pn.kicker} className={`panel${pn.dark ? ' panel-dark' : ''} rise`} style={i ? { '--d': `${i * 0.1}s` } : undefined}>
             <p className="kicker">{pn.kicker}</p>
-            <h3 className="t-sub">{pn.title}</h3>
+            <h3 className="t-sub">{pn.title.replace(/ (\S+)$/, '\u00a0$1')}</h3>
             <ul className="ticks">{pn.items.map((s) => <li key={s}>{s}</li>)}</ul>
           </div>
         ))}
@@ -816,7 +816,7 @@ function About() {
     <section className="section about" id="about">
       <div className="section-label rise"><span>02</span>About</div>
       <div className="about-grid">
-        <h2 className="big t-head rise" style={{ '--d': '.1s' }}>Build the system underneath,<br />ship the <DotWord text="interface" /> on top.</h2>
+        <h2 className="big t-head rise" style={{ '--d': '.1s' }}>Build the system underneath,<br />ship the <DotWord text="interface" /> <span className="nowrap">on top.</span></h2>
         <div className="about-body">
           <div className="about-copy t-copy rise" style={{ '--d': '.2s' }}>
             <p>I work where product engineering meets applied AI: auth, data architecture, models and deployment. I build with Claude Code (plan, review, verify) and test AI on real runs, not demos.</p>
@@ -922,7 +922,7 @@ function Experience() {
         <div className="xp-head">
           <div className="rise">
             <div className="section-label"><span>04</span>Experience</div>
-            <h2 className="big t-head">From first commit to full <DotWord text="ownership." /></h2>
+            <h2 className="big t-head">From first commit to <span className="nowrap">full <DotWord text="ownership." /></span></h2>
             <p className="xp-intro t-copy">From e-commerce builds to a live compliance SaaS.</p>
           </div>
           <div className="xp-viewing" aria-hidden="true">
@@ -989,7 +989,7 @@ function WorkTogether() {
     <section className="section section--fill together">
       <div className="together-head">
         <div className="section-label rise"><span>05</span>Work together</div>
-        <h2 className="big t-head rise" style={{ '--d': '.1s' }}>Two ways to work <DotWord text="together." /></h2>
+        <h2 className="big t-head rise" style={{ '--d': '.1s' }}>Two ways to <span className="nowrap">work <DotWord text="together." /></span></h2>
       </div>
       <div className="together-grid sp-pending" ref={grid}>
         {offers.map((o, i) => (

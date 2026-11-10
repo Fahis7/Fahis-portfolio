@@ -377,7 +377,7 @@ html.js-rv .sp-pending .sp-line, html.js-rv .sp-pending .sp-intro, html.js-rv .s
 }
 /* phones: one column */
 @media (max-width: 599px) {
-  .sp-headline { font-size: 30px; }
+  .sp-headline { font-size: 26px; }
   .sp-cards { grid-template-columns: minmax(0, 1fr); justify-items: center; --card-w: min(100cqw, 429px); }
   .sp-card:last-child { grid-column: auto; }
   .sp-card { --entrance-delay: .4s !important; }

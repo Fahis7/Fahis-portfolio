@@ -351,7 +351,8 @@ html[data-theme="dark"] .sp-stage {
 @keyframes spControl { from { opacity: 0; translate: 0 calc(6 * var(--u)); scale: .975; } to { opacity: 1; translate: none; scale: none; } }
 
 /* ── responsive: only how many cards share a row changes ── */
-@media (min-width: 768px) and (max-width: 1180px) and (max-aspect-ratio: 6/7) {
+/* portrait tablets 900px+: 2 + 1, sized by height */
+@media (min-width: 900px) and (max-width: 1180px) and (max-aspect-ratio: 6/7) {
   .sp-stage { min-height: 100svh; }
   .sp-screen { height: auto; }
   .sp-cards {
@@ -360,13 +361,23 @@ html[data-theme="dark"] .sp-stage {
   }
   .sp-card:last-child { grid-column: 1 / -1; justify-self: center; }
 }
-@media (max-width: 767px) {
-  .sp-stage { min-height: 100svh; overflow: visible; }
+/* below 900px: 2 columns (the third card centred under them), sized from the width */
+@media (max-width: 899px) {
+  .sp-stage { min-height: 0; overflow: visible; }
   .sp-screen { height: auto; }
   .sp-masthead { grid-template-columns: minmax(0, 1fr); }
-  .sp-headline { font-size: 30px; }
   .sp-intro { font-size: 15px; }
-  .sp-cards { container-type: inline-size; flex: 0 0 auto; flex-direction: column; align-items: center; --card-w: min(100cqw, 429px); }
+  .sp-cards {
+    container-type: inline-size; flex: 0 0 auto; height: auto; display: grid; grid-template-columns: repeat(2, max-content);
+    justify-content: center; --card-w: min((100cqw - var(--gap)) / 2, 429px);
+  }
+  .sp-card:last-child { grid-column: 1 / -1; justify-self: center; }
+}
+/* phones: one column */
+@media (max-width: 599px) {
+  .sp-headline { font-size: 30px; }
+  .sp-cards { grid-template-columns: minmax(0, 1fr); justify-items: center; --card-w: min(100cqw, 429px); }
+  .sp-card:last-child { grid-column: auto; }
   .sp-card { --entrance-delay: .4s !important; }
 }
 

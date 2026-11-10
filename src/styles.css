@@ -849,9 +849,18 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
   .hero-dl { font-size: 12.5px; }
   .quote p { font-size: 17px; }
   /* experience: one column; no sticky column, live year or index; each card shows its own LED year */
-  .xp-grid { grid-template-columns: 1fr; }
-  .xp-head { position: static; }
-  .xp-viewing, .xp-index { display: none; }
+  /* experience: one column; the live year becomes a slim sticky bar under the navbar while the cards scroll.
+     The head wrapper is flattened so the bar's sticky range is the whole grid. */
+  .xp-grid { grid-template-columns: 1fr; gap: 0; }
+  .xp-head { display: contents; }
+  .xp-index { display: none; }
+  .xp-viewing {
+    position: sticky; top: calc(52px + var(--safe-top)); z-index: 4; display: flex; align-items: center; gap: 14px;
+    margin: 20px calc(-1 * var(--gutter)) 16px; padding: 10px var(--gutter); border-bottom: 1px solid var(--line);
+    background: color-mix(in srgb, var(--bg) 88%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  }
+  .xp-year { width: 86px; height: 24px; flex: none; }
+  .xp-viewing-line { margin-top: 0; font-size: 11px; }
   .xp-list { padding-left: 24px; }
   .xp-spine { left: 12px; }
   .xp-card { padding: 22px; }
@@ -859,7 +868,7 @@ img.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: 
   .xp-creds { grid-template-columns: 1fr; }
   .xp-creds::before { left: -16.5px; top: 26px; }
   .xp-card.xp-cred { padding: 22px; }
-  .xp-year-m { display: block; height: 22px; margin-bottom: 14px; color: var(--dot); }
+  .xp-year-m { display: none; } /* the sticky bar shows the year */
   /* toolkit: tabs become a horizontal pill row, tiles in 2 columns */
   .tk-body { grid-template-columns: 1fr; }
   .tk-tabs {

@@ -260,6 +260,11 @@ export function GlassCard({ id, variant, title, dots, unit, caption, index = 0, 
     if (pinned) { setPinned(false); closeHover(); } else setPinned(true);
   };
   const onBack = (e) => { kbd.current = e.detail === 0; setPinned(false); closeHover(); };
+  // touch screens: a tap on the card itself flips it (and a tap again flips it back); buttons and links keep their job
+  const onCardTap = (e) => {
+    if (finePointer() || e.target.closest('a, button')) return;
+    onToggle(e);
+  };
 
   // Flip state lives in classes set here (React only renders the constant "sp-card", so it never wipes the
   // classes this file adds by hand). 3D (.is-3d: preserve-3d, backface-visibility, will-change) exists only
@@ -308,6 +313,7 @@ export function GlassCard({ id, variant, title, dots, unit, caption, index = 0, 
       ref={card}
       className="sp-card" style={{ '--entrance-delay': `${0.46 + index * 0.12}s` }}
       onPointerEnter={revealOnHover ? hoverIn : undefined} onPointerLeave={revealOnHover ? hoverOut : undefined}
+      onClick={onCardTap}
     >
       <div className="sp-flipper">
         {/* FRONT: the card design */}

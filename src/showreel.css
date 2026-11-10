@@ -15,7 +15,7 @@ html[data-theme="dark"] .reel { --reel-bg: #000; --reel-ink: #fff; }
 /* html has scroll-padding-top (nav height + 16px); cancel it so #showreel lands with the band flush at the top (p = 0) */
 .reel--band { scroll-margin-top: calc(-1 * (var(--nav-h) + 16px)); }
 /* the pinned band sits under the fixed nav: its top corner labels move down by the nav height */
-.reel--band .reel-tl, .reel--band .reel-tr { top: calc(40 * var(--ru) + var(--nav-h)); }
+.reel--band .reel-tl, .reel--band .reel-tr { top: calc(40 * var(--ru) + var(--nav-h) + var(--safe-top)); }
 .reel-sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; }
 .reel-stage { position: absolute; inset: 0; }
 /* labels layer: a second sticky box laid over the first (sticky makes its own stacking context,
@@ -88,7 +88,7 @@ html[data-theme="dark"] .reel--band::after { bottom: 0; background: linear-gradi
   .reel { --ru: calc(100vw / 390); }
   .reel-tl { left: var(--edge); top: calc(25 * var(--ru)); }
   .reel-tr { right: var(--edge); top: calc(25 * var(--ru)); }
-  .reel--band .reel-tl, .reel--band .reel-tr { top: calc(25 * var(--ru) + var(--nav-h)); }
+  .reel--band .reel-tl, .reel--band .reel-tr { top: calc(25 * var(--ru) + var(--nav-h) + var(--safe-top)); }
   .reel-bl { left: var(--edge); bottom: calc(25 * var(--ru)); }
   .reel-br { right: var(--edge); bottom: calc(25 * var(--ru)); }
   .reel--row { padding: calc(25 * var(--ru) + 30px) 0; }

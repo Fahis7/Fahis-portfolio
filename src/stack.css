@@ -13,9 +13,12 @@
   --gap: clamp(8px, 1.5vw, 23px);
   --content-max: calc(var(--card-count) * 429px + (var(--card-count) - 1) * var(--gap));
   --pad-top: clamp(20px, 9.6vh, 94px);
+  --pad-top: clamp(20px, 9.6svh, 94px);
   --pad-bottom: clamp(88px, 11vh, 104px); /* leaves room for the floating chat pill */
+  --pad-bottom: clamp(88px, 11svh, 104px);
   --masthead-gap: clamp(16px, 3vw, 40px);
   --cards-offset: clamp(14px, 6vh, 64px);
+  --cards-offset: clamp(14px, 6svh, 64px);
 
   position: relative; isolation: isolate; display: flex; flex-direction: column;
   overflow: hidden;

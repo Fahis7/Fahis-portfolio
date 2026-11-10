@@ -18,6 +18,19 @@
         if (m) m.setAttribute('content', t === 'dark' ? '#0b0d10' : '#ececeb');
         // the preloader shows once per browser session; later visits skip it before anything paints
         try { if (sessionStorage.getItem('fahis-loaded')) document.documentElement.classList.add('pl-skip'); } catch (e) {}
+        // ?debug=1: collect errors and resize events from the very start for the debug panel (src/debug.js)
+        if (/[?&]debug=1(&|$)/.test(location.search)) {
+          var D = window.__dbg = { errors: [], resizes: 0 };
+          addEventListener('error', function (e) {
+            var t = e.target, res = t && t !== window && (t.currentSrc || t.src || t.href);
+            D.errors.push({ msg: res ? 'failed to load ' + t.tagName : (e.message || 'error'), file: res || e.filename || '', line: e.lineno || 0, col: e.colno || 0 });
+          }, true);
+          addEventListener('unhandledrejection', function (e) {
+            var r = e.reason, at = ((r && r.stack) || '').split('\n')[1] || '';
+            D.errors.push({ msg: 'unhandled rejection: ' + ((r && r.message) || r), file: at.trim(), line: 0 });
+          });
+          addEventListener('resize', function () { D.resizes++; });
+        }
       })();
     </script>
     <style>

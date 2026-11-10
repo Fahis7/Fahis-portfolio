@@ -53,7 +53,7 @@ html[data-theme="dark"] .sp-stage {
 
 /* the masthead + glass cards keep the old full-screen height (the cards size from it via 100cqh);
    the toolkit grid follows below, so the section itself scrolls normally */
-.sp-screen { display: flex; flex-direction: column; height: calc(clamp(760px, 100svh, 1100px) - 2 * var(--section-pad)); }
+.sp-screen { display: flex; flex-direction: column; height: calc(clamp(760px, 100vh, 1100px) - 2 * var(--section-pad)); height: calc(clamp(760px, 100svh, 1100px) - 2 * var(--section-pad)); }
 
 /* masthead */
 .sp-masthead, .sp-cards { width: min(100%, var(--content-max)); margin-inline: auto; }
@@ -353,10 +353,10 @@ html[data-theme="dark"] .sp-stage {
 /* ── responsive: only how many cards share a row changes ── */
 /* portrait tablets 900px+: 2 + 1, sized by height */
 @media (min-width: 900px) and (max-width: 1180px) and (max-aspect-ratio: 6/7) {
-  .sp-stage { min-height: 100svh; }
+  .sp-stage { min-height: 100vh; min-height: 100svh; }
   .sp-screen { height: auto; }
   .sp-cards {
-    display: grid; grid-template-columns: repeat(2, max-content); justify-content: center; align-content: center; flex: 0 0 auto; height: 78svh;
+    display: grid; grid-template-columns: repeat(2, max-content); justify-content: center; align-content: center; flex: 0 0 auto; height: 78vh; height: 78svh;
     --card-w: min((100cqw - var(--gap)) / 2, (100cqh - var(--gap)) / 2 * 429 / 554, 429px);
   }
   .sp-card:last-child { grid-column: 1 / -1; justify-self: center; }

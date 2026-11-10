@@ -1,14 +1,17 @@
 /* Decode portrait. --p (0 to 1) is set by Portrait.jsx */
 .me {
   --p: 0;
-  position: relative; margin: 0; flex: none; height: clamp(200px, 34svh, 340px); aspect-ratio: 4 / 5;
+  position: relative; margin: 0; flex: none; height: clamp(200px, 34vh, 340px); height: clamp(200px, 34svh, 340px); aspect-ratio: 4 / 5;
   border-radius: 18px; overflow: hidden; isolation: isolate; cursor: crosshair; outline-offset: 4px;
   background: #0f1115; -webkit-tap-highlight-color: transparent;
   box-shadow: var(--shadow-portrait), 0 0 calc(var(--p) * 34px) calc(var(--p) * 2px) rgba(255, 90, 31, calc(var(--p) * 0.35));
   transform: translateY(calc(var(--p) * -3px));
 }
 .me-photo, .me-code { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.me-photo { object-fit: cover; clip-path: inset(0 0 0 calc(var(--p) * 100%)); user-select: none; -webkit-user-select: none; }
+/* the photo is plain by default (no clip-path, mask or blend mode), so it shows even if JavaScript fails;
+   it is only clipped while the code layer exists and is showing or moving */
+.me-photo { object-fit: cover; user-select: none; -webkit-user-select: none; }
+.me.has-code:not(.is-photo) .me-photo, .me.has-code.is-moving .me-photo { clip-path: inset(0 0 0 calc(var(--p) * 100%)); }
 .me-code { clip-path: inset(0 calc((1 - var(--p)) * 100%) 0 0); }
 .me-scan {
   position: absolute; z-index: 2; top: -2%; bottom: -2%; left: calc(var(--p) * 100%); width: 3px; margin-left: -1.5px; border-radius: 3px;

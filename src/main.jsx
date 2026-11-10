@@ -21,6 +21,7 @@ import Quotes from './Quotes.jsx';
 import { DotText, DotWord, DotTitle, GLYPHS } from './DotText.jsx';
 import { GlassCard, Grain, useGlassEntrance, useTilt } from './GlassCard.jsx';
 import { initScrollFx, watchReveals, onScrollFrame, motionOK } from './scrollfx.js';
+import { onViewportResize } from './viewport.js';
 import { profile, projects, heroStats, stackCards, toolkit, marquee, experience, credentials, quotes, offers, realShot } from './data.js';
 
 const BASE = import.meta.env.BASE_URL;
@@ -445,7 +446,9 @@ function ledColumns(word) {
   return { dots, colEnd, width: x };
 }
 function LedWord({ led, cols }) {
-  if (!cols) return null;
+  // empty: an invisible, near-zero-width LED box stays in place, so the line always has the same height and
+  // baseline (when the word vanished, the line's baseline jumped and the whole hero moved)
+  if (!cols) return <span className="dot-word hl2-led hl2-led--empty"><svg viewBox="0 0 1 28" aria-hidden="true" /></span>;
   const w = cols >= led.colEnd.length ? led.width : led.colEnd[cols - 1];
   return (
     <span className="dot-word hl2-led">
@@ -460,8 +463,10 @@ function HeroTagline() {
   const leds = useMemo(() => TAGLINES.map(([, w]) => ledColumns(w)), []);
   const reduced = useMemo(() => reducedMotion(), []);
   const [st, setSt] = useState({ i: 0, plain: TAGLINES[0][0], cols: leds[0].colEnd.length, stop: true, caret: 'led', busy: false, live: false, print: false });
-  const [box, setBox] = useState({ minW: 0, wrap: false });
+  const [box, setBox] = useState({ minW: 0, wrap: false, n: 0, h: 0, ledH: 0 });
   const root = useRef(null), measure = useRef(null);
+  // phones / touch: the line's box is locked to the tallest of the six full taglines (measured below)
+  const lock = useMemo(() => window.matchMedia('(max-width: 899px), (hover: none)').matches, []);
 
   // min-width from the widest full line; wrap the LED word onto its own line if that doesn't fit (phones)
   useEffect(() => {
@@ -473,13 +478,20 @@ function HeroTagline() {
       const avail = el.closest('h1')?.clientWidth || Infinity;
       const line = w('.hl2-m-line');
       const wrap = line > avail + 1;
-      setBox({ wrap, minW: Math.ceil(wrap ? Math.max(w('.hl2-m-plain'), w('.hl2-m-led')) : line) });
+      setBox((b) => ({ ...b, wrap, minW: Math.ceil(wrap ? Math.max(w('.hl2-m-plain'), w('.hl2-m-led')) : line), n: b.n + 1 }));
     };
     fit();
     document.fonts?.ready.then(fit);
-    window.addEventListener('resize', fit, { passive: true });
-    return () => window.removeEventListener('resize', fit);
+    return onViewportResize(fit); // width changes only on touch (the iPhone toolbar is ignored)
   }, []);
+
+  // phones: measure the six full taglines in their real layout and lock to the biggest (before paint)
+  useLayoutEffect(() => {
+    if (!lock || !measure.current) return;
+    const max = (sel) => Math.ceil(Math.max(0, ...[...measure.current.querySelectorAll(sel)].map((n) => n.getBoundingClientRect().height)));
+    const h = max('.hl2-m-box'), ledH = box.wrap ? max('.hl2-m-box .hl2-ledpart') : 0;
+    if (h !== box.h || ledH !== box.ledH) setBox((b) => ({ ...b, h, ledH }));
+  }, [lock, box.n, box.wrap]);
 
   useEffect(() => {
     if (reduced) return undefined;
@@ -536,7 +548,8 @@ function HeroTagline() {
   const caret = <span className={`hl2-caret${st.busy ? '' : ' is-blink'}`} />;
   const showCaret = !reduced && st.live;
   return (
-    <span ref={root} className={`hl2${box.wrap ? ' hl2--wrap' : ''}${st.print ? ' is-printing' : ''}`} style={box.minW ? { minWidth: box.minW } : undefined} aria-hidden="true">
+    <span ref={root} className={`hl2${box.wrap ? ' hl2--wrap' : ''}${st.print ? ' is-printing' : ''}`} aria-hidden="true"
+      style={{ minWidth: box.minW || undefined, minHeight: (lock && box.h) || undefined, '--hl2-led-h': lock && box.ledH ? `${box.ledH}px` : undefined }}>
       <span className="hl2-plain">{st.plain}{showCaret && st.caret === 'plain' && caret}</span>
       {!box.wrap && ' '}
       <span className="hl2-ledpart">
@@ -550,6 +563,14 @@ function HeroTagline() {
           <span key={plain} className="hl2-m-line">
             <span className="hl2-m-plain">{plain}</span>{' '}
             <span className="hl2-m-led"><LedWord led={leds[k]} cols={leds[k].colEnd.length} />.</span>
+          </span>
+        ))}
+        {/* each full tagline in the real layout (wrapped or not, caret included), for the phone height lock */}
+        {lock && TAGLINES.map(([plain], k) => (
+          <span key={`b-${plain}`} className={`hl2 hl2-m-box${box.wrap ? ' hl2--wrap' : ''}`}>
+            <span className="hl2-plain">{plain}<span className="hl2-caret" /></span>
+            {!box.wrap && ' '}
+            <span className="hl2-ledpart"><LedWord led={leds[k]} cols={leds[k].colEnd.length} />.<span className="hl2-caret" /></span>
           </span>
         ))}
       </span>
@@ -583,7 +604,11 @@ function HeroProof() {
     <ul className="hero-proof" ref={ref}>
       {heroStats.map((st) => (
         <li key={st.label}>
-          <span className="hero-proof-num" aria-hidden="true"><DotText text={fmtStat(st.value * t, t >= 1 ? st.suffix : '')} pitchX={4} radius={1.8} /></span>
+          <span className="hero-proof-num" aria-hidden="true">
+            {/* the final value, invisible, reserves the width; the counting value sits on top of it */}
+            <span className="hpn-final"><DotText text={fmtStat(st.value, st.suffix)} pitchX={4} radius={1.8} /></span>
+            <span className="hpn-live"><DotText text={fmtStat(st.value * t, t >= 1 ? st.suffix : '')} pitchX={4} radius={1.8} /></span>
+          </span>
           <span className="hero-proof-label">{st.label}</span>
           <span className="sr-only">{fmtStat(st.value, st.suffix)} {st.label}</span>
         </li>
@@ -868,8 +893,8 @@ function Experience() {
     const ro = new ResizeObserver(onResize);
     ro.observe(el); ro.observe(document.body); // content above moving (fonts, images) shifts the list too
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onResize, { passive: true });
-    return () => { cancelAnimationFrame(raf); ro.disconnect(); window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onResize); };
+    const offResize = onViewportResize(onResize); // the iPhone toolbar (height-only) is ignored
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); window.removeEventListener('scroll', onScroll); offResize(); };
   }, []);
 
   // the card crossing the middle of the screen is the active one
@@ -1174,8 +1199,8 @@ function BottomNav() {
     if (ft) io.observe(ft);
     update();
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onResize, { passive: true });
-    return () => { cancelAnimationFrame(raf); io.disconnect(); window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onResize); };
+    const offResize = onViewportResize(onResize); // the iPhone toolbar (height-only) is ignored
+    return () => { cancelAnimationFrame(raf); io.disconnect(); window.removeEventListener('scroll', onScroll); offResize(); };
   }, []);
   return (
     <div className={`bottom-nav ${show ? 'show' : ''}`} aria-hidden={!show}>
@@ -1212,3 +1237,6 @@ function App() {
 }
 
 createRoot(document.getElementById('root')).render(<App />);
+
+// ?debug=1: a live debug panel for testing on real phones (its own chunk; never loaded otherwise)
+if (/[?&]debug=1(&|$)/.test(location.search)) import('./debug.js').then((m) => m.startDebug());

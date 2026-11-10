@@ -148,13 +148,19 @@ export default function Portrait({ photo, cutout, alt }) {
     const touch = !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     let p = 0, target = 0, raf = 0, last = 0, touched = false, alive = true, kbd = false, io = null, back = 0;
     const ease = (x) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
+    const toPhoto = () => { // anything goes wrong: rest on the photo
+      cancelAnimationFrame(raf); raf = 0; last = 0; p = target = 0;
+      el.style.setProperty('--p', '0'); el.classList.add('is-photo'); el.classList.remove('is-moving');
+    };
     const tick = (t) => {
-      const dt = last ? Math.min(0.05, (t - last) / 1000) : 0.016; last = t;
-      const dir = Math.sign(target - p);
-      p += (dir * dt) / (target ? 0.9 : 0.7); // 0.9 s to decode, 0.7 s back
-      if ((dir > 0 && p >= target) || (dir < 0 && p <= target)) p = target;
-      el.style.setProperty('--p', ease(p).toFixed(4));
-      if (p !== target) raf = requestAnimationFrame(tick); else { raf = 0; last = 0; }
+      try {
+        const dt = last ? Math.min(0.05, (t - last) / 1000) : 0.016; last = t;
+        const dir = Math.sign(target - p);
+        p += (dir * dt) / (target ? 0.9 : 0.7); // 0.9 s to decode, 0.7 s back
+        if ((dir > 0 && p >= target) || (dir < 0 && p <= target)) p = target;
+        el.style.setProperty('--p', ease(p).toFixed(4));
+        if (p !== target) raf = requestAnimationFrame(tick); else { raf = 0; last = 0; el.classList.remove('is-moving'); }
+      } catch { toPhoto(); }
     };
     const go = (v, user = true) => {
       if (v && !el.classList.contains('has-code')) v = 0; // no code layer: stay on the photo
@@ -163,6 +169,7 @@ export default function Portrait({ photo, cutout, alt }) {
       el.setAttribute('aria-pressed', v ? 'false' : 'true'); // pressed = photo revealed
       el.classList.toggle('is-photo', !v);
       if (reduced) { p = v; el.style.setProperty('--p', String(v)); return; }
+      el.classList.add('is-moving');
       if (!raf) raf = requestAnimationFrame(tick);
     };
     const enter = (e) => e.pointerType !== 'touch' && go(0);

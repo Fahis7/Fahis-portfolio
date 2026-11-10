@@ -16,11 +16,11 @@ html[data-theme="dark"] .reel { --reel-bg: #000; --reel-ink: #fff; }
 .reel--band { scroll-margin-top: calc(-1 * (var(--nav-h) + 16px)); }
 /* the pinned band sits under the fixed nav: its top corner labels move down by the nav height */
 .reel--band .reel-tl, .reel--band .reel-tr { top: calc(40 * var(--ru) + var(--nav-h) + var(--safe-top)); }
-.reel-sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+.reel-sticky { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
 .reel-stage { position: absolute; inset: 0; }
 /* labels layer: a second sticky box laid over the first (sticky makes its own stacking context,
    so the labels can't sit above the dark edge gradients from inside .reel-sticky) */
-.reel-ui { position: sticky; top: 0; z-index: 2; height: 100svh; margin-top: -100svh; pointer-events: none; }
+.reel-ui { position: sticky; top: 0; z-index: 2; height: 100vh; height: 100svh; margin-top: -100svh; pointer-events: none; }
 .reel-ui a, .reel-ui .reel-list { pointer-events: auto; }
 
 html[data-theme="dark"] .reel--band::before,

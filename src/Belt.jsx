@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import MiniSite from './MiniSites.jsx';
 import { realShot } from './data.js';
+import { onViewportResize } from './viewport.js';
 
 /*
   Scanner belt: project cards drift left; at the orange scanner line
@@ -114,8 +115,7 @@ export default function Belt({ projects }) {
     belt.addEventListener('pointercancel', onUp);
     belt.addEventListener('wheel', onWheel, { passive: false });
     belt.addEventListener('keydown', onKey);
-    const onResize = () => measure();
-    window.addEventListener('resize', onResize);
+    const offResize = onViewportResize(measure); // the iPhone toolbar (height-only) is ignored on touch
     const io = new IntersectionObserver(([en]) => {
       visible = en.isIntersecting;
       belt.toggleAttribute('data-live', visible); // phones: will-change only while the belt is on screen
@@ -245,7 +245,7 @@ export default function Belt({ projects }) {
 
     return () => {
       cancelAnimationFrame(raf); io.disconnect(); document.removeEventListener('visibilitychange', onVis);
-      window.removeEventListener('resize', onResize);
+      offResize();
       belt.removeEventListener('pointerenter', onEnter); belt.removeEventListener('pointerleave', onLeave);
       belt.removeEventListener('pointerdown', onDown); belt.removeEventListener('pointermove', onMove);
       belt.removeEventListener('pointerup', onUp); belt.removeEventListener('pointercancel', onUp);
